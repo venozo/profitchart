@@ -1,0 +1,9 @@
+var 
+
+x : array [0..52]of integer; // of float //Of Boolean
+
+begin
+
+x := etc; 
+
+end;
