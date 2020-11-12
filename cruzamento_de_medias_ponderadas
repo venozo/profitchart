@@ -1,0 +1,32 @@
+Input
+  Periodo(6);
+  Nivel1(2.0);
+  x_dados(high);
+  Y_dados(low);
+var
+  x,y     : float;
+  h,b,c,d : float;
+Begin
+  X := x_dados;
+  Y := Y_dados;
+  if WAverage(Open,Periodo) > WAverage(Close,Periodo) then
+    begin
+      noplot(2);
+      noplot(1);
+      c := high;
+      h := ABS((((high - low) * Nivel1) + high));
+      PaintBar(clRed);
+    end;
+  if WAverage(Open,Periodo) < WAverage(Close,Periodo) then
+    begin
+      d := low;
+      b := ABS((((high - low) * Nivel1) - low));
+      noplot(3);
+      noplot(4);
+      PaintBar(clGreen);
+    end;
+  plot(c);
+  plot2(h);
+  plot3(d);
+  plot4(b);
+End
