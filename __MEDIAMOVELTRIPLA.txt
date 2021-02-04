@@ -1,0 +1,19 @@
+input
+PeriodoMMT(21);
+Source(close);
+
+var
+MMT : Float;
+
+begin
+MMT := (3 * mediaexp(PeriodoMMT,Source)) - 
+(3 * mediaexp(PeriodoMMT,mediaexp(PeriodoMMT,Source))) + 
+mediaexp(PeriodoMMT,mediaexp(PeriodoMMT,mediaexp(PeriodoMMT,Source))); 
+if close > MMT then
+paintbar(clNavy);
+if close < MMT then
+paintbar(clred);  
+plot(MMT);
+end;
+
+

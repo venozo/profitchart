@@ -1,0 +1,27 @@
+var
+   vVolFin, vPrecoAbertura  : float;
+   vFlagAbertura : boolean;
+   vPlot : float;
+
+begin  
+   vVolFin := FinancialVol(false);
+
+   if (date <> date[1]) then 
+   begin
+      vPrecoAbertura := 0; 
+      vFlagAbertura := True;
+   end;
+
+
+   if ((vVolFin > 0) and vFlagAbertura) then
+   begin
+      vPrecoAbertura := open;
+      vFlagAbertura := False;
+   end;  
+
+   if (close < vPrecoAbertura) then PaintBar(clVermelho)
+   else PaintBar(clAzul);
+
+   Plot(vPrecoAbertura); 
+
+end;

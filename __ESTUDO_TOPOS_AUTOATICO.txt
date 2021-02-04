@@ -1,0 +1,83 @@
+input
+  frequencia(21);
+  periodo(5);
+  esconder_linhas_não_horizontais(true);
+var
+  topoOnda,fundoOnda        : float;
+  chave,pausa,pausa2,chave2 : integer;
+begin
+  //-----------------------------------------
+  //   CONTANDO AS PLOTAGENS
+  if (topoOnda > 0) and (fundoOnda > 0) then
+    begin
+      chave := chave + 1;
+    end;
+  //-----------------------------------------
+  //   PRIMEIRO CÁLCULO DO INDICADOR
+  if (topoOnda = 0) and (fundoOnda = 0) then
+    begin
+      topoOnda := highD(0);
+      fundoOnda := lowD(0);
+    end;
+  //-----------------------------------------
+  //   ATUALIZANDO TOPOS
+  if (highest(high,periodo) > topoOnda) then
+    begin
+      chave := chave - 1;
+      pausa := 1;
+      topoOnda := high;
+    end;
+  if (highest(high,periodo) < topoOnda) then
+    begin
+      pausa := 0;
+    end;
+  //-----------------------------------------
+  //   ATUALIZANDO FUNDOS
+  if (lowest(low,periodo) < fundoOnda) then
+    begin
+      chave := chave - 1;
+      pausa2 := 1;
+      fundoOnda := low;
+    end;
+  if (lowest(low,periodo) > fundoOnda) then
+    begin
+      pausa2 := 0;
+    end;
+  //-----------------------------------------
+  // RECONECTANDO COM A REGIÃO ATUAL DO PREÇO
+  if (chave = frequencia) then
+    begin
+      chave2 := 0;
+      chave := 0;
+      pausa := 1;
+      pausa2 := 1;
+      //topoOnda:=(highest(high, periodo));
+      topoOnda := (HIGHD(0));
+      //fundoOnda:=(lowest(low, periodo));
+      fundoOnda := (LowD(0));
+    end;
+  //-----------------------------------------
+  //  PLOTANDO O INDICADOR NO GRÁFICO
+  if (topoOnda > 0) and (fundoOnda > 0) then
+    begin
+      if (esconder_linhas_não_horizontais = true) then
+        begin
+          if (pausa = 0) then
+            plot(topoOnda);
+            plot3(topoOnda-23.5);
+
+          if (pausa2 = 0) then
+            plot2(fundoOnda);
+            plot4( fundoOnda+23.5);
+      
+        end;
+      if (esconder_linhas_não_horizontais = false) then
+        begin
+          plot(topoOnda);
+          plot3(topoOnda+1.5);
+          plot2(fundoOnda);
+        end;
+    end;
+
+end;
+

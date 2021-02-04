@@ -1,0 +1,19 @@
+var
+vwapD1 : Real;
+Inicio
+// VWAP(Periodo);
+// Onde Periodo é :
+{0 = Barra}
+{1 = Diário}
+{2 = Semanal}
+{3 = Mensal}
+Se (Date > Date[1]) entao vwapD1 := VWAP(1)[1];
+// Plot(vwapD1);
+Se (Time = 900) entao
+inicio
+Plot(vwapD1);
+NoPlot(1);
+fim
+Senao Se (Time > 900) e (Time <= 1800) entao
+Plot(vwapD1);
+Fim;

@@ -1,0 +1,30 @@
+Input
+Por(12);
+
+var
+
+diff, ind1, ind2, cond, yrange, temp, RVI,soma, RVIsig: float;
+
+início
+
+yrange := AvgTrueRange(Por, 1);
+
+diff := close - open;
+ind1 := (diff + (2 * difF [1]) + (2 * difF [2]) + difF [3]) / 3;
+ind2 := (yrange + 2 * yrange [1] + 2 * yrange [2] + yrange [3]) / 3;
+   soma := ind2 +por; 
+cond := soma;
+SE (cond = 0) ENTÃO
+temp := 0.68
+
+else
+temp := cond;
+
+
+RVI := Soma / temp;
+RVIsig := (RVI + 2 * RVI [1] + 2 * RVI [2] + RVI [3]) / 6;
+
+plot (RVI); setplotcolor (1, clSilver); setplotwidth (1,2);
+plot2 (RVIsig); setplotcolor (2, clGray); setplotwidth (2,3);
+
+fim;

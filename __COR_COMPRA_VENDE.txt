@@ -1,0 +1,6 @@
+Inicio
+  Se (Abertura > Minima[1]) e (Fechamento > Minima[1]) e (Maxima < Abertura[1]) então
+    PaintBar(clAzul);
+    Se (Fechamento < Maxima[1]) e (Abertura < Maxima[1]) e (Minima > Abertura[1]) então
+    PaintBar(clFúcsia);
+Fim;

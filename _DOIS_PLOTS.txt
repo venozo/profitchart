@@ -1,0 +1,27 @@
+input
+Dados1(open);
+Dados2(close);
+limitarPlotagem(true);
+var
+candle : integer;
+valor1,valor2: float;
+begin
+if (time[1] > 1600) and (time < 1100) then
+begin
+valor1:= Dados1;
+Valor2:=Dados2;
+end;
+if (limitarPlotagem = true) then
+begin
+if (time < 1730) then
+begin
+plot(valor1);
+Plot2(valor2);
+end;
+end;
+if (limitarPlotagem = false) then
+Begin
+plot(valor1);
+Plot2(valor2);
+end;
+End;

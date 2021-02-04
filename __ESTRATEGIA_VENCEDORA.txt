@@ -1,0 +1,47 @@
+Input 
+D(0.20);
+P(21); 
+T(0); 
+Gain(10);  
+loss (7); 
+ 
+Var 
+ Compra, Venda: boolean;
+  BC, BB, vmed: float;
+Inicio
+   vMed:= Media(9, Close);                                                                                            
+    BC:= BollingerBands(D,P,T)|0|;
+      BB:= BollingerBands(D,P,T)|1|; 
+       plot(vMed);
+        SetPlotColor(2,clvermelho);
+         Plot(BC); 
+          SetPlotColor(1,clAmarelo);                     
+           SetPlotWidth(1,1); 
+            Plot2(BB);
+             SetPlotColor(2,clAmarelo); 
+              SetPlotWidth(2,1); 
+Compra:= (fechamento > vMed) e (fechamento > abertura) e (fechamento > bc) ;
+Venda:= (fechamento < vMed) e (fechamento < abertura) e(fechamento < bb) ;
+  se (C_Doji(2) = 1)
+    então PaintBar(clamarelo); // 
+      Se compra então paintbar(clVerde); 
+        Se venda então paintbar(clVermelho); 
+         Se (time > 1005) e (time < 1645)e (buyposition=0) e (sellposition=0) então
+Inicio
+se (sellposition=0) então ;
+ Se compra então buystop(HIGH + 1,HIGH + 1); 
+  se (buyposition=0)então ;
+   Se venda então sellshortstop(low - 1,low - 1); 
+Fim;
+Inicio
+Se buyposition=1 então 
+ SellShortlimit(buyposition + gain);
+  SellShortstop(Buyprice - loss,Buyprice - loss);
+Fim;
+Inicio
+Se sellposition=1 então 
+ Buylimit(sellprice - gain); 
+  Buylimit (Sellprice - loss); 
+Fim;
+ Se time > 1700 então closeposition; 
+fim;

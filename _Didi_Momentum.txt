@@ -1,0 +1,7 @@
+begin
+Plot(0);
+Plot2(momentum(3,3,0)-momentum(8,8,0));
+Plot3(momentum(20,20,0)-momentum(8,8,0));
+SetPlotColor(2,clVerde);
+SetPlotColor(3,clVermelho); 
+end;

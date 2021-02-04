@@ -1,0 +1,41 @@
+input
+  horario(0059);
+var
+  duracao,horaA,chave : float;
+  valor,x,z,nivel1    : float;
+begin
+  if (Date > CalcDate(CurrentDate, - 4)) then
+    begin
+      if (chave = 1) then
+        begin
+          duracao := abs(time - horaA);
+          if (duracao > horario) then
+            begin
+              chave := 0;
+              noplot(1);
+            //  noplot(2);
+            //  noplot(3);
+            end;
+        end;
+      if (chave = 0) then
+        begin
+          horaA := time;
+          valor := high;
+         // x := high;
+         // z := low;
+          chave := 1;
+        end;
+      if (close[1] > valor) and (maxima > valor) then
+        begin
+          paintbar(clverde);
+        end;
+      if (close[1] < valor) and (close < valor) then
+        begin
+          paintbar(clvermelho);
+        end;
+      plot(valor);
+     // plot2(x);
+     // plot3(z);
+    end;
+end;
+

@@ -1,0 +1,49 @@
+Input
+  Divisor(3);
+  MME_Vol(17);
+  MME_Agre(17);
+  naoplotarhistograma(false);
+Var
+  VolQ : float;
+  MMEV : float;
+  Agre : float;
+  MMEA : float;
+  X,Y  : FLOAT;
+begin
+  VolQ := (QuantityVol(false) / Divisor);
+  MMEV := MediaExp(MME_Vol,VolQ);
+  Se (agressionvolbuy > agressionvolsell) entao
+    Agre := (agressionvolbuy - agressionvolsell)
+  Senão se (agressionvolbuy < agressionvolsell) entao
+    Agre := (agressionvolsell - agressionvolbuy);
+  MMEA := Media(MME_Agre,Agre);
+  if (naoplotarhistograma = false) then
+    begin
+      Plot(agre);
+      Plot2(MMEA);
+    end;
+  Se (agressionvolbuy > agressionvolsell) entao
+    begin
+      paintbar(clLime);
+      setplotcolor(1,clVerde);
+      Se (Agre > MMEA) entao
+        begin
+          paintbar(clVerde);
+        end;
+    end;
+  Se (agressionvolbuy < agressionvolsell) entao
+    begin
+      paintbar(clvermelho);
+      setplotcolor(1,clvermelho);
+      Se (Agre > MMEA) entao
+        begin
+          paintbar(255);
+
+          Se (Agre > 5000) entao X := low;
+          noplot(3);
+        end;
+    end;
+  if (naoplotarhistograma = true) then
+    PLOT3(X);
+end;
+

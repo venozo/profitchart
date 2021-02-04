@@ -1,0 +1,35 @@
+var
+  duracao, horaA, chave :float;
+  valor,valor2 : float;
+
+begin
+
+  if (chave=1) then
+  begin
+
+    duracao := abs(time - horaA);
+    
+    if (duracao>=0100) then
+    begin
+
+      chave:=0;
+
+    end;  
+
+  end;
+
+  if (chave=0) then
+  begin
+
+    horaA:=time;
+    valor:=high;
+    valor2:=low;
+    chave:=1;
+
+  end;
+
+  plot(valor);
+  plot2(valor2);
+
+ 
+end;

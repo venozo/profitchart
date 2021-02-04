@@ -1,0 +1,20 @@
+begin
+ 
+  if (BuyPosition = 0)and(time < 1600) then
+    begin
+      if (high[0] < high[1]) and (low[0] > low[1]) and (close > media(20,close)) then
+        begin
+          BuyStop(high,high);
+        end;
+    end;
+  if (BuyPosition = 1) then
+    begin
+      SellToCoverStop(BuyPrice + 200,BuyPrice + 200);
+      SellToCoverStop(BuyPrice - 100,BuyPrice - 100);
+    end;
+    if (time >= 1610) then
+    ClosePosition;
+
+end;
+
+

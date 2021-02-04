@@ -1,0 +1,14 @@
+input
+  Mperiodo1(3);
+  Mperiodo2(40);
+  Dados(close);
+var
+  x,z : float;
+begin
+  Plot(0);
+  x := (mediaexp(Mperiodo1,Dados) - mediaexp(8,Dados));
+  z := (mediaexp(Mperiodo2,Dados) - mediaexp(8,Dados));
+  Plot2(x);
+  Plot3(z);
+end;
+

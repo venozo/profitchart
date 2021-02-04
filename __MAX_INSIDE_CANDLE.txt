@@ -1,0 +1,21 @@
+var
+  z,c,d : float;
+begin
+  //////////////////////////////////////////////////////////////
+  //Testa os limites do candle e pinta caso for um inside candle
+  if (HIGH < HIGH[1]) and (LOW > LOW[1]) then
+    begin
+      PaintBar(clazul);
+      z := high;
+      c := medianprice;
+      d := low;
+      noplot(1);
+      noplot(2);
+      noplot(3);
+    end;
+  plot(z);
+  plot2(c);
+  plot3(d);
+  plot4(media(21,c));
+end;
+

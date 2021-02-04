@@ -1,0 +1,144 @@
+input
+  operar_comprado(verdadeiro);
+  operar_vendido(falso);
+  plotar_media(verdadeiro);
+  periodo_media(21);
+  tipo(0);
+  tamanho_do_alvo(2);
+  tamanho_do_stop(1);
+var
+  candle,chave,entrou       : integer;
+  entrada1,alvo1,stop1      : float;
+  candle22,chave22,entrou22 : integer;
+  entrada22,alvo22,stop22   : float;
+begin
+  if (plotar_media = verdadeiro) then
+    begin
+      if (tipo = 0) then
+        plot4(media(periodo_media,close));
+      if (tipo = 1) then
+        plot4(mediaExp(periodo_media,close));
+    end;
+  if (chave = 1) and (candle = 1) then
+    begin
+      candle := candle + 1;
+      if (high >= entrada1) then
+        begin
+          entrou := 1;
+          chave := 1;
+        end;
+      if (high < entrada1) then
+        begin
+          entrou := 0;
+          chave := 0;
+          candle := 0;
+        end;
+    end;
+  /////  COLOQUE SEU SETUP DE COMPRA AQUI /////////////////////
+  //----------------------------------------------------------
+  //
+  //   SUAS CONDIÇÕES DE ENTRADA NA COMPRA (não escreva o then)
+  //
+  //-----------------------------------------------------------
+  if (low[0] < low[1]) and (low[0] < low[2]) and (close > media(21,close)) and (media(5,close) < media(21,close)) // CONDIÇÕES FIXAS //
+  {-------------------------}
+  and (chave = 0) and (chave22 = 0) and (operar_comprado = verdadeiro) then
+    {--------------------------}
+    begin
+      chave := 1;
+    end;
+  if (chave = 1) and (candle = 0) then
+    begin
+      candle := candle + 1;
+      entrada1 := high;
+      alvo1 := (((high - low) * tamanho_do_alvo) + high);
+      if (tamanho_do_stop <> 0) then
+        stop1 := (abs(((high - low) * tamanho_do_stop) - low));
+      if (tamanho_do_stop = 0) then
+        stop1 := low;
+    end;
+  if (chave = 1) and (candle >= 2) then
+    begin
+      if (high >= alvo1) or (low <= stop1) then
+        begin
+          chave := 0;
+          candle := 0;
+        end;
+    end;
+  if (chave = 1) then
+    begin
+      SetPlotColor(1,clWhite);
+      SetPlotColor(2,clLime);
+      SetPlotColor(3,RGB(200,80,50));
+      SetPlotWidth(1,2);
+      SetPlotWidth(2,2);
+      SetPlotWidth(3,2);
+      plot(entrada1);
+      if (entrou = 1) then
+        begin
+          plot2(alvo1);
+          plot3(stop1);
+        end;
+    end;
+  if (chave22 = 1) and (candle22 = 1) then
+    begin
+      candle22 := candle22 + 1;
+      if (low <= entrada22) then
+        begin
+          entrou22 := 1;
+          chave22 := 1;
+        end;
+      if (low > entrada22) then
+        begin
+          entrou22 := 0;
+          chave22 := 0;
+          candle22 := 0;
+        end;
+    end;
+  /////  COLOQUE SEU SETUP DE VENDA AQUI /////////////////////
+  //---------------------------------------------------------
+  //
+  // SUAS CONDIÇÕES DE ENTRADA NA VENDA (não coloque o then)
+  //
+  //---------------------------------------------------------
+  if (high[0] > high[1]) and (high[0] > high[2]) and (close < media(21,close)) // CONDIÇÕES FIXAS //
+  {-------------------------}
+  and (chave22 = 0) and (chave = 0) and (operar_vendido = true) then
+    {--------------------------}
+    begin
+      chave22 := 1;
+    end;
+  if (chave22 = 1) and (candle22 = 0) then
+    begin
+      candle22 := candle22 + 1;
+      entrada22 := low;
+      alvo22 := abs((((high - low) * tamanho_do_alvo) - low));
+      if (tamanho_do_stop <> 0) then
+        stop22 := (abs(((high - low) * tamanho_do_stop) + high));
+      if (tamanho_do_stop = 0) then
+        stop22 := high;
+    end;
+  if (chave22 = 1) and (candle22 >= 2) then
+    begin
+      if (low <= alvo22) or (high >= stop22) then
+        begin
+          chave22 := 0;
+          candle22 := 0;
+        end;
+    end;
+  if (chave22 = 1) then
+    begin
+      SetPlotColor(1,clWhite);
+      SetPlotColor(2,clLime);
+      SetPlotColor(3,RGB(200,80,50));
+      SetPlotWidth(1,2);
+      SetPlotWidth(2,2);
+      SetPlotWidth(3,2);
+      plot(entrada22);
+      if (entrou22 = 1) then
+        begin
+          plot2(alvo22);
+          plot3(stop22);
+        end;
+    end;
+end;

@@ -1,0 +1,35 @@
+{
+@adaptação fernando 
+coloração do ADX com DI+ DI-
+
+sugestões fernandokotecki@gmail.com
+}
+input
+periodoAdx(8);
+LdiMais(8);
+LdiMenos(8);
+
+var
+nADX , DIP, DIM : float;
+
+begin
+
+plot4(25);
+plot2(DiPDiM(8)|1|);SetPlotColor(2,clVermelho);//-
+plot3(ADX(8,8)); SetPlotColor(3,clBranco);
+plot(DiPDiM(8)|0|); SetPlotColor(1,clVerde);
+
+nADX := ADX(periodoAdx,periodoAdx);
+DIP := DiPDiM(LdiMais)|0|;
+DIM := DiPDiM(LdiMenos)|1|;
+if (nADX > 25) and ( DIP > DIM) then
+    PaintBar(clGreen)
+ else if ( DIP < DIM) then
+    PaintBar(clRed) 
+else
+  PaintBar(clBranco);
+end;
+
+
+
+

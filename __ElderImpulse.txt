@@ -1,0 +1,46 @@
+//******************************************
+//****** Indicator: Elder Impulse System **** 
+//******************************************
+input
+source (close);
+lengthEMA(13);
+fastLength(12);
+slowLength(26);
+signalLength(9);
+
+var
+  emaSeries,macdHist : Float;
+ 
+function calc_hist(source: Float; fastLength, slowLength,signalLength:integer): Float;
+var
+ fastMA ,   slowMA, nMacd,  signal:float;
+begin
+  fastMA := MediaExp(fastLength,source);
+  slowMA := MediaExp(slowLength,source);
+  nMacd := fastMA - slowMA;
+  signal := Media(signalLength,nMacd);
+
+  Result :=  nMacd - signal;
+end;
+
+ 
+begin
+    emaSeries := MediaExp(lengthEMA,source);
+    macdHist := calc_hist(source, fastLength, slowLength,signalLength);
+
+    if (emaSeries > emaSeries[1]) and (macdHist > macdHist[1]) then
+    begin
+      Plot(1); // Linha 1 - Mudar para Histograma e Colocar Cor VERDE
+      PaintBar(clgreen);  // Regra de COLORAÇAO
+    end
+    else if (emaSeries < emaSeries[1]) and (macdHist < macdHist[1]) then
+    begin
+      Plot2(1); // Linha 2 - Mudar para Histograma e Colocar Cor VERMELHO
+      PaintBar(clred); // Regra de COLORAÇAO
+    end
+    else
+    begin
+      Plot3(1); // Linha 3 - Mudar para Histograma e Colocar Cor AZUL
+      PaintBar(clblue); // Regra de COLORAÇAO
+    end;
+end;

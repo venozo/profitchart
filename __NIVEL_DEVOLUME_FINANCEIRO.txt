@@ -1,0 +1,25 @@
+input
+  periodo(20);
+var
+  maiorVolume,a,b,c : float;
+  contagem          : integer;
+begin
+  contagem := contagem + 1;
+  if (contagem = periodo) then
+    begin
+      contagem := 0;
+      maiorVolume := 0;
+    end;
+  if (maiorVolume = 0) then
+    if (VOLUME > media(20,volume)) then
+      maiorVolume := volume;
+  if (maiorVolume > 2 * volume) then
+    begin
+      a := high;
+      b := low;
+      noplot(1);
+      noplot(2);
+    end;
+  plot(a);
+  plot2(b);
+end;

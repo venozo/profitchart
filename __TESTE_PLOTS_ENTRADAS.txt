@@ -1,0 +1,38 @@
+input
+  dados(low);
+  dados2(high);
+var
+  x                                      : integer;
+  preço_entrada,entrou,saida,preço_saida : float;
+begin
+  if (close > close[1]) then
+    begin
+      if (SlowStochastic(17) < 30) and (RSI(9,0) > 20) and (RSI(9,0) < 40) and (entrou = 0) then
+        begin
+          entrou := 1;
+          preço_entrada := dados;
+        end;
+    end;
+  if (SlowStochastic(17) > 60) and (entrou = 1) then
+    begin
+      entrou := 0;
+      preço_saida := dados2;
+      saida := 1;
+    end;
+  if (entrou = 1) then
+    begin
+      Plot(preco_entrada);
+      paintbar(clazul);
+    end;
+  if (saida = 1) and (entrou = 0) then
+    begin
+      se (high > preço_saida) then
+        begin
+          preço_saida := high;
+        end;
+      Plot2(preço_saida);
+      se (close > HiloActivator(20)) then paintbar(clverde);
+      se (close < HiloActivator(20)) then paintbar(clvermelho);
+    end;
+end;
+

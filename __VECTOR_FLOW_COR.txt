@@ -1,0 +1,8 @@
+begin
+Se
+(Fechamento > VectorFlowChannel(30,30,10,20,20,50)[1]) então
+PaintBar(clVerde);
+Se
+(Fechamento < VectorFlowChannel(30,30,10,20,20,50)[1]) então
+PaintBar(clVermelho);
+Fim;

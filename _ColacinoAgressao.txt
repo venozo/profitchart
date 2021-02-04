@@ -1,0 +1,48 @@
+{2020 por Paulo Colacino
+Código utilizando o Saldo de Agressão aplicando os conceitos do John Ehler de filtro highpass e smooth filter
+*** Filtro***
+Media_Filtro: define perido para filtrar operações de compra / venda.
+
+*****Cores*****
+VERMELHO = venda
+AZUL = compra
+VERMELHO CLARO = pullback ou esgotamento de uma alta
+AZUL CLARO = throwback ou esgotamento de uma queda.
+BRANCO = movimento contra tendência, neutro e/ou consolidação
+
+}
+
+Input Media_Filtro(34);
+Var alpha1, HP, a1, b1, c1, c2, c3, Filt, Filt2, m:float;
+
+begin
+alpha1 := (Cosine(0.707*360 / 148) + Sine (0.707*360 / 148) - 1) / Cosine(0.707*360 / 148);
+HP := (1 - alpha1 / 2)*(1 - alpha1 / 2)*(Accagresssaldo(1) - 2*Accagresssaldo(1)[1] + Accagresssaldo(1)[2]) + 2*(1 -
+alpha1)*HP[1] - (1 - alpha1)*(1 - alpha1)*HP[2];
+a1 := expvalue(-1.414*3.14159 / 10);
+b1 := 2*a1*Cosine(1.414*180 / 10);
+c2 := b1;
+c3 := -a1*a1;
+c1 := 1 - c2 - c3;
+Filt := c1*(HP + HP[1]) / 2 + c2*Filt[1] + c3*Filt[2];
+Plot(Filt);
+Plot2(0);
+m := MediaExp(Media_Filtro,Close); 
+
+Se (Filt > 0) 
+e (Close[1] > m[1])
+e (Close > m)
+// e (Close > Close[1]) {caso queira apenas barras positivas tire esse comentário}
+
+then PaintBar(clBlue);
+
+Se (Filt < 0) 
+e (Close[1] < m[1])
+e (Close < m)
+// e (Close < Close[1]) {caso queira apenas barras negativas tire esse comentário}
+then PaintBar(clRed);
+
+ Se (Filt <0) e (Close > m) e (Close < Close[1]) then PaintBar(RGB(255,170,170)); 
+Se (Filt >0) e (Close < m) e (Close > Close[1]) then PaintBar(RGB(170,170,255)); 
+
+end;

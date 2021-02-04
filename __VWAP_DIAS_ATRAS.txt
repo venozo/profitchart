@@ -1,0 +1,16 @@
+input
+Período(1);
+HorárioAbertura(0900);
+var
+DataInício,Aj : Integer;
+Ajuste : float;
+início
+DataInício := CalcDate(CurrentDate, - Período);
+Se (Date < DataInício) e (Time < HorárioAbertura) então
+Aj := 1;
+Se (Date >= DataInício) e (Time >= HorárioAbertura) então
+Aj := Aj[1] + 1;
+Ajuste := VWAP(1);
+Se (Date >= CurrentDate) então
+Plot(Ajuste[Aj]);
+fim;

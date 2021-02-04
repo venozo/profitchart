@@ -1,0 +1,14 @@
+///////////////////////////////////////
+///////FREQUÊNCIA DE MERCADO///////////
+///////////////////////////////////////
+/////////////BY_ACBRITO////////////////
+///////////////////////////////////////
+
+begin
+  Se (media(1,range) <= 100) então
+    PaintBar(claqua);
+  Se (media(1,range) > 100) e (media(1,range) < 350) então
+    PaintBar(clwhite); 
+  Se (media(1,range) >= 350) então
+    PaintBar(clred);
+end;

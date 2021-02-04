@@ -1,0 +1,19 @@
+{
+A»O fundo 1 fosse mais baixo que fundo 2 e topo 1 fosse mais baixo que o topo 2
+F1<F2 e T1<T2
+B»O candle que faz o T2 (2° topo) deve ter pelo menos 1,5X o tamanho do candle anterior a ele (50% maior no mínimo)
+Alguém poderia ajudar com esse código?
+}
+begin
+  if (_TOPOS_FUDOS_AUTOMATICOS(40,8,TRUE) > TopBottomDetector(3)) then
+    begin
+      paintBar(clVErde);
+    end;
+  if (TopBottomDetector(3) < TopBottomDetector(3)[1])then
+    begin
+      paintBar(clVErmelho);
+    end;
+
+end;
+
+

@@ -1,0 +1,29 @@
+Input
+MedMovW(3);
+MedMovA(34);
+
+var
+nMedA : float;
+nMedF : float;
+WMA   : float;
+
+Inicio
+//VARIAVEIS
+WMA   := WMA[1] + ((Close - WMA[1]) / MedMovW);
+nMedF := Media(MedMovA, close);
+nMedA := Media(MedMovA, Open); 
+  
+//PLOTA AS LINHAS
+  plot (WMA);
+  plot2(nMedF);
+
+//COLORAÇÃO    
+  Se 
+ (WMA[1]<nMedF)and (WMA > nMedF) entao
+  PaintBar(clAzul)
+  
+  Senão 
+  Se 
+  (WMA[1]>nMedF)and(WMA < nMedF) então  
+  PaintBar(clVermelho);
+Fim;

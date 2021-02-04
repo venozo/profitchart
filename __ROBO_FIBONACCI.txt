@@ -1,0 +1,145 @@
+input
+
+  frequencia(30);
+
+  periodo(10);
+
+  plotar_50(verdadeiro);
+
+  plotar_61(verdadeiro);
+
+  plotar_38(verdadeiro);
+
+var
+
+  topoOnda, fundoOnda, fibo_de_cinquenta, fibo_de_61, fibo_de_38 :float;
+
+  chave, pausa, pausa2, chave2 : integer;
+
+begin
+
+  //-----------------------------------------
+
+  //   CONTANDO AS PLOTAGENS
+
+  if (topoOnda>0) and (fundoOnda>0) then
+
+  begin
+
+    chave:=chave+1;
+
+    fibo_de_cinquenta:=(topoOnda+fundoOnda)/2;
+
+    fibo_de_61:=abs(((topoOnda-fundoOnda)*0.618)-topoOnda);
+
+    fibo_de_38:=abs(((topoOnda-fundoOnda)*0.382)-topoOnda);
+
+  end;
+
+  //-----------------------------------------
+
+  //   PRIMEIRO CÁLCULO DO INDICADOR
+
+  if (topoOnda=0) and (fundoOnda=0) then
+
+  begin
+
+    topoOnda:=high;
+
+    fundoOnda:=low;
+
+  end;
+
+  //-----------------------------------------
+
+  //   ATUALIZANDO TOPOS 
+
+  if (high>topoOnda) then
+
+  begin
+
+    chave:=chave-1;
+
+    pausa:=1;
+
+    topoOnda:=high;
+
+  end;
+
+  if (high<topoOnda) then
+
+  begin
+
+    pausa:=0;
+
+  end;
+
+  //-----------------------------------------
+
+  //   ATUALIZANDO FUNDOS
+
+  if (low<fundoOnda) then
+
+  begin
+
+    chave:=chave-1;
+
+    pausa2:=1;
+
+    fundoOnda:=low;
+
+  end;
+
+  if (low>fundoOnda) then
+
+  begin
+
+    pausa2:=0;
+
+  end;
+
+  //-----------------------------------------
+
+  // RECONECTANDO COM A REGIÃO ATUAL DO PREÇO
+
+  if (chave=frequencia) then
+
+  begin
+
+    chave2:=0;
+
+    chave:=0;
+
+    pausa:=1;
+
+    pausa2:=1;
+
+    topoOnda:=(highest(high, periodo));
+
+    fundoOnda:=(lowest(low, periodo));
+
+  end;
+
+  //-----------------------------------------
+
+  //  PLOTANDO O INDICADOR NO GRÁFICO
+
+  if (topoOnda>0) and (fundoOnda>0) then
+
+  begin
+
+    if (plotar_50=verdadeiro) then 
+
+    plot(fibo_de_cinquenta);
+
+    if (plotar_61=verdadeiro) then
+
+    plot2(fibo_de_61);
+
+    if (plotar_38=verdadeiro) then 
+
+    plot3(fibo_de_38);
+
+  end;
+
+end;

@@ -1,0 +1,22 @@
+input
+  Topos1(3);
+  Mediexpo(3);
+Inicio
+  //Identificando a Direção (Alta)
+  Se ((MediaExp(Mediexpo,High)[0] > ADAPTIVEMOVINGAVERAGE(4,2,20)) e (Fechamento > (Media(Mediexpo,Close)[0])) e (Fechamento > (MediaExp(2,High)[0])) //Candle Positivo
+  e (Fechamento > Abertura) //Detectando o ponto de virada para alta ou correção
+  e (TopBottomDetector(Topos1) < TopBottomDetector(Topos1)[1])) //Coloração para marcar fundo
+  então
+    inicio
+      PaintBar(clLime);
+      
+    fim;
+  //Identificando a Direção (Queda)
+  Se ((MediaExp(Mediexpo,Low)[0] < ADAPTIVEMOVINGAVERAGE(4,2,20)) e (Fechamento < (Media(Mediexpo,Close)[0])) e (Fechamento < (MediaExp(2,Low)[0])) //Candle Negativo
+  e (Fechamento < Abertura) //Detectando o ponto de virada para alta ou correção
+  e (TopBottomDetector(Topos1) < TopBottomDetector(Topos1)[1])) então
+    inicio
+      PaintBar(clVermelho);
+      
+    fim;
+Fim;

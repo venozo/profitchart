@@ -1,0 +1,31 @@
+input
+gain(10);
+loss(10);
+tempoD(5);
+var
+compra : booleano;
+z : float;
+inicio
+if (TIME < 1610) e (buyposition = 0) entao
+inicio
+//////////////////////////coloque aki sua condição de compra ////////////////////
+se (RsiStochastic(9)[1] < RsiStochastic(9)) e (RsiStochastic(9) > 0) e (RsiStochastic(9)[1] = 0) entao
+/////////////////////////// fim da condição de compra/////////////////////////
+begin
+BuyAtMarket;
+z := CalcTime(Time,tempoD);
+end;
+end;
+if (BuyPosition = 1) then
+inicio
+if (time > z) then
+begin
+ClosePosition;
+end
+else
+selltocoverstop(BuyPrice + gain,BuyPrice + gain);
+selltocoverstop(BuyPrice - loss,BuyPrice - loss);
+end;
+Se (TIME > 1630) entao
+ClosePosition;
+end;

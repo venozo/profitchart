@@ -1,0 +1,40 @@
+input
+  frequencia(40);
+  periodo(4);
+  esconder_linhas_não_horizontais(true);
+var
+  topoOnda,alta,baixa : float;
+  chave,pausa         : integer;
+begin
+  if (topoOnda = 0) then
+    begin
+      alta := highest(high,periodo);
+      baixa := Lowest(low,periodo);
+      chave := chave + 1;
+      topoOnda := topoOnda + 1; //vai valer 1
+    end;
+  if (topoOnda = 1) then
+    begin
+      chave := chave + 1;
+    end;
+  if (chave < frequencia) then
+    begin
+    end;
+  if (chave = frequencia) then
+    begin
+      topoonda := 0;
+      chave := 0;
+      noplot(1);
+      noplot(2);
+    end;
+  if (chave = 0) then
+    begin
+      alta := highest(high,periodo);
+      baixa := Lowest(low,periodo);
+    end;
+  plot(alta);
+  plot2(baixa);
+  plot3(highest(high,frequencia));
+  plot4(lowest(low,frequencia));
+end;
+

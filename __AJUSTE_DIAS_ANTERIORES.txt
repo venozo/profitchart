@@ -1,0 +1,19 @@
+input
+  Periodo(1);
+  tipo(4);
+var
+  b : integer;
+Begin
+  if (Date > CalcDate(CurrentDate, - Período)) then
+    begin
+      b := FindBar((Date - Periodo),0900);
+      if b > 0 then
+        begin
+          plot(priorCote(tipo)[b]);
+         
+        end
+      else 
+        plot(priorCote(tipo));
+    end;
+End;
+

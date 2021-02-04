@@ -1,0 +1,24 @@
+var
+venda,compra :boolean;
+begin
+venda:= (MAXIMA<=MAXIMA[1])E (MINIMA[1]<= MINIMA[2])e(fechamento[3]>abertura[3])e (fechamento<FECHAMENTO[1])e (fechamento[1]<fechamento[2])e(ifr(14)>30);
+compra:=(MAXIMA>=MAXIMA[1])E (MINIMA[1]>= MINIMA[2])e (fechamento[3]<abertura[3])e(fechamento>FECHAMENTO[1])e (fechamento[1]>fechamento[2]) e(ifr(14)<70);
+se (venda) entao
+begin
+  SellShortStop(low,low,1);
+ PaintBar(clred);
+end;
+ se compra entao 
+ begin
+ PaintBar(cllime);
+ se(close > close[1])then BuyStop(high,high,1);
+ end;
+
+if(BuyPosition = 1) or (SellPosition = 1) then
+ begin
+ if (BuyPrice+8  > BuyPrice+8)then ClosePosition;
+if (SellPrice-8  < SellPrice-8)then ClosePosition;
+
+ end;
+
+end;

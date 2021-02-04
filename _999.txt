@@ -1,0 +1,30 @@
+var
+  periodo, plotagem   : Integer;
+  valor : float;
+ 
+begin
+  periodo := 0;
+  
+  while periodo < 5 do
+    begin
+      if  (Low[periodo] > Low[periodo + 1])
+      and (Low[periodo + 1] > Low[periodo + 2])
+      and (Low[periodo + 2] < Low[periodo + 3])
+      and (Low[periodo + 3] < Low[periodo + 4]) 
+      and (plotagem=0) 
+      and (time<1640) then
+        begin
+          plotagem:=1;
+          valor:=(Low[periodo+2]);
+          setplotcolor(1,clgreen);
+        end;
+      periodo := periodo + 1;
+    end;
+
+  if (plotagem=1) then
+    plot(valor);
+
+  if (time>1640) then
+    plotagem:=0;
+
+end;

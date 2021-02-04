@@ -1,0 +1,28 @@
+ input
+ medialow(17);
+ mediahigh(200);
+ hilo(8);
+ var 
+ medialow   : Float;
+ mediahigh  : Float;
+ hilo       : Float;
+begin
+  Plot (media(medialow,close));
+  Plot (media(mediahigh,close));
+  Plot   (hiloactivator(hilo));
+
+  se currentbar < fechamento[1] then
+
+  Begin
+  Se (Fechamento > Media(medialow,Close)) e (media(medialow,close)>media(medialow,close)[1])e (Fechamento > HiloActivator(hilo)) e (Fechamento > StopATR(2.00,8,0)) e (fechamento > media(mediahigh,close))então
+    PaintBar(clBranco)
+    else  Se (Fechamento > Media(medialow,Close)) e (Fechamento > HiloActivator(hilo)) e (Fechamento > StopATR(2.00,8,0)) e (fechamento < media(mediahigh,close))então
+    PaintBar(clblue) 
+  else Se (Fechamento < Media(medialow,Close)) e (media(medialow,close)<media(medialow,close)[1]) e (Fechamento < HiloActivator(hilo)) e (Fechamento < StopATR(2.00,8,0))e (fechamento < media(mediahigh,close)) então
+    PaintBar(clVermelho) 
+    else se    (Fechamento < Media(medialow,Close)) e (Fechamento < HiloActivator(hilo)) e (Fechamento < StopATR(2.00,8,0))e (fechamento > media(mediahigh,close)) então
+    PaintBar(clAmarelo);
+
+
+end;
+end;

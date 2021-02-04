@@ -1,0 +1,19 @@
+input
+source(close);
+period(60);
+var
+hd, ld, dist, distsma, lasthigh, lastlow, center : float;
+begin
+{//Canal de Preco: 1}
+lasthigh := highest(source,period);
+lastlow := lowest(source,period);
+center := (lasthigh+lastlow)/2;
+{//dist}
+dist := abs(source-center);
+distsma := Media(period,dist);
+hd := center + distsma;
+ld := center - distsma;
+plot(hd);
+plot2(ld);
+plot3(center);
+end;

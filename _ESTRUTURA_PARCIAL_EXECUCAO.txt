@@ -1,0 +1,50 @@
+begin
+  if (BuyPosition = 0) and (SellPosition = 0) and (time < 1600) then
+    begin
+      //Condições de compra  alterar se necessario
+      if (high[0] < high[1]) and (low[0] > low[1]) and (close > media(21,close)) then
+        begin
+          BuyStop(high,high);
+          BuyStop(high,high);
+        end;
+      //Condições de venda  alterar se necessario
+      if (high[0] < high[1]) and (low[0] > low[1]) and (close < media(21,close)) then
+        begin
+          SellShortStop(low,low);
+          SellShortStop(low,low);
+        end;
+    end;
+  if (BuyPosition = 2) then
+    begin
+      //Alvo Parcial
+      SellToCoverStop(BuyPrice + 300,BuyPrice + 300);
+      //Stop
+      SellToCoverStop(BuyPrice - 300,BuyPrice - 300);
+      SellToCoverStop(BuyPrice - 300,BuyPrice - 300);
+    end;
+  if (BuyPosition = 1) then
+    begin
+      //Alvo final
+      SellToCoverStop(BuyPrice + 500,BuyPrice + 500);
+      //Stop
+      SellToCoverStop(BuyPrice - 300,BuyPrice - 300);
+    end;
+  if (SellPosition = 2) then
+    begin
+      //Alvo Parcial
+      BuyToCoverStop(SellPrice - 400,SellPrice - 300);
+      //Stop
+      BuyToCoverStop(SellPrice + 300,SellPrice + 300);
+      BuyToCoverStop(SellPrice + 300,SellPrice + 300);
+    end;
+  if (SellPosition = 1) then
+    begin
+      //Alvo Final
+      BuyToCoverStop(SellPrice - 500,SellPrice - 500);
+      //Stop
+      BuyToCoverStop(SellPrice + 300,SellPrice + 300);
+    end;
+  if (time > 1700) then
+    ClosePosition;
+end;
+

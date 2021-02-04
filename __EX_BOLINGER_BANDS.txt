@@ -1,0 +1,19 @@
+var
+  stopLoss : Float;
+  alvo     : Float;
+Inicio
+  Se (BuyPosition = 1) então
+    Inicio
+      SellToCoverStop(alvo,alvo);
+      SellToCoverStop(stopLoss,stopLoss);
+    Fim
+  Senão 
+    Inicio
+      Se (Fechamento[1] <= bollingerBands(2.00,20,0)|1|) e (Fechamento > bollingerBands(2.00,20,0)|1|) então
+        BuyStop(maxima,maxima);
+      //parametros de stop e alvo
+      stopLoss := minima;
+      alvo := (maxima - minima) * 0.21 + maxima;
+    Fim;
+Fim;
+

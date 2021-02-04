@@ -1,0 +1,25 @@
+input
+Período(2);
+nivel1(0.50);
+nivel2(1.00);
+var
+DataInício,Aj : Integer;
+vap,HorárioAbertura : float;
+início
+HorárioAbertura:=0900;
+  if (Date > CalcDate(CurrentDate, -(periodo+2))) then
+  begin
+DataInício := CalcDate(CurrentDate, - Período);
+Se (Date < DataInício) e (Time < HorárioAbertura) então
+Aj := 1;
+Se (Date >= DataInício) e (Time >= HorárioAbertura) então
+Aj := Aj[1] + 1;
+vap := VWAP(1);
+//Se (Date >= CurrentDate) então
+Plot(vap[Aj]);
+Plot2(vap[Aj] * (1 + nivel1 / 100));
+Plot3(vap[Aj] * (1 + nivel2 / 100));
+
+end;
+
+fim;

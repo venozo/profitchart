@@ -1,0 +1,24 @@
+var
+Linha1 : Float;
+Linha2 : Float;
+DIP : Float;
+DIM : Float;
+MACD1 : Float;
+MACDs : Float;
+begin
+///////////////////////////////////////////////////////
+// Armazena os valores em variáveis
+linha1 := Waverage(close,15) ;
+Linha2 := Waverage(close,40) ;
+DIP := DiPDiM(1)|0|;
+DIM := DiPDiM(1)|1|;
+MACD1 := MACD(90,50,20) |0| ;
+MACDs := MediaEXP(20,MACD1) ;
+/////////////////////////////////////////////////////
+// Verifica se as condições foram satisfeitas
+if (Linha1 >= Linha2) and (DIP >= DIM) and (MACD1 > MACDs) then PaintBar(clVerdeLimão)
+else
+if (Linha1 <= Linha2) and (DIP <= DIM) and (MACD1 < MACDs) then PaintBar(clRed)
+else
+paintbar(clWhite);
+end;

@@ -1,0 +1,41 @@
+Input
+  Nivel1(0.23);
+  Nivel2(0.61);
+  Nivel3(0.89);
+  Nivel4(1.61);
+  positivo_negativo(false);
+var
+  x : float;
+  a : float;
+  b : boolean;
+begin
+  if (time > 0850) and (time < 1658) then
+
+
+    begin
+      se (positivo_negativo = false) then
+        a := 1;
+      se (positivo_negativo = true) then
+        a := 2;
+      se (a = 1) then
+        begin
+          x := (PriorCote(0));
+          Plot(x * (1 - Nivel1 / 100));
+          Plot2(x * (1 - Nivel2 / 100));
+          Plot3(x * (1 - Nivel3 / 100));
+          Plot4(x * (1 - Nivel4 / 100));
+          setPlotcolor(2,clVermelho);
+        end;
+      se (a = 2) then
+        begin
+          x := (PriorCote(0));
+          Plot(x * (1 + Nivel1 / 100));
+          Plot2(x * (1 + Nivel2 / 100));
+          Plot3(x * (1 + Nivel3 / 100));
+          Plot4(x * (1 + Nivel4 / 100));
+          setPlotcolor(2,clVermelho);
+        end;
+    end;
+end;
+;
+

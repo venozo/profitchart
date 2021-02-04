@@ -1,0 +1,30 @@
+input
+  periodo(21);
+var
+  nvermelha,avg : float;
+  Elevado       : boolean;
+  maiorVolume,x : float;
+  contagem      : integer;
+begin
+  if (contagem = 0) then
+    begin
+      contagem := contagem + 1;
+      maiorVolume := volume;
+    end;
+  if (contagem > 0) and (contagem <= periodo) then
+    begin
+      contagem := contagem + 1;
+      if (volume > maiorVolume) then
+        begin
+          maiorVolume := volume;
+          x := close;
+        end;
+    end;
+  if (contagem = periodo) then
+    begin
+      maiorVolume := 0;
+      contagem := 0;
+    end;
+ // plot(maiorVolume);
+  plot2(x);
+end;

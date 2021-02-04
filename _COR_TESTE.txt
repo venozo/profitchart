@@ -1,0 +1,8 @@
+begin
+  if (Abertura > Minima[1]) e (Fechamento > Minima[1]) e (Maxima < Abertura[1]) then
+    begin
+      PaintBar(clAzul);
+      BuyStop(high,high);
+    end;
+end;
+

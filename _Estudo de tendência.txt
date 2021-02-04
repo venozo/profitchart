@@ -1,0 +1,56 @@
+input 
+media_tendência(72);
+media_sinal(34);
+
+var 
+a,b,c,d,f,g:float;
+
+begin
+ a:= mediaexp(media_tendência,close);
+ b:=mediaexp(media_sinal,close);
+ c:=close;
+ 
+ if (c > a) and
+ (c > b) then
+ plot(b); 
+ if c <= a then
+ begin
+ if (c < a) and
+ (c < b) then
+ plot3(b); 
+ end;
+ 
+ begin
+
+ ///////////coloração/////////
+ if (c > a) and
+ (c > b) then
+ paintbar(cllime) else
+ if (c < a) and
+ (c > b)then
+ paintbar(claqua);
+ if (c < a) and
+ (c < b) then
+ paintbar(clred) else
+ if (c > a) and
+ (c < b)then
+ paintbar(clyellow); 
+ end;
+
+ end;
+end;
+
+
+
+
+
+
+    {else
+ if (c > a) and
+ (c < b) then 
+ plot2(c);}
+
+  {else
+ if (c < a) and
+ (c > b)then
+ plot2(c);} 

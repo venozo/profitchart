@@ -1,0 +1,41 @@
+input
+periodoDI(14);
+plotarmuralha(false);
+Var
+  dmais,dmenos,ad,x,z,c,d : float;
+  cor                     : integer;
+Begin
+  dmais := DiPDiM(periodoDI)|0|;
+  dmenos := DiPDiM(periodoDI)|1|;
+  ad := ADX(9,9);
+  if (dmais > dmenos) then
+    begin
+      c := lowest(low,periodoDI);
+      z := low;
+      noplot(2);
+      noplot(3);
+      cor := rgb(10,10,10);
+      if (ad > 25) then
+        cor := rgb(0,255,0);
+      paintbar(cor);
+    end;
+  if (dmenos > dmais) then
+    begin
+      noplot(4);
+      d := highest(high,periodoDI);
+      noplot(1);
+      x := high;
+      cor := rgb(255,0,0);
+      if (ad < 25) then
+        cor := rgb(80,0,0);
+      paintbar(cor);
+    end;
+  plot2(z);
+  Plot(x);
+  if(plotarmuralha=true)then
+  begin
+   if (lowest(low,periodoDI) < x) then    plot3(c);
+   if (highest(high,periodoDI) > x) then    plot4(d);
+  end;
+end;
+

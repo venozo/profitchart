@@ -1,0 +1,32 @@
+input
+periodoR(37);
+periodoL(9);
+periodom(21);
+
+var
+cima,baixo,meio,x1,x2,x3,x4:float;
+begin
+
+  cima:=DidiIndex(periodoR,1,periodoL,1,periodom,1);
+  meio:=DidiIndex(periodoR,1,periodoL,1,periodom,1)|2|;
+  baixo:=DidiIndex(periodoR,1,periodoL,1,periodom,1)|1|;
+
+if(cima>baixo) then
+begin
+noplot(1);
+x1:=high;
+paintbar(clverde);
+end;
+
+if(cima<baixo) then
+begin
+noplot(2);
+x2:=low;
+paintbar(clvermelho);
+end;
+
+ plot(x1);
+ plot2(x2);
+// plot3(x3);
+// plot4(x4);
+end;

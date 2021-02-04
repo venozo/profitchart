@@ -1,0 +1,67 @@
+input
+
+  tamanho_do_gap(200);
+
+var
+
+  candle, gap_de_alta, gap_de_baixa, operações, barra : integer;
+
+begin
+
+  if (time<=1700) then
+
+    barra:=barra+1;
+
+  if (open>closeD(1)+tamanho_do_gap)
+
+  and (barra=1)
+
+  and (time<=1600)then
+
+  begin
+
+    gap_de_alta:=1;
+
+    PaintBar(RGB(200,20,0));
+
+    plot(open);
+
+
+  end;
+
+  if (open<closeD(1)-tamanho_do_gap)
+
+  and (barra=1)
+
+  and (time<=1600)then
+
+  begin
+
+    gap_de_baixa:=1;    
+
+    PaintBar(clLime);
+
+    plot(open);
+
+  end;
+
+  //AJUSTE O HORÁRIO !!!
+
+  // COLOQUE A HORA DE FECHAMENTO DO ÚLTIMO CANDLE
+
+  // DO DIA NO TEMPO GRÁFICO QUE ESTÁ USANDO O 
+
+  // INDICADOR
+
+  if (time>=1750) then
+
+  begin
+
+    plot(close); 
+
+    barra:=0;
+
+  end;     
+
+
+end;

@@ -1,0 +1,63 @@
+input
+  stage1(3);
+  stage2(10);
+  stage3(50);
+  countmax(5.5);
+  Fator(0.2);
+var
+  botvalue,prebotvector01,botvector01counter,botvector01,botvector01finalcounter,topvalue,topvector01counter,topvector01finalcounter,topvector01,pretopvector01,decay : float;
+begin
+  decay := Media(15,truerange) * (Fator / 100);
+  if (topvector01[1] = 0) then
+  topvector01 :=close
+   // pretopvector01 := close
+  else
+    pretopvector01 := topvector01[1];
+ 
+  if (close >= pretopvector01) then
+    topvector01 := close
+  else 
+    topvector01 := pretopvector01 - (decay * topvector01finalcounter[1]);
+  if (close >= topvector01) then
+    topvalue := CurrentBar
+  else 
+    topvalue := 0;
+  topvector01counter := CurrentBar - topvalue;
+  if (topvector01counter <= countmax) then
+    topvector01finalcounter := stage1
+  else if (topvector01counter <= countmax * 4) then
+    topvector01finalcounter := stage2
+  else 
+    topvector01finalcounter := stage3;
+  if (botvector01[1] = 0) then
+    botvector01[1] := close;
+  prebotvector01 := botvector01[1];
+  if (close <= prebotvector01) then
+    botvector01 := close
+  else 
+    botvector01 := prebotvector01 + (decay * botvector01finalcounter[1]);
+  if (close <= botvector01) then
+    botvalue := CurrentBar
+  else 
+    botvalue := 0;
+  botvector01counter := CurrentBar - botvalue;
+  if (botvector01counter <= countmax) then
+    botvector01finalcounter := stage1
+  else if (botvector01counter <= countmax * 4) then
+    botvector01finalcounter := stage2
+  else 
+    botvector01finalcounter := stage3;
+  if (topvalue = 0) then
+    plot(topvector01)
+  else 
+    begin
+      PaintBar(clLime);
+    end;
+  if (botvalue = 0) then
+    plot2(botvector01)
+  else 
+    begin
+      PaintBar(clRed);
+    end;
+end;
+

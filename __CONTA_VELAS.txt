@@ -1,0 +1,43 @@
+input
+Período(4);
+var
+  ybar,ybarnumber,c : inteiro;
+  x               : float;
+    b : integer;
+início
+  if (LastCalcDate > LastCalcDate[1]) então
+    início
+      ybar := CurrentBar;
+      noplot(1);
+    fim;
+     
+   if (Date > CalcDate(LastCalcDate, - Período)) then
+    begin
+      b := FindBar((Date - Periodo),0900);
+      end;   
+
+  if (currentbar = 1) then
+    begin
+      
+      ybarnumber := ybarnumber + 1;
+    end;
+  
+   
+  if (currentbar > 1) then
+    begin
+      ybarnumber := Ceiling(currentbar - (ybar - 1));
+      end;
+    plot(ybarnumber);
+    plot2((RS_BarsPerDay-BarDuration)/2);
+  //  plot3();
+
+ 
+      {
+  if (ybarnumber < 1) then
+    begin
+      ybarnumber := 1;
+    end;
+ plot2(RS_BarsPerDay);
+ }
+fim;
+

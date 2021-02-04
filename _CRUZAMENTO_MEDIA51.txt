@@ -1,0 +1,14 @@
+begin
+  if(close>media(51,close))then
+  paintbar(rgb(0,150,0));
+
+  if(close[1]>media(51,close))and(close<open)then
+  paintbar(rgb(255,255,255));
+
+  if(close<media(51,close))then
+  paintbar(rgb(255,0,0));
+  
+  if(close[1]<media(51,close))and(close>abertura)then
+   paintbar(rgb(255,255,255));
+   plot(media(51,close));
+end;

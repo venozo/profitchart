@@ -1,0 +1,12 @@
+input
+periodo(9);
+begin
+  plot3(media(MaxBarsForward + 1,close));
+  plot2(0);
+  plot(media(MaxBarsForward + periodo,close));
+  if (media(MaxBarsForward + 1,close)>0)and(media(MaxBarsForward + 1,close)>media(MaxBarsForward + periodo,close))then
+  paintbar(clverde);
+  if (media(MaxBarsForward + 1,close)<0)and(media(MaxBarsForward + 1,close)<media(MaxBarsForward + periodo,close))then
+  paintbar(clvermelho);
+end;
+

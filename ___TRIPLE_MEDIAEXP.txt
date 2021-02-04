@@ -1,0 +1,9 @@
+input
+Periodo(9);
+Source(close);
+
+begin
+  Plot(mediaexp(Periodo,Source));
+  Plot2(mediaexp(Periodo*2,Source));
+  Plot3(mediaexp(Periodo*4,Source));
+end;

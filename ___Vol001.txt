@@ -1,0 +1,16 @@
+input
+periodoMax(20);
+periodoMin(10);
+var
+VolMax,VolMin : float;
+begin
+//if(volume
+ VolMax :=(Summation(volume,periodoMin)*2);
+ VolMin :=(Summation(volume,periodoMax)/2);
+ Plot((Summation(volume,periodoMax)));
+ Plot2((Summation(volume,periodoMin)*2));
+end;
+
+
+
+        

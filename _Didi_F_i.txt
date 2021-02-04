@@ -1,0 +1,5 @@
+begin
+Plot(0);
+Plot2(ForceIndex(3,0)-ForceIndex(8,0));
+Plot3(ForceIndex(20,0)-ForceIndex(8,0));
+end;

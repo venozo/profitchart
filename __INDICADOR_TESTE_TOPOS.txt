@@ -1,0 +1,50 @@
+input
+  Periodo(4);
+  fonte(close);
+var
+  k,pdm,mdm,pdmS,mdmS,s,mdiS,pdi,mdi,pdiS,d,s1,iS,hhv,llv,d1,vI,vmai : Float;
+function Maxy(a : Float;
+b : Float) : Float;
+begin
+  maxy := close;
+  if (a >= b) then
+    maxy := a;
+  if (a <= b) then
+    maxy := b;
+end;
+begin
+  k := 1.0 / Periodo;
+  pdm := maxy((Fonte - Fonte[1]),0);
+  mdm := maxy((Fonte[1] - Fonte),0);
+  pdmS := ((1 - k) * (pdmS[1]) + k * pdm);
+  mdmS := ((1 - k) * (mdmS[1]) + k * mdm);
+  s := pdmS + mdmS;
+  if (s <> 0) then
+    pdi := pdmS / s;
+  if (s <> 0) then
+    mdi := mdmS / s;
+  pdiS := ((1 - k) * (pdiS[1]) + k * pdi);
+  mdiS := ((1 - k) * (mdiS[1]) + k * mdi);
+  d := abs(pdiS - mdiS);
+  s1 := pdiS + mdiS;
+  if (s1 <> 0) then
+    iS := ((1 - k) * (iS[1]) + k * d / s1);
+  hhv := highest(is,Periodo);
+  llv := lowest(is,Periodo);
+  d1 := hhv - llv;
+  if (d1 <> 0) then
+    vI := (iS - llv) / d1;
+  VMAi := (1 - k * vI) * (VMAi[1]) + k * vI * Fonte;
+  If (Open > VMAi) and (Close > VMAi) and (open > media(9,close)) then
+    PaintBar(RGB(0,79,0));
+  If (Open < VMAi) and (Close < VMAi) and (close < media(9,close)) then
+    PaintBar(clRed);
+  If (Fonte > VMAi) and (Open[1] < VMAi[1]) and (Close[1] > VMAi[1]) then
+    PaintBar(clWhite);
+  If (Fonte < VMAi) and (Open[1] > VMAi[1]) and (Close[1] < VMAi[1]) then
+    PaintBar(clWhite);
+  if (media(9,close) > media(9,close)[1]) and (media(9,close) > media(21,close)) then
+    PaintBar(RGB(30,252,50));
+  Plot(VMAi);
+end;
+

@@ -1,0 +1,34 @@
+input
+  Periodo(8);
+var
+  acc            : Real;
+  nVolume,nMedia : Float;
+início
+  // nMedia: = MediaHMA (Periodo);
+  // nVolume: = AgressionVolBuy + AgressionVolSell;
+  // if ((nMedia <nMedia [1])) então
+  // nVolume: = AgressionVolSell
+  // outro
+  // nVolume: = AgressionVolBuy;
+  nMedia := HullMovingAverage(periodo);
+  nVolume := Volume + AgressionVolBalance;
+  if ((nMedia > nMedia[1]) e (nMedia[1] < nMedia[2])) ou ((nMedia < nMedia[1]) e (nMedia[1] > nMedia[2])) então
+    início
+      acc := nVolume;
+    fim;
+  início
+    acc := acc[1] + nVolume;
+  fim;
+  if ((nMedia < nMedia[1])) então
+    início
+      plot( - acc);
+      plot2( - acc);
+      PaintBar(clRed);
+    fim
+  else 
+    início
+      plot(acc);
+      PaintBar(clLime);
+    fim;
+fim;
+

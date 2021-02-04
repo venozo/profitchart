@@ -1,0 +1,15 @@
+///////////////////////////////////////
+///////FREQUÊNCIA DE MERCADO///////////
+///////////////////////////////////////
+/////////////BY_ACBRITO////////////////
+///////////////////////////////////////
+
+begin
+  Se (media(1,range) <= 7) então
+    PaintBar(claqua);
+  Se (media(1,range) > 7) e (media(1,range) < 15) então
+    PaintBar(clwhite); 
+  Se (media(1,range) >= 15) então
+    PaintBar(clred);
+end;
+

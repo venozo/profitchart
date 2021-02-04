@@ -1,0 +1,26 @@
+input
+  Período(4);
+  Nivel1(0.25);
+  Nivel2(0.50);
+  Nivel3(1.00);
+  Nivel4(1.61);
+  HorárioAbertura(0900);
+var
+  DataInício,Aj : Integer;
+  Ajuste        : float;
+início
+  DataInício := CalcDate(CurrentDate, - Período);
+  Se (Date < DataInício) e (Time < HorárioAbertura) então
+    Aj := 1;
+  Se (Date >= DataInício) e (Time >= HorárioAbertura) então
+    Aj := Aj[1] + 1;
+  Ajuste := PriorCote(4);
+  Se (Date >= CurrentDate) então
+    begin
+      Plot(Ajuste[Aj] + (Nivel1 / 100) * (closed(1)));
+      Plot2(Ajuste[Aj-2] + (Nivel2 / 100) * (closed(1)));
+      Plot3(Ajuste[Aj-3] + (Nivel3 / 100) * (closed(1)));
+      Plot4(Ajuste[Aj-4] + (Nivel4/ 100) * (closed(1)));
+    end;
+end;
+

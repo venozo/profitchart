@@ -1,0 +1,16 @@
+begin
+Plot (0);
+Plot2 ( HullMovingAverage(3)-HullMovingAverage(8));
+Plot3 (HullMovingAverage(20)-HullMovingAverage(8)); 
+end;
+
+
+
+
+
+
+
+
+
+
+            

@@ -1,0 +1,129 @@
+input
+  comprimento(2);
+  showDistributionBelowZero(true);
+
+var
+  mov: Inteiro;
+  tendência: Inteiro;
+  isTrending: Integer;
+  onda: Inteiro;
+  vol: Float;
+  cima: Float;
+  dn: Float;
+
+  isTrendingUp: Integer;
+  isTrendingDown: Integer;
+
+  trendIdx: Integer;
+
+início
+
+  if (MaxBarsBack > comprimento) then
+  início
+
+// mov = fechar> fechar [1]? 1: fechar <fechar [1]? -1: 0
+  if (CLOSE> close [1]) then
+  início
+    mov:= 1;
+  fim
+  else if (close <close [1]) then
+  início
+    mov:= -1;
+  fim
+  else
+  início
+    mov:= 0;
+  fim;
+ 
+// tendência = (mov! = 0) e (mov! = mov [1])? mov: nz (tendência [1])
+  if ((mov <> 0) e (mov <> mov [1])) então
+  início
+    tendência:= mov;
+  fim
+ else
+  início
+    tendência:= tendência [1];
+  fim;
+
+// isTrending = crescente (fechar, trendDetectionLength) ou cair (fechar, trendDetectionLength) // abs (close-close [1])> = dif
+  para trendIdx:= 0 to comprimento-1 do
+  início
+     isTrendingUp:= 1;
+     isTrendingDown:= 1;
+
+     if (CLOSE [trendIdx] <= CLOSE [trendIdx + 1]) então
+     início
+       isTrendingUp:= 0;
+     fim;
+
+     if (CLOSE [trendIdx] >= CLOSE [trendIdx + 1]) então
+     início
+       isTrendingDown:= 0;
+     fim;
+  fim;
+
+  if (isTrendingUp> 0) ou (isTrendingDown> 0) então
+  início
+    isTrending:= 1;
+  fim;
+
+// onda = (tendência! = nz (onda [1])) e é tendência? tendência: nz (onda [1])
+  if (tendência <> onda [1]) e (isTrending = 1) então
+  início
+    onda:= tendência;
+  fim
+   else
+  início
+    onda:= onda [1];
+  fim;
+
+// vol = (onda == onda [1])? (nz (vol [1]) + volume): volume
+  if (onda = onda [1]) então
+  início
+    vol:= vol [1] + VOLUME;
+  fim
+    else
+  início
+    vol:= VOLUME;
+  fim;
+
+// up = wave == 1? vol: 0
+  if (onda = 1) então
+  início
+     cima := vol;
+  fim
+    else
+  início
+     cima:= 0;
+  fim;
+
+// dn = showDistributionBelowZero? 
+// (onda == 1? 0: onda == -1? -vol: vol): 
+// (onda == 1? 0: vol)
+  if (showDistributionBelowZero) then
+  início
+    dn:= -vol;
+  fim
+ else
+  início
+    dn:= vol;
+  fim;
+
+  if (onda = 1) então
+  início
+    // plot (up, style = histogram, color = green, linewidth = 3)
+    SetPlotColor (1, clGreen);
+    Plot (cima);
+    PaintBar(clGreen);
+  fim;
+
+  se (onda = -1) então
+  início
+    // plot (dn, style = histogram, color = red, linewidth = 3)
+    SetPlotColor (2, clRed);
+    Plot2 (dn);
+    PaintBar(clRed);
+  fim;
+
+fim;
+fim;

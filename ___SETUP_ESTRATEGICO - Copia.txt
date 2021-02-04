@@ -1,0 +1,266 @@
+// Gerenciamento de Risco no Backtesting
+// Autor: Lucas Anschau Antunes
+// Data: 16/11/2020
+// Descrição: Tentativa de fazer o backtesting ter gerencimento de risco, VULGO GAMBIARRA DOS INFERNOS
+input
+  horarioinicio(0905);
+  horariofim(1600);
+  // Configuração em pontos 
+  gain(100); 
+  loss(7.5); 
+  autobreakeven(0.5);
+  autobreakevenDisparo(5.0);
+  traillingstopDistanciaUltimaCotacao(6.0);
+  traillingstopDisparo(7.0);
+  lossmaximo(15.0); // R$ 150,00
+  gainmaximo(30.0); // R$ 300,00
+  // Configuração em número (INTEGER)
+  nmaximooperacoes(10);
+  nmaximolossconsecutivo(3);
+var
+  nIndex, nQuantidadeDeOperacoes, nCandleOperacao, nQuantidadeLossConsecutivos, nQtdPerdedoras, nQtdVencedoras : Integer;
+  bCompra,bVenda,bZerar, bOperando, bAutoBreakEven, bStopAtual, bTravaGerenciamentoRisco : Boolean;
+  sResultadoAtual, sResultadoDia, sResultadoOperacaoAnterior, sAuxMaiorMaxima, sAuxMenorMinima : Float;   
+begin
+  { zerando váriaveis de controle do candle }
+  bCompra := false;
+  bVenda := false;
+  bZerar := false;
+  bOperando := false;
+  bAutoBreakEven := false;
+  sResultadoAtual := 0;
+  bStopAtual := false;
+  sAuxMaiorMaxima := 0;
+  sAuxMenorMinima := 100000000;
+  bTravaGerenciamentoRisco := false;
+  { Se a data do candle atual for maior que a data do candle anterior, então primeiro candle do dia}
+  if(Date > Date[1]) then
+  begin
+    // Zera variaveis de controle do dia
+    nQuantidadeDeOperacoes := 0;
+    nCandleOperacao := 0;
+    sResultadoDia := 0;
+    nQuantidadeLossConsecutivos := 0;
+    sResultadoOperacaoAnterior := 0;
+    nQtdPerdedoras := 0;
+    nQtdVencedoras := 0;
+  end else
+  begin
+    // Salva as váriveis de controle do dia
+    nQuantidadeDeOperacoes := nQuantidadeDeOperacoes[1];
+    nCandleOperacao := nCandleOperacao[1];
+    sResultadoDia := sResultadoDia[1];
+    nQuantidadeLossConsecutivos := nQuantidadeLossConsecutivos[1];
+    sResultadoOperacaoAnterior := sResultadoOperacaoAnterior[1];
+    nQtdPerdedoras := nQtdPerdedoras[1];
+    nQtdVencedoras := nQtdVencedoras[1];
+  end;
+  { Verifica se algum item do gerenciamento de risco foi alcançado }
+  // Superou o limite de operações diárias
+  if(nQuantidadeDeOperacoes >= nmaximooperacoes) then bTravaGerenciamentoRisco := true;
+  // Atingiu o maximo de loss consecutivos. HOJE REALMENTE NÃO É SEU DIA DE SORTE
+  if(nQuantidadeLossConsecutivos >= nmaximolossconsecutivo) then bTravaGerenciamentoRisco := true;
+  // Atingiu a perda máxima por dia. NÃO SEI O QUE É PIOR. O DE CIMA OU O DE BAIXO.
+  if((lossmaximo <= Abs(sResultadoDia)) e (sResultadoDia < 0)) then bTravaGerenciamentoRisco := true;
+  // Atingiu o ganho máximo diário. PARABÉNS, VOCÊ É FODÃO
+  if(gainmaximo <= sResultadoDia) then bTravaGerenciamentoRisco := true;
+  // Simulando ordens de compras e vendas: Sempre que o HiLo inverte
+  if ((HiloActivator(6)|1| = 1) and (HiloActivator(6)[1]|1| = 0)) then bCompra := true;
+  if ((HiloActivator(6)|1| = 0) and (HiloActivator(6)[1]|1| = 1)) then bVenda := true;
+  {Se teve entrada nos ultimos 5 candles. Não entra }
+  for nIndex := 1 to 5 do
+  begin
+    if(bOperando[nIndex] = true) then
+    begin
+      bCompra := false;
+      bVenda := false;
+    end;
+  end;
+  {Se está fora do horário }
+  if (time < horarioinicio) ou (time > horariofim) then
+    begin
+      bCompra := false;
+      bVenda := false; 
+    end;
+  { Não opera após as 16:55 }
+  if (time > 1655) then
+    begin
+      bZerar := true;
+    end;
+  { Se o gerenciamento de risco não permitir operar mais }
+  if(bTravaGerenciamentoRisco = true) then
+    begin
+      bCompra := false;
+      bVenda := false;
+    end;
+  { Se vai comprar ou vender, então estamos operando }  
+  if(bCompra or bVenda) then
+  begin
+    bZerar := true; // Zera a posição em aberto antes de entrar
+    bOperando := true;
+    nQuantidadeDeOperacoes := nQuantidadeDeOperacoes + 1;
+    nCandleOperacao := CurrentBar;
+  end;
+  { Se zerar, stop a mercado }
+  if bZerar then
+    begin
+      if IsSold then 
+      begin
+        sResultadoAtual := sellprice - Close;
+        bStopAtual := true;
+        BuyStop(Close,Close);
+      end;
+      if IsBought then 
+      begin
+        sResultadoAtual := Close - buyprice;
+        bStopAtual := true;
+        SellShortStop(Close,Close);
+      end;
+    end;
+  { Se não estiver operando, então entra a mercado }  
+  if ((IsBought = false) and (IsSold = false)) then
+  begin
+    if bCompra then
+      begin
+        if IsSold then
+          begin
+            sResultadoAtual := sellprice - Close;
+            bStopAtual := true; 
+            BuyStop(Close,Close);
+          end;
+        BuyAtMarket;
+      end;
+    if bVenda then
+      begin
+        if IsBought then
+          begin
+            sResultadoAtual := Close - buyprice;
+            bStopAtual := true; 
+            SellShortStop(Close,Close);
+          end;
+        SellShortAtMarket;
+      end;
+  end;
+  {DEBUG
+  if(Date = 1201116) then
+    begin
+      Plot4(1);
+    end;}
+  if IsBought then
+    begin
+      {Gambiarra pra calcular o Auto BreakEven: vai varrer todos os candles desde a entrada da operação
+       e se algum bateu a máxima para disparo do breakeven, vai setar o stopgain. }
+      for nIndex :=0 to (CurrentBar - nCandleOperacao) do
+      begin
+        if(High[nIndex] >= (BuyPrice + autobreakevenDisparo)) then
+        begin
+          SellShortStop(buyprice + autobreakeven,buyprice + autobreakeven);
+          bAutoBreakEven := true;
+        end;
+      end;
+      // Verificamos se o preço bateu o breakeven
+      if((bAutoBreakEven = true) and (Close <= (buyprice + autobreakeven))) then
+      begin
+        sResultadoAtual := autobreakeven;
+        bStopAtual := true; 
+      end;
+      {Gambiarra pra calcular o Trailling Stop: vai varrer todos os candles desde a entrada da operação,
+       buscando a maior máxima (Reduntante eu sei ??)}
+      for nIndex :=0 to (CurrentBar - nCandleOperacao) do
+      begin
+        if(High[nIndex] > sAuxMaiorMaxima) then sAuxMaiorMaxima := High[nIndex];       
+      end;
+      // Verifica a maior máxima: se o preço de disparo foi atingido, então move o stop para a diferença 
+      // entre a máxima e a distância
+      if((sAuxMaiorMaxima - BuyPrice) >= traillingstopDisparo) then
+        begin
+          if(Close <= (sAuxMaiorMaxima - traillingstopDistanciaUltimaCotacao)) then
+          begin
+            SellShortStop((sAuxMaiorMaxima - traillingstopDistanciaUltimaCotacao),(sAuxMaiorMaxima - traillingstopDistanciaUltimaCotacao));
+            sResultadoAtual := (sAuxMaiorMaxima - traillingstopDistanciaUltimaCotacao) - buyprice;
+            bStopAtual := true;  
+          end;
+        end;
+      { Stop Gain Fixo}
+      if(Close >= (buyprice + gain)) then
+      begin
+        SellShortStop(buyprice + gain,buyprice + gain);
+        sResultadoAtual := gain;
+        bStopAtual := true;
+      end;
+      { Stop Loss Fixo }
+      if(Close <= (buyprice - loss)) then
+      begin
+        SellShortStop(buyprice - loss,buyprice - loss);
+        sResultadoAtual := (-1 * loss);
+        bStopAtual := true;
+      end;      
+    end;
+    if IsSold then
+    begin
+      {Gambiarra pra calcular o Auto BreakEven: vai varrer todos os candles desde a entrada da operação
+       e se algum bateu a mínima para disparo do breakeven, vai setar o stopgain. }
+      for nIndex :=0 to (CurrentBar - nCandleOperacao) do
+      begin
+        if(Low[nIndex] <= (SellPrice - autobreakevenDisparo)) then
+        begin
+          BuyStop(sellprice - autobreakeven,sellprice - autobreakeven);
+          bAutoBreakEven := true;
+        end;
+      end;
+      // Verificamos se o preço bateu o breakeven
+      if((bAutoBreakEven = true) and (Close >= (sellprice - autobreakeven))) then
+      begin
+        sResultadoAtual := autobreakeven;
+        bStopAtual := true; 
+      end;
+      {Gambiarra pra calcular o Trailling Stop: vai varrer todos os candles desde a entrada da operação,
+       buscando a menor minima (Reduntante eu sei ??)}
+      for nIndex :=0 to (CurrentBar - nCandleOperacao) do
+      begin
+        if(Low[nIndex] < sAuxMenorMinima) then sAuxMenorMinima := Low[nIndex];       
+      end;
+      // Verifica a menor mínima: se o preço de disparo foi atingido, então move o stop para a diferença 
+      // entre a máxima e a distância
+      if((sellprice - sAuxMenorMinima) >= traillingstopDisparo) then
+        begin
+          if(Close >= (sAuxMenorMinima + traillingstopDistanciaUltimaCotacao)) then
+          begin
+            BuyStop((sAuxMenorMinima + traillingstopDistanciaUltimaCotacao),(sAuxMenorMinima + traillingstopDistanciaUltimaCotacao));
+            sResultadoAtual := sellprice - (sAuxMenorMinima + traillingstopDistanciaUltimaCotacao);
+            bStopAtual := true;  
+          end;
+        end;
+      { Stop Gain Fixo}
+      if(Close <= (sellprice - gain)) then
+      begin
+        BuyStop(sellprice - gain,sellprice - gain);
+        sResultadoAtual := gain;
+        bStopAtual := true;
+      end;
+      { Stop Loss Fixo }
+      if(Close >= (sellprice + loss)) then
+      begin
+        BuyStop(sellprice + loss,sellprice + loss);
+        sResultadoAtual := (-1 * loss);
+        bStopAtual := true;
+      end;
+    end;
+  if(bStopAtual = true) then
+  begin
+    // A operação foi stopada por algum motivo, então salva nas váriaveis de controle
+    if(sResultadoAtual > 0) then
+      nQtdVencedoras := nQtdVencedoras + 1
+    else if(sResultadoAtual < 0) then
+      nQtdPerdedoras := nQtdPerdedoras + 1;
+    sResultadoDia := sResultadoDia + sResultadoAtual;
+    if((sResultadoOperacaoAnterior < 0) e (sResultadoAtual < 0)) then nQuantidadeLossConsecutivos := nQuantidadeLossConsecutivos + 1;
+    if(sResultadoAtual > 0) then nQuantidadeLossConsecutivos := 0;
+    sResultadoOperacaoAnterior := sResultadoAtual;
+  end;
+  { APENAS PRA DEBUG }
+  //Plot(nQtdVencedoras);
+  //Plot2(nQtdPerdedoras);
+  //Plot3(sResultadoAtual);
+  { FIM DEBUG }        
+end;

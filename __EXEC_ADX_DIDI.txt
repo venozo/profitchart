@@ -1,0 +1,34 @@
+input
+  tempoD(15);
+var
+  candle, operacoes : integer;
+  z      : float;
+Inicio
+  if (BuyPosition = 1) then
+    begin
+      operacoes:=operacoes+1;
+
+      z := CalcTime(Time,tempoD);
+      SellToCoverStop(BuyPrice + 35,BuyPrice + 35);
+      SellToCoverStop(BuyPrice - 5,BuyPrice - 5);
+      if (time > z) then
+        begin
+          ClosePosition;
+        end; 
+    end;
+  //////////////ESTRUTURA DE COMPRA //////////
+  if (BuyPosition = 0) and (SellPosition = 0) and (operacoes=0) and (time<1600) then
+    begin
+      //Condições de compra
+      if (DiPDiM(14)[1] > DiPDiM(14)|0|) and (DiPDiM(14)|0| > DiPDiM(14)|1|) then
+        begin
+          candle := 0;
+          buystop(high,high);
+        end;
+    end;
+  if (time >= 1600)or(operaçoes>=8) then
+  begin
+    operacoes:=0;
+    ClosePosition;
+  end;
+end;
