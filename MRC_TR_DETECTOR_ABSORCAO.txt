@@ -1,0 +1,26 @@
+var
+  agrBuy, agrSell, agrDiff : float;
+  agr : integer;
+
+begin
+  agrBuy := AgressionVolBuy;
+  agrSell := AgressionVolSell;
+  agr := 0;
+
+  if (agrBuy > agrSell) then 
+  begin
+    agr := 1;
+    agrDiff := agrBuy - agrSell;
+    plot(agrDiff);
+    if (close < open) then paintbar(clred);
+  end;
+
+  if (agrBuy < agrSell) then 
+  begin
+    agr := -1;
+    agrDiff := agrSell - agrBuy;
+    plot2(agrDiff);
+    if (close > open) then paintbar(cllime);
+  end;
+
+end;

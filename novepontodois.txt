@@ -1,0 +1,6 @@
+begin
+if (Fechamento > Fechamento[1]) e (Fechamento > MediaExp(9,Close)) then
+PaintBar(clGreen)
+else if (Fechamento < Fechamento[1]) e (Fechamento < MediaExp(9,Close))then
+PaintBar(clRed);
+end

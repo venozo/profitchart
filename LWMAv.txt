@@ -1,0 +1,38 @@
+///////////////////////////////////////////////////////////
+/// LWMA -- Linearly Weigthed Moving Average
+
+input
+
+period(20);
+Dados(close);
+
+var
+
+yLWMA, yD, ySum, yDenominador: float;
+i: integer;
+
+begin
+
+yD:= 0;
+ySum:= 0;
+yDenominador:= 0;
+
+for i:= 0 to period - 1 do begin
+
+yD:= Dados[i] * (period - i);
+ySum:= ysum + yD;
+end;
+
+for i:= 0 to period do begin
+
+yDenominador:= yDenominador + i;
+end;
+
+yLWMA:= ySum/yDenominador;
+
+plot(yLWMA); 
+
+end;
+
+
+

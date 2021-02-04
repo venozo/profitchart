@@ -1,0 +1,12 @@
+Inicio
+  Se (Fechamento > media(20,close)) então
+    PaintBar(clVerde);
+  Se (Fechamento < media(20,close)) e 
+  (Fechamento < WAverage(low, 3)) então
+    PaintBar(clVermelho);
+  Se (Fechamento > WAverage(high, 3)) então
+    PaintBar(clAzul);
+  
+Fim;
+
+                 

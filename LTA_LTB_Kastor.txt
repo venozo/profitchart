@@ -1,0 +1,43 @@
+input
+  MED_LTA_LTB(21);
+var
+  msc,msv,x,y : float;
+  LTA,LTB     : boolean;
+inicio
+  //msv:=mediaexp(MED_LTA_LTB,minima);
+  msv := TriAverage(minima,MED_LTA_LTB);
+  msc := TriAverage(maxima,MED_LTA_LTB);
+  //msc:=mediaexp(MED_LTA_LTB,maxima);
+  LTA := (msc >= msc[1]) e (msv >= msv[1]);
+  LTB := (msc <= msc[1]) e (msv <= msv[1]);
+  //se (time>905) e (time<1800) entao
+  inicio
+    x := low;
+    Y := high;
+    se ((maxima - abertura) > (maxima - minima) / 2) e (fechamento < abertura) entao
+      paintbar(clred);
+    se ((fechamento - minima) > (maxima - minima) / 4) e (fechamento > abertura) entao
+      paintbar(clverde);
+    se (LTA = true) entao
+      begin
+        x := x[1];
+        plot3(x);
+        paintbar(clverde);
+      end;
+    se (LTB = true) entao
+      begin
+        y := y[1];
+        plot4(y);
+        paintbar(clvermelho);
+      end;
+    if (close < msc) then
+      noplot(3);
+    SetPlotColor(1,clvermelho);
+    SetPlotWidth(1,3);
+    plot(msc);
+    plot2(msv);
+    SetPlotColor(2,clverde);
+    SetPlotWidth(2,3);
+  fim;
+fim;
+

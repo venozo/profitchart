@@ -1,0 +1,35 @@
+{
+escrito e produzido por arthur777
+
+https://astridmikkelsen777.wixsite.com/codigolivre
+
+BarType=1 tempos menores que 1 dia,qualquer periodo entre 1minuto e um dia
+BarType=2 tempo igual a dias qualquer periodo escrito em dias ex 360 dias
+BarType=3 tempo de semanas
+BarType=4 tempo de meses
+BarType=-1 de anos ou de renko ou range
+BarType=0   de trades
+}
+input
+  periodoMedia(9);
+  Dias(9);
+var
+  referencia : integer;
+  soma       : float;
+begin
+  if (Date >= CalcDate(CurrentDate, - Dias)) then
+    if (CurrentBar >= periodoMedia - 1) then
+      begin
+        soma := 0;
+        for referencia := 0 to periodoMedia - 1 do
+          begin
+            soma := soma + closeD(referencia);
+          end;
+        if (BarType = 1) then
+          plot(soma / periodoMedia);
+        if (BarType = 2) then
+          plot2(media(periodoMedia,close));
+      end;
+end;
+
+

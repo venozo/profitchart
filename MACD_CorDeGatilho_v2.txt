@@ -1,0 +1,53 @@
+{ MACD com cor de gatilho
+
+Indicador e regra de coloração com o objetivo de sinalizar quando MACD abrir em relação a média móvel adicional de gatilho. 
+Azul: altista
+Vermelho: baixista
+Amarelo: zerar
+Cinza: neutro
+
+
+Por: José Moraes
+} 
+
+input
+  MediaLonga(72);
+  MediaCurta(34);
+  Sinal(17);
+  nBoxStop(3);
+  MediaGatilho(9);
+
+var 
+  sMACD, sMediaGatilho, sMediaSinal : float;
+  iOnTrade, iColorPlot, iCorCompra, iCorVenda, iCorStop, iCorNeutro : integer;
+
+Inicio
+  // cores
+ iCorCompra := clAzul;
+ iCorVenda := clVermelho;
+ iCorStop :=clAmarelo;
+ iCorNeutro := clCinza;
+ //
+ sMACD :=  MACD(MediaLonga,MediaCurta,Sinal);
+ sMediaSinal := mediaExp(Sinal,sMACD[1]);
+ sMediaGatilho := mediaExp(MediaGatilho,sMACD[1]);
+ iOnTrade := iOnTrade[1]; 
+
+ if (sMACD > sMediaGatilho) and (abs(sMACD - sMediaGatilho) > abs(sMACD[2] - sMediaGatilho[2])) then iOnTrade := 1; 
+ if (sMACD < sMediaGatilho) and (abs(sMACD - sMediaGatilho) > abs(sMACD[2] - sMediaGatilho[2])) then iOnTrade := -1; 
+
+ 
+ if (iOnTrade <> 0) and (((sMACD > sMediaGatilho) and (low < lowest(low[1],nBoxStop)))  or ((sMACD < sMediaGatilho) and (high > highest(high[1],nBoxStop)))) then iOnTrade := 0; 
+   
+ if (iOnTrade = 0) then if (iOnTrade[1] = 0) then iColorPlot := iCorNeutro else iColorPlot := iCorStop;
+ if (iOnTrade > 0) then iColorPlot := iCorCompra;
+ if (iOnTrade < 0) then iColorPlot := iCorVenda;
+
+ paintBar(iColorPlot);
+ setPlotColor(4,iColorPlot);
+ plot(MACD(MediaLonga,MediaCurta,Sinal)|1|);
+ plot2(sMediaSinal);
+ plot3(sMediaGatilho);
+ plot4(sMACD);
+end;
+

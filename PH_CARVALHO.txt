@@ -1,0 +1,186 @@
+{BarType=1 tempos menores que 1 dia,qualquer periodo entre 1minuto e um dia
+BarType=2 tempo igual a dias qualquer periodo escrito em dias ex 360 dias
+BarType=3 tempo de semanas
+BarType=4 tempo de meses
+BarType= -1 de anos ou de renko ou range
+BarType=0   de trades
+}
+input
+  dias_retroativos(2);
+  XReferencia(0);
+  Periodo(5); //periodo tbd
+  periodoMedia(2);
+  pvma(2);
+  Multiplier(1.682);
+  Sup(Low);
+  Res(High);
+  Linhas(true);
+var
+  referencia                                           : integer;
+  soma                                                 : float;
+  MDUp,MDUp2,aRange,a,l1,l2,UP                         : Float;
+  Down                                                 : Float;
+  trend                                                : Integer;
+  sATRi                                                : Float; //Variavel que receberá o valor do ATR * Multiplier
+  sATR                                                 : Float;
+  Resultado,mysupertrend,Flag,aRange2,a2, {l1,l2,} UP2 : Float;
+  Down2                                                : Float;
+  trend2                                               : Integer;
+  sATRi2                                               : Float; //Variavel que receberá o valor do ATR * Multiplier
+  sATR2                                                : Float;
+begin
+  if (LastCalcDate > CalcDate(CurrentDate, - (Dias_retroativos))) then
+    if (CurrentBar >= periodoMedia - 1) then
+      begin
+        soma := 0;
+        for referencia := XReferencia to periodoMedia - 1 do
+          begin
+            //soma := soma + close(referencia);
+            soma := soma + close[referencia];
+          end;
+        a := TopBottomDetector(Periodo);
+        sATR := vmasimple(Pvma,TrueRange);
+        //sATR:= 1;
+        sATRi := sATR * (Multiplier);
+        UP := Close[1] + sATRi;
+        Down := Close[1] - sATRi;
+        {UP := WeightedClose[1]+sATRi;
+        Down:= WeightedClose[1]-sATRi;  }
+        {UP := open+sATRi;
+        Down:= open-sATRi; }
+        {UP := low[1]+sATRi;
+        Down:= high[1]-sATRi; }
+        if (a = low) then
+          trend := 1;
+        if (a = high) then
+          trend := - 1;
+        if ((trend > 0) and (Down < Down[1])) then
+          Down := Down[1];
+        if ((trend < 0) and (UP > UP[1])) then
+          UP := Up[1];
+        Flag := 0;
+        if flag = 1 then
+          up := up;
+        if flag = 1 then
+          down := down;
+        if trend = 1 then
+          begin
+            mysupertrend := down;
+          end;
+        if trend = - 1 then
+          begin
+            mysupertrend := up;
+          end;
+        if (BarType = - 1) then
+          plot(soma / periodoMedia);
+        if (BarType = 2) then
+          plot2(mysupertrend);
+      end;
+  //end;
+  //plot (mysupertrend);
+  begin
+    If Linhas = Verdadeiro then
+      begin
+        // a:= TopBottomDetector(5);
+        // if a2 =  Highest(mysupertrend,Round( A)) then begin
+        if (close > mysupertrend) then
+          begin
+            // if (close >= mysupertrend) and (close[1] <= mysupertrend[1]) then begin
+            l1 := res;
+          end
+        else 
+          Plot3(abs(l1));
+        // Plot3 (media(pm,l1));
+        begin
+          // if a2 = lowest(mysupertrend, Round(A)) then begin
+          if (close < mysupertrend) then
+            begin
+              // if (close <= mysupertrend) and (close[1] >= mysupertrend[1]) then  begin
+              l2 := sup;
+            end
+          else 
+            Plot4(abs(l2));
+          // Plot4 (media(pm,l2));
+          //end;
+          { 	 if( close > mysupertrend ) then  paintbar (cllime) ;
+          
+          
+          If (close > mysupertrend)e (rafi>2.2) E (Fechamento > VWAP(1))  E (CLOSE > OPEN)  THEN PAINTBAR(CLAzulClaro);
+          
+          if( close < mysupertrend ) then  paintbar (clred);
+          
+          
+          If (close < mysupertrend)  e (rafi>2.2) E (Fechamento < VWAP(1)) E (CLOSE < OPEN) THEN PAINTBAR(CLFUCSIA);  }
+        end;
+      end;
+    if (close > mysupertrend) then
+      paintbar(cllime);
+    if (close < mysupertrend) then
+      paintbar(clred);
+    if (close >= mysupertrend) and (close[1] <= mysupertrend[1]) then
+      Paintbar(clBranco);
+    if (close <= mysupertrend) and (close[1] >= mysupertrend[1]) then
+      Paintbar(clBranco);
+    {if (mysupertrend >= close) and (mysupertrend[1] <= close[1]) then Paintbar (clBranco)else
+    if (mysupertrend <= close) and (mysupertrend[1] >= close[1]) then Paintbar (clBranco); }
+    //------------------------------------------------------------------------------------
+    { subindo o preço }
+    If (close > mysupertrend) then
+      Resultado := + 1;
+    { descendo o preço }
+    If (close < mysupertrend) then
+      Resultado := - 1;
+    // CHAVE DE ATIVAÇÃO //
+    //begin
+    //If (time  > 905) and (time < 1800) then
+    //begin
+    // saidas
+    If (issold) then
+      begin
+        {if (mysupertrend < Buyprice + 2000.00)or
+        (mysupertrend >  Buyprice - 250.00) then }
+        if (close > mysupertrend) then
+          Buytocoveratmarket;
+      end
+    else if (IsBought) then
+      begin
+        {if (mysupertrend > buyprice +2000.00) or
+        (mysupertrend <  Buyprice - 250.00) then }
+        if (close < mysupertrend) then
+          SellToCoverAtMarket;
+      end // entradas
+  else if  //((Resultado) > 0)  and (LastCalcTime<1800)
+  (close > mysupertrend) then
+    BuyAtMarket //end
+
+  else if  //((Resultado) < 0)
+  (close < mysupertrend) then
+    SellToCoverAtMarket;
+  //end;
+  begin
+    begin
+      { if (time > 1130) and ( time < 1230) then
+      ClosePosition;
+      end;
+      end;
+     }
+end;
+end;
+end;
+end;
+end;
+end;
+end;
+end;
+end;
+end;
+end;
+end;
+end;
+end;
+end;
+end;
+end; 
+end 
+end;                                                 
+end; 

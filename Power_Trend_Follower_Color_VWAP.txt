@@ -1,0 +1,24 @@
+//Power Trend Follower//
+//Criador:Trader Sérgio FT//
+//CANDLE_RENKO_COLOR: Coloração Baseado nas MME3[2], MMA20 e HiloActivator(17)
+//Pode ser utilizado no Renko ou gráfico de Candles
+//Fazer alteração na Aparência dos candles da seguinte forma
+//Positivo:Verde
+//Negativo:Vermelho
+//Linha Positivo:Verde Limão
+//Linha Negativo:Fúcsia
+
+Inicio
+Se (Fechamento > MediaExp(3,Close)[2]) e (Fechamento > Media(20,Close)) e (Fechamento > HiloActivator(17)) então
+PaintBar(clVerde)
+Senão Se (Fechamento < MediaExp(3,Close)[2]) e (Fechamento < Media(20,Close)) e (Fechamento < HiloActivator(17)) então
+PaintBar(clVermelho)
+Senão
+PaintBar(clBranco);
+Inicio
+Se (Fechamento > VWAP(1)) e (Fechamento >Media(20,Close)) e (Fechamento > HiloActivator(17)) então
+PaintBar(clAzulClaro)
+Senão se (Fechamento < VWAP(1)) e (Fechamento < Media(20,Close)) e (Fechamento < HiloActivator(17)) então
+PaintBar(clAmarelo);
+Fim;
+Fim

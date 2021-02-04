@@ -1,0 +1,37 @@
+Inicio
+  Se (Abertura < PIVOT(Verdadeiro,Verdadeiro)|0|) e (Fechamento > PIVOT(Verdadeiro,Verdadeiro)|0|) então
+    PaintBar(clLime)
+  Senão Se (Abertura > PIVOT(Verdadeiro,Verdadeiro)|0|) e (Fechamento < PIVOT(Verdadeiro,Verdadeiro)|0|) então
+    PaintBar(clVermelho)
+
+ Senão Se (Abertura < PIVOT(Verdadeiro,Verdadeiro)|1|) e (Fechamento > PIVOT(Verdadeiro,Verdadeiro)|1|) então
+    PaintBar(clLime)
+  Senão Se (Abertura > PIVOT(Verdadeiro,Verdadeiro)|1|) e (Fechamento < PIVOT(Verdadeiro,Verdadeiro)|1|) então
+    PaintBar(clVermelho)
+    
+  Senão Se (Abertura < PIVOT(Verdadeiro,Verdadeiro)|2|) e (Fechamento > PIVOT(Verdadeiro,Verdadeiro)|2|) então
+    PaintBar(clLime)
+  Senão Se (Abertura > PIVOT(Verdadeiro,Verdadeiro)|2|) e (Fechamento < PIVOT(Verdadeiro,Verdadeiro)|2|) então
+    PaintBar(clVermelho)        
+    
+   Senão Se (Abertura < PIVOT(Verdadeiro,Verdadeiro)|3|) e (Fechamento > PIVOT(Verdadeiro,Verdadeiro)|3|) então
+    PaintBar(clLime)
+  Senão Se (Abertura > PIVOT(Verdadeiro,Verdadeiro)|3|) e (Fechamento < PIVOT(Verdadeiro,Verdadeiro)|3|) então
+    PaintBar(clVermelho)   
+  
+   Senão Se (Abertura < PIVOT(Verdadeiro,Verdadeiro)|4|) e (Fechamento > PIVOT(Verdadeiro,Verdadeiro)|4|) então
+    PaintBar(clLime)
+  Senão Se (Abertura > PIVOT(Verdadeiro,Verdadeiro)|4|) e (Fechamento < PIVOT(Verdadeiro,Verdadeiro)|4|) então
+    PaintBar(clVermelho)    
+    
+     Senão Se (Abertura < PIVOT(Verdadeiro,Verdadeiro)|5|) e (Fechamento > PIVOT(Verdadeiro,Verdadeiro)|5|) então
+    PaintBar(clLime)
+  Senão Se (Abertura > PIVOT(Verdadeiro,Verdadeiro)|5|) e (Fechamento < PIVOT(Verdadeiro,Verdadeiro)|5|) então
+    PaintBar(clVermelho)   
+  
+   Senão Se (Abertura < PIVOT(Verdadeiro,Verdadeiro)|6|) e (Fechamento > PIVOT(Verdadeiro,Verdadeiro)|6|) então
+    PaintBar(clLime)
+  Senão Se (Abertura > PIVOT(Verdadeiro,Verdadeiro)|6|) e (Fechamento < PIVOT(Verdadeiro,Verdadeiro)|6|) então
+    PaintBar(clVermelho);
+
+Fim;

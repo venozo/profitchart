@@ -1,0 +1,35 @@
+input
+stochlen(8);
+smoothlen(25);
+
+var
+sk : float;
+len :integer;
+nsk :float;
+ss :float;
+expss : float;
+pso:float;
+
+begin
+sk := slowstochastic(stochlen);  
+len := round(sqrt( smoothlen ));
+nsk := 0.1 * ( sk - 50 );  
+ss := mediaexp(len,mediaexp(len,nsk));  
+expss := exp( ss );
+pso := ( expss - 1 )/( expss + 1 );
+
+if (pso > 0.9) then
+setplotcolor(1,clred);
+if (pso < -0.9) then
+setplotcolor(1,cllime);
+
+plot(pso);  
+end;
+
+
+
+
+
+
+
+

@@ -1,0 +1,56 @@
+{
+- TRIXM 9 (TRIXM, não o TRIX)
+- MACD 26/12
+- Estocástico lento 8
+- ROC 3/9
+- MME 3
+--------------------------
+Seria:
+
+- (5x0) Quando os 5 apontam a mesma direção: verde limão ou vermelho vivo
+- (4x1) Quatro na mesma direção e um oposto: verde ou vermelho escuro
+- (3x2) Três na mesma direção e dois contra: teal ou laranja
+MACD(26,12)
+ROC()
+TRIXM()
+SlowStochastic()
+xAverage()
+}
+// Inicio do Codigo
+var
+  Makd       : Float;
+  StowLento  : Float;
+  MCDA       : Float;
+  MCDB       : Float;
+  MME        : Float;
+  TRIXX      : Float;
+  ROK        : Float;
+begin
+  ///////////////////////////////////////////////////////
+  // Armazena os valores em variáveis
+  Makd := Macd(26,12,9);
+  StowLento := SlowStochastic(8);
+  MME   := xAverage(close,3);
+  MCDA  := Macd(26,12,9)|0|;
+  MCDB  := Macd(26,12,9)|1|;
+  TRIXX := TRIXM(9,1);
+  ROK := ROC(3,9,0);
+  ///////////////////////////////////////////////////////
+  // Verifica se as condições foram satisfeitas
+ 
+
+plot2(ROK);setPlotcolor(2,clPurple );
+plot(Makd);
+ 
+ ///periodo de alta
+ if (ROK  > 0)  then
+  if (MME > MME[1] ) and (TRIXX > TRIXX[1] ) then  // condição media subindo
+      PaintBar(clLime)
+    else if(MME < MME[1]) and (TRIXX < TRIXX[1])  then
+      PaintBar(clVermelho)
+    else 
+      paintbar(clBranco);
+
+
+end;
+

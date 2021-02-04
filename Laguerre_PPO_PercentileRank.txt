@@ -1,0 +1,64 @@
+input
+Short(0.4);
+Long(0.8);
+periodo(200);
+sl(true);
+swl(true);
+
+var
+L0:float;
+L1:float;
+L2:float;
+L3:float;
+hl2:float;
+G0:float;
+G1:float;
+G2:float;
+G3:float;
+lmas:float;
+lmal:float;
+ppoT:float;
+ppoB:float;
+pctRankT:float;
+pctRankB:float;
+count:integer;
+i:integer;
+count2:integer;
+h:integer;
+begin
+hl2 := (high + low) /2;
+L0 := (1 - Short)*hl2+Short*(L0[1]);
+L1 := 0-Short*L0+(L0[1])+Short*(L1[1]);
+L2 := 0-Short*L1+(L1[1])+Short*(L2[1]);
+L3 := 0-Short*L2+(L2[1])+Short*(L3[1]);
+lmas := (L0 + 2*L1 + 2*L2 + L3)/6;
+G0 := (1 - Long)*hl2+Long*(G0[1]);
+G1 := 0-Long*G0+(G0[1])+Long*(G1[1]);
+G2 := 0-Long*G1+(G1[1])+Long*(G2[1]);
+G3 := 0-Long*G2+(G2[1])+Long*(G3[1]);
+lmal := (G0 + 2*G1 + 2*G2 + G3)/6;
+ppoT := (lmas-lmal)/lmal*100;
+ppoB := (lmal-lmas)/lmal*100;
+count := 0;
+for i := 1 to periodo do
+if (ppoT >= ppoT[i]) then
+count := count + 1
+else
+count := count + 0; 
+pctRankT := 100 * count / periodo;
+count2 := 0;
+for h := 1 to periodo do
+if (ppoB >= ppoB[h]) then
+count2 := count2 + 1
+else
+count2 := count2 + 0; 
+pctRankB := (100 * count2 / periodo) * (-1);
+if pctRankT >= 90 then
+paintbar(clred);
+if pctRankB <= -90 then
+paintbar(cllime);
+
+plot(pctRankT);
+plot2(pctRankB);
+
+end;

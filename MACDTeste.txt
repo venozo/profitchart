@@ -1,0 +1,35 @@
+input
+media_rapida(16);
+media_lenta(48);
+sinal(12);
+var
+sFast,sSlow,sTrigger,sMACD: Float;
+a,b,c,d : Float;
+begin
+sFast    := MediaExp(media_rapida, Close);
+sSlow    := MediaExp(media_lenta, Close);
+sTrigger := MediaExp(sinal, sFast - sSlow);
+sMACD    := MACD(media_lenta,media_rapida,sinal);
+a:= sTrigger;
+b:= sFast - sSlow;
+c:= b-a;
+begin  
+se (c > 0.01) e (c>c[1]) então setplotcolor(1,clverde) senão
+se (c > 0.01) e (c<c[1]) então setplotcolor(1,clverdeclaro);
+
+se (c < -0.01) e (c<c[1]) então setplotcolor(1,clvermelho) senão
+se (c < -0.01) e (c>c[1]) então setplotcolor(1,rgb(255,167,167));
+
+////regra de coloração Candle 
+se (c > 0.01) e (c>c[1]) então paintbar(clverde) senão
+se (c > 0.01) e (c<c[1]) então paintbar(clverdeclaro);
+
+se (c < -0.01) e (c<c[1]) então paintbar(clvermelho) senão
+se (c < -0.01) e (c>c[1]) então paintbar(rgb(255,167,167));
+plot(c);
+
+end;
+end;
+end;
+
+

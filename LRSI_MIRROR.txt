@@ -1,0 +1,400 @@
+//•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•//   
+//                                             //
+//           LAGUERRE RSI BY THELARK           //
+//                 ~ 2-17-14 ~                 //
+//                                             //
+//                     •/•                     //
+//                                             //
+//    https://www.tradingview.com/u/TheLark    //
+//                                             //
+//•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•/•//
+
+
+
+//inputs
+//g = input(0.75, title="Gamma")
+//ob = input(0.80,title="Over Bought")
+//os = input(0.20,title="Over Sold")
+//smooth = input(1,minval=1,title="Smoothing (1 = off)")
+//coloring = input(true,type=bool,title="3 colors?")
+
+//calc
+//p = c
+//L0 = ((1 - g)*p)+(g*nz(L0[1]))
+//L1 = (-g*L0)+nz(L0[1])+(g*nz(L1[1]))
+//L2 = (-g*L1)+nz(L1[1])+(g*nz(L2[1]))
+//L3 = (-g*L2)+nz(L2[1])+(g*nz(L3[1]))
+//cu = (L0>L1?L0-L1:0)+(L1>L2?L1-L2:0)+(L2>L3?L2-L3:0)
+//cd = (L0<L1?L1-L0:0)+(L1<L2?L2-L1:0)+(L2<L3?L3-L2:0)
+
+ //plots
+//lrsi=ema((cu+cd==0?-1:cu+cd)==-1?0:(cu/(cu+cd==0?-1:cu+cd)), smooth)
+//hline(ob)
+//hline(os)
+//col1 =  lrsi > lrsi[1] and lrsi > os ? #00FF7B : lrsi < lrsi[1] and lrsi < ob ? #FF3571 : lrsi == lrsi ? #ECA700 : #ECA700
+//col2 =  lrsi > lrsi[1] and lrsi > os ? #00FF7B : lrsi < lrsi[1] and lrsi < ob ? #FF3571 : lrsi < os ? #FF3571 : lrsi > ob ? #00FF7B : lrsi == lrsi ? #ECA700 : #ECA700
+//col = coloring ? col1 : col2
+//plot(lrsi, color=col, linewidth=2,style=line)
+
+//inputs2
+//g = input(0.75, title="Gamma")
+//ob = input(0.80,title="Over Bought")
+//os = input(0.20,title="Over Sold")
+//smooth = input(1,minval=1,title="Smoothing (1 = off)")
+//coloring = input(true,type=bool,title="3 colors?")
+
+//calc2
+//p2 = c2
+//L11 = ((1 - g2)*p2)+(g2*nz(L01[1]))
+//L11 = (-g2*L01)+nz(L01[1])+(g2*nz(L11[1]))
+//L21 = (-g2*L11)+nz(L11[1])+(g2*nz(L21[1]))
+//L31 = (-g2*L21)+nz(L21[1])+(g2*nz(L31[1]))
+//cu1 = (L01>L1?L01-L11:0)+(L11>L21?L11-L21:0)+(L21>L31?L21-L31:0)
+//cd1 = (L01<L11?L11-L01:0)+(L11<L21?L21-L11:0)+(L21<L31?L31-L21:0)
+
+//plots2
+//Neglrsi1=ema((c12+cd1==0?-1:cu1+cd1)==-1?0:(cu1/(cu1+cd1==0?-1:cu1+cd1)), smooth2)
+//hline(ob)
+//hline(os)
+//col32 =  lrsi1 > lrsi1[1] and lrsi2 > os ? #00FF7B : lrsi1 < lrsi1[1] and lrsi1 < ob ? #FF3571 : lrsi1 == lrsi1 ? #ECA700 : #ECA700
+//col42 =  lrsi1 > lrsi1[1] and lrsi2 > os ? #00FF7B : lrsi1 < lrsi1[1] and lrsi1 < ob ? #FF3571 : lrsi1 < os ? #FF3571 : lrsi1 > ob ? #00FF7B : lrsi1 == lrsi1 ? #ECA500 : #ECA500
+//col2 = coloring2 ? col12 : col22
+//plot2(lrsi1, color22=col22, linewidth=22,style=line)
+
+input
+ 
+   lGamma(0.75);
+  overBought(0.80);
+  overSold(0.20);
+  smooth(1);
+  coloring(true);
+   overBought2(0.80);
+  overSold2(0.20);
+  smooth2(1);
+  coloring2(true);
+  lGamma2(0.75);
+
+  periodo (4); 
+periodo1(17);
+Periodo2 (34);
+Periodo3(55);
+periodo4 (72); 
+periodo5(144);
+Periodo6 (305);
+
+Negperiodo (4); 
+Negperiodo1(17);
+NegPeriodo2 (34);
+NegPeriodo3(55);
+Negperiodo4 (72); 
+Negperiodo5(144);
+negPeriodo6 (305); 
+
+  
+var
+
+
+ p : SERIE;
+ p2: SERIE;
+  L0, L1, L2, L3, cu, dd, g, cd, lrsi: Float;
+
+  L01, L11, L21, L31, cu1, dd1, g1, cd1, lrsi1: Float;
+
+  mediaCalculation : Float;
+  mediaCalculation2 : Float;
+
+  col1, col2,col3,col4, Color : Integer;
+
+  col12, col22,col32,col42, Color2 : Integer;
+
+
+
+  speriodo: float;
+speriodo1: float;
+speriodo2: float;
+speriodo3: float;
+speriodo4: float;
+speriodo5: float; 
+speriodo6: float;
+
+Negsperiodo: float;
+Negsperiodo1: float;
+Negsperiodo2: float;
+Negsperiodo3: float;
+Negsperiodo4: float;
+Negsperiodo5: float;
+Negsperiodo6: float;
+  begin
+
+  g := lGamma;
+
+  p  := CLOSE;
+  L0 := ((1 - g)*p)+(g*L0[1]);
+  L1 := (-g*L0)+L0[1]+(g*L1[1]);
+  L2 := (-g*L1)+L1[1]+(g*L2[1]);
+  L3 := (-g*L2)+L2[1]+(g*L3[1]);
+ 
+
+  if ( L0 > L1 ) then
+  begin
+    cu := L0-L1;
+  end
+    else
+  begin
+    cu := 0;
+  end;
+
+  if ( L1 > L2 ) then
+    cu := cu + L1 - L2;
+
+  if ( L2 > L3 ) then
+    cu := cu + L2 - L3;
+    if ( L0 < L1 ) then
+  begin
+    cd := L1 - L0;
+  end
+    else
+  begin
+    cd := 0;
+  end;
+
+  if ( L1 < L2 ) then
+    cd := cd + L2 - L1;
+
+  if ( L2 < L3 ) then
+    cd := cd + L3 - L2;
+
+
+  if ( (cu+cd) = 0 ) then
+  begin
+    mediaCalculation := -1;
+  end
+    else
+  begin
+    mediaCalculation := cu + cd;
+  end;
+  if ( mediaCalculation = -1 ) then
+  begin
+    mediaCalculation := 0;
+  end
+    else
+  begin
+    if ( (cu+cd) = 0 ) then
+    begin
+      mediaCalculation := cu/Neg(1);
+    end
+      else
+    begin
+      mediaCalculation := cu/(cu+cd);
+    end;
+  end;
+
+  
+ lrsi := MediaExp(smooth, mediaCalculation);
+ if ( lrsi > lrsi[1] ) and ( lrsi > overSold ) then
+  begin
+    col1 := clGreen;
+  end
+    else if ( lrsi < lrsi[1] ) and ( lrsi < overBought ) then
+  begin
+     col1 := clRed;
+  end
+    else
+  begin
+    col1 := clYellow;
+  end;
+
+  if ( lrsi > lrsi[1] ) and ( lrsi > overSold ) then
+  begin
+    col2 := clGreen;
+  end
+    else if ( lrsi < lrsi[1] ) and ( lrsi < overBought ) then
+  begin
+     col2 := clRed;
+  end
+    else if ( lrsi < overSold ) then
+  begin
+    col2 := clRed;
+    end
+    else if ( lrsi > overBought ) then
+  begin
+    col2 := clGreen;
+  end
+    else
+  begin
+    col2 := clYellow;
+  end; 
+
+  if ( coloring ) then
+  begin
+    color := col1;
+  end
+    else
+  begin
+    color := col2;
+  end;
+
+
+
+ begin
+
+  g1 := lGamma2;
+
+  p2  := CLOSE;
+  L01 := ((1 - g1)*p2)+(g1*L01[1]);
+  L11 := (-g1*L01)+L01[1]+(g1*L11[1]);
+  L21 := (-g1*L11)+L11[1]+(g1*L21[1]);
+  L31 := (-g1*L21)+L21[1]+(g1*L31[1]);
+
+  if ( L01 > L11 ) then
+  begin
+    cu1 := L01-L11;
+  end
+    else
+  begin
+    cu1 := 0;
+  end;
+
+  if ( L11 > L21 ) then
+    cu1 := cu1 + L11 - L21;
+
+  if ( L21 > L31 ) then
+    cu1 := cu1 + L21 - L31;
+    if ( L01 < L11 ) then
+      begin
+    cd1 := L11 - L01;
+  end
+    else
+  begin
+    cd1 := 0;
+  end;
+
+  if ( L11 < L21 ) then
+    cd1 := cd1 + L21 - L11;
+
+  if ( L21 < L31 ) then
+    cd1 := cd1 + L31 - L21;
+
+
+  if ( (cu1+cd1) = 0 ) then
+  begin
+    mediaCalculation2 := -1;
+  end
+    else
+  begin
+    mediaCalculation2 := cu1 + cd1;
+  end;
+  if ( mediaCalculation2 = -1 ) then
+  begin
+    mediaCalculation2 := 0;
+  end
+      else
+  begin
+    if ( (cu1+cd1) = 0 ) then
+    begin
+      mediaCalculation2 := cu1/Neg(1);
+    end
+      else
+    begin
+      mediaCalculation2 := cu1/(cu1+cd1);
+    end;
+  end;
+   lrsi1 := MediaExp(smooth, mediaCalculation2);
+ if ( lrsi1 > lrsi1[1] ) and ( lrsi1 > overSold ) then
+  begin
+    col32 := clGreen;
+  end
+    else if ( lrsi1 < lrsi1[1] ) and ( lrsi1 < overBought ) then
+  begin
+     col32 := clRed;
+  end
+    else
+  begin
+    col32 := clYellow;
+  end;
+
+  if ( lrsi1 > lrsi1[1] ) and ( lrsi1 > overSold ) then
+  begin
+    col42 := clGreen;
+
+  end
+    else if ( lrsi1 < lrsi1[1] ) and ( lrsi1 < overBought ) then
+  begin
+     col42 := clRed;
+  end
+    else if ( lrsi1 < overSold ) then
+  begin
+    col42 := clRed;
+    end
+    else if ( lrsi1 > overBought ) then
+  begin
+    col42 := clGreen;
+  end
+    else
+  begin
+    col42 := clYellow;
+     end;
+    if ( coloring2 ) then
+  begin
+    color2 := col32;
+  end
+    else
+  begin
+    color2 := col42;
+  end;   
+  end; 
+     SetPlotColor(1, Color);
+  PaintBar(color); 
+  
+  se (fechamento > mediaexp(Periodo, close))
+       então paintbar(clverde) senão  
+   se (fechamento < mediaexp(periodo1,close))
+      então paintbar(clvermelho) senão
+      paintbar(clbranco);
+
+
+     SetPlotColor(1, color2);
+         PaintBar(color2);
+
+        se (fechamento > mediaexp(periodo, close))
+       então paintbar(clverde) senão  
+   se (fechamento < mediaexp(periodo1,close))
+      então paintbar(clvermelho) senão
+      paintbar(clbranco);
+    se (fechamento > mediaexp(periodo, close))
+       então paintbar(clverde) senão  
+   se (fechamento < mediaexp(periodo1,close))
+      então paintbar(clvermelho) senão
+      paintbar(clbranco); 
+
+   se (fechamento < mediaexp(negperiodo, close))
+       então paintbar(clvermelho) senão  
+   se (fechamento  > mediaexp(negperiodo1,close))
+      então paintbar(clverde) senão
+      paintbar(clbranco);
+    se (fechamento < mediaexp(negperiodo, close))
+       então paintbar(clvermelho) senão  
+   se (fechamento  > mediaexp(negperiodo1,close))
+      então paintbar(clverde) senão
+      paintbar(clbranco); 
+
+    
+ 
+     
+
+
+  Plot(lrsi + (color)); 
+  Plot2(Neg(lrsi+ (color)));
+  Plot3(lrsi1 + (Color2));
+  Plot4 (Neg(lrsi1 + (Color2)));
+  
+  
+   
+
+
+end;
+
+
+
+
+

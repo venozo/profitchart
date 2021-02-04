@@ -1,0 +1,21 @@
+input
+
+  Slow(26);
+  Fast(12);
+  Sinal(9);
+
+var
+ sNewIND: Float;
+ 
+begin;
+
+  sNewIND  := (MACD(Slow,Fast,Sinal)|1|);
+
+  Plot(sNewIND);
+  Plot2(Media(1,sNewIND));  
+  Plot3(Media(3,sNewIND));
+    
+      if ((Media(1,sNewIND)-(Media(3,sNewIND))) > 0)  Then PaintBar(clVerde) else PaintBar(clVermelho);
+
+end;
+

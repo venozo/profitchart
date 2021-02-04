@@ -1,0 +1,27 @@
+//PriorCote(2) = maxima do dia amterior
+//PriorCote(0) = fexamento dia anterior
+//PriorCote(3) = minima do dia anterior
+//PriorCote(1) = abertura do dia anterior
+//PriorCote(4) = ajuste do dia anterior
+var
+  a : integer;
+  
+begin
+
+   
+      //Se (Date >= CurrentDate) então
+        begin
+         a := FindBar(Date - 1,Time);
+         if (Date = sunday)then a:=a+1;
+      
+          plot(priorcote(2)[a]);
+          plot2(priorcote(2)[a * 2]);
+          plot3(priorcote(2)[a * 3]);
+          plot4(priorcote(2)[a * 4]);
+        
+        end;
+   
+
+end;
+;
+

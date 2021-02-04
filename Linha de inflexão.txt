@@ -1,0 +1,66 @@
+{
+Linha de inflexao
+Desenvolvido por José Moraes, é uma regra de coloração e indicador para auxílilio em tomada de decisão.
+Azul = Altista
+Vermelho = Baixista
+Cinza = Neutro ou Zerar
+Opera-se na direção do sinal o rompimento do candle que o antecedeu. 
+Obs.: Respeite sempre sua metodologia de trade e seu gerenciamento de risco.
+Contato: 71 99211-1516
+}
+
+Input
+ Periodo(5);
+ Sinal(9);
+var
+  nIndex, nLength, iTend  : Integer;
+  fSerie, fLinhaSinal, fLinhaPeriodo : Float;
+  
+begin
+  if (High > High[1] ) Then fSerie := MediaExp(3,High) 
+  else if (Low < Low[1] ) Then fSerie := MediaExp(3,Low)
+  else fSerie   := MedianPrice;
+  fLinhaPeriodo := MediaExp(Periodo,fSerie);
+  fLinhaSinal   := MediaExp(Floor(Sinal-Periodo),MediaExp(Floor(Sinal-Periodo/2),fSerie));
+  SetPlotWidth(1,1);
+  SetPlotColor(1,clCinza);
+  Plot(fLinhaSinal);
+  if (fLinhaSinal > Media(2,fLinhaSinal)) Then
+    Begin
+      if (iTend < 0) or (Close < Media(3,MedianPrice)) Then
+        Begin
+          PaintBar(clCinza);
+          SetPlotColor(3,clCinza);
+        End
+      else
+        Begin 
+          PaintBar(clAzul);
+          SetPlotColor(3,clNavy);
+         End;
+      iTend := 1;
+      SetPlotColor(2,clAzul);
+      SetPlotWidth(2,2);
+      Plot2(fLinhaPeriodo);
+      SetPlotWidth(3,1);
+      Plot3(fLinhaSinal);
+    end
+  else
+    Begin
+      if (iTend > 0) or (Close > Media(3,MedianPrice)) Then
+        Begin
+          PaintBar(clCinza);
+          SetPlotColor(2,clCinza);
+        End
+      else
+        Begin
+          PaintBar(clVermelho);
+          SetPlotColor(2,clMarrom);
+        End;
+      iTend := -1;
+      SetPlotWidth(2,1);
+      Plot2(fLinhaSinal);
+      SetPlotColor(3,clVermelho);
+      SetPlotWidth(3,2);
+      Plot3(fLinhaPeriodo);
+    End;
+end;

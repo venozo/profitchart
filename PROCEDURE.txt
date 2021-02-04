@@ -1,0 +1,29 @@
+var
+  x,sDiff : Float;
+ 
+procedure PintaBarra(sPaintValue : Float); 
+//funçao pinta barra ,recebe um valor flutuante "serie de dados numeros aleatorios"
+begin
+  if sPaintValue > 0 then  //verefica se o valor recebido é maior que 0 ou menor
+    PaintBar(clGreen);     // se for maior que 0 pinta verde
+  if sPaintValue < 0 then
+    PaintBar(clAmarelo);   //se for menor que 0 pinta amarelo
+end;
+ 
+function MyDiff(sValue1, sValue2 : Float): Float;
+begin
+  Result := sValue1 - sValue2;
+end;
+ 
+begin
+x:=close;
+  sDiff := MyDiff(CLOSE[1],OPEN);
+  PintaBarra(sDiff);
+ // Plot(highest(sDiff,5));
+  if(highest(sDiff,14)[1]<=highest(sDiff,7))then
+  begin
+  x:=x[1];
+  plot2(x);
+  end;
+    
+end;

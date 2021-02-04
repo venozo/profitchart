@@ -1,0 +1,3 @@
+begin
+  Plot((CloseD(0)+CloseD(1)+CloseD(2)+CloseD(3)+CloseD(4)+CloseD(5)+CloseD(6)+CloseD(7)+CloseD(8)+CloseD(9))/9);
+end;

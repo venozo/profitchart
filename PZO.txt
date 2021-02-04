@@ -1,0 +1,23 @@
+//PZO_Ind (Indicator)
+//by Fábio Trevisan
+//{ TASC Article, May, 2011, "In The Volume Zone" }
+//{ Volume Zone Oscillator }
+			
+input
+	Period( 17 );		
+
+var
+	R:float;
+	VP:float;
+	TV:float;
+	PZO_i:float;
+
+begin
+R:= Sign( Close - Close[1] ) * Close;
+VP:= XAverage( R, Period ) ;
+TV:= XAverage( Close, Period ) ;
+
+if TV <> 0 then 	PZO_i:= VP / TV * 100 ;
+
+Plot(PZO_i) ;
+end;

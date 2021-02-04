@@ -1,0 +1,55 @@
+var
+  suporte17,suporte34,suporte72,suporte144,suporte305,suporte610,suporte1292,suporte2584 : boolean;
+  media2584,media1292,media610,media500,media305,media200,media144,media89,media72,media42,media34,media21,media17,media13,media8,media4   : float;
+begin
+  media4 := mediaexp(4,close);
+  media8 := mediaexp(8,close);
+  media13 := mediaexp(13,close);
+  media17 := mediaexp(17,close);
+  media21 := mediaexp(21,close);
+  media34 := mediaexp(34,close);
+  media42 := mediaexp(42,close);
+  media72 := mediaexp(72,close);
+  media89 := mediaexp(89,close);
+  media144 := mediaexp(144,close);
+  media200 := mediaexp(200,close);
+  media305 := mediaexp(305,close);
+  media500 := mediaexp(500,close);
+  media610 := mediaexp(610,close);
+  media1292 := mediaexp(1292,close);
+  media2584 := mediaexp(2584,close);
+  //SUPORTES
+  suporte17 := (close > media13) and (close > media17) and (media4 > media8) and (media8 > media17);
+  suporte34 := (close > media21) and (close > media34) and (media8 > media17) and (media17 > media34);
+  suporte72 := (close > media42) and (close > media72) and (media17 > media34) and (media34 > media72);
+  suporte144 := (close > media89) and (close > media144) and (media34 > media72) and (media72 > media144);
+  suporte305 := (close > media200) and (close > media305) and (media72 > media144) and (media144 > media305);
+  suporte610 := (close > media500) and (close > media610) and (media144 > media305) and (media305 > media610);
+  suporte1292 := (close > media610) and (close > media1292) and (media144 > media305) and (media305 > media610) and (media610 > media1292);
+  suporte2584 := (close > media1292) and (close > media2584) and (media305 > media610) and (media610 > media1292) and (media1292 > media2584);
+  SetPlotWidth(1,2);
+  SetPlotColor(1, clPurple);
+  if suporte17 then
+    plot(media17)
+  else 
+    noplot(1);
+  SetPlotWidth(2,2);
+  SetPlotColor(2, clAqua);
+  if suporte34 then
+    plot2(media34)
+  else 
+    noplot(2);
+  SetPlotWidth(3,2);
+  SetPlotColor(3, clMaroon);
+  if suporte72 then
+    plot3(media72)
+  else 
+    noplot(3);
+  SetPlotWidth(4,2);
+  SetPlotColor(4, clOlive);
+  if suporte144 then
+    plot4(media144)
+  else 
+    noplot(4);
+end;
+

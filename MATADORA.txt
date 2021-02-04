@@ -1,0 +1,56 @@
+////////////////////////////////////
+//
+// salvar em formato psf ou 
+// editar no editor de estrategias(recomendado)
+//
+////////////////////////////////////
+{
+ indicador 
+
+}
+ /////////////////////////////////////////////////////////
+//                                                     //
+//                  Bollinger Breakout                 //
+//                                                     //
+//                 by: Rafael Peres                    //
+//                                                     //
+//     Parâmetros      Período: 20                     //
+//                     Desvio: 1.0                     //
+//                                                     //
+//     tipo(modo)      Aritmético 0                    //
+//                     Exponencial 1                   //
+//                     Welles Wilder 2                 //
+//                     Ponderada 3                     //
+//                                                     //
+/////////////////////////////////////////////////////////
+
+input
+Periodo(20);
+Desvio(1.0);
+Modo(0);
+
+begin
+  // Verifica se possui posição vendida em aberto
+  if (IsSold) then
+    begin
+      // Cobre a posição com uma compra à mercado
+      if (Fechamento > Abertura) and (Fechamento > Media(Periodo, Fechamento)) then
+        BuyToCoverAtMarket;
+                          
+    end     
+  // Verifica se possui posição comprada em aberto
+  else if (IsBought) then
+    begin
+      // Cobre a posição com uma venda à mercado
+      if (Fechamento < Abertura) and (Fechamento < Media(Periodo, Fechamento)) then
+        SellToCoverAtMarket;
+                           
+    end
+
+  // Verifica se deve abrir uma posição     
+  else if Fechamento > BollingerBands(Desvio, Periodo, Modo)|0| then
+    BuyAtMarket
+  else if Fechamento < BollingerBands(Desvio, Periodo, Modo)|1| then
+    SellShortAtMarket;
+end;
+

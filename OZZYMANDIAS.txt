@@ -1,0 +1,90 @@
+input
+input_Length(9);
+ATR_Length(100);
+var
+Next_Trend, Trend : integer;
+Lowest_Low, MA_Low, Highest_High, MA_High, ATR_Half, Low_Max, High_Min, Arrow_Shift, Line_HT : float;
+function fMax (valor_A:float; valor_B:float):float;
+begin
+Result := 0;
+if (valor_A > valor_B) then
+Result := valor_A
+else
+Result := valor_B;
+end;
+function fMin (valor_A:float; valor_B:float):float;
+begin
+Result := 0;
+if (valor_A < valor_B) then
+Result := valor_A
+else
+Result := valor_B;
+end;
+begin
+Lowest_Low := lowest(low, input_Length);
+MA_Low := Media(input_Length, low);
+Highest_High := highest(high, input_Length);
+MA_High := Media(input_Length, high);
+ATR_Half := AvgTrueRange(ATR_Length, 1) / 2;
+if (Next_Trend[1] = 0) then
+Next_Trend := 0
+else
+Next_Trend := Next_Trend[1];
+if (Trend[1] = 0) then
+Trend := 0
+else
+Trend := Trend[1];
+if (Low_Max[1] = 0) then
+Low_Max := low[1]
+else
+Low_Max := Low_Max[1];
+if (High_Min[1] = 0) then
+High_Min := high[1]
+else
+High_Min := High_Min[1];
+if (Next_Trend = 1) then
+begin
+Low_Max := fMax(Low_Max, Lowest_Low);
+if (MA_High < Low_Max) and (close < low[1]) then
+begin
+Trend := 1;
+Next_Trend := 0;
+High_Min := Highest_High;
+end;
+end;
+if (Next_Trend = 0) then
+begin
+High_Min := fMin(High_Min, Highest_High);
+if (MA_Low > High_Min) and (close > high[1]) then
+begin
+Trend := 0;
+Next_Trend := 1;
+Low_Max := Lowest_Low;
+end;
+end;
+Arrow_Shift := 0.0;
+Line_HT := close;
+if (Trend = 0) then
+begin
+if (Trend[1] = 0) then
+Line_HT := fMax(Low_Max, Line_HT[1])
+else if (Trend[1] = 0) then
+Arrow_Shift := -AvgTrueRange(10, 1);
+//azul
+SetPlotColor(1, RGB(30,144,255));
+PaintBar(RGB(30,144,255));
+end;
+if (Trend = 1) then
+begin
+if (Trend[1] = 1) then
+Line_HT := fMin(High_Min, Line_HT[1])
+else if (Trend[1] = 0) then
+Arrow_Shift := AvgTrueRange(10, 1);
+//rosa
+SetPlotColor(1, RGB(255,105,180));
+PaintBar(RGB(255,105,180));
+end;
+plot(Line_HT);
+//plot2(Line_HT - ATR_HALF);
+//plot3(Line_HT + ATR_HALF);
+end;

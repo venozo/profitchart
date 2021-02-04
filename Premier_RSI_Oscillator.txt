@@ -1,0 +1,31 @@
+input
+lrsi(14);
+stochlen(8);
+smoothlen(25);
+
+var
+r:float;
+sk:float;
+len:integer;
+nsk:float;
+ss:float;
+expss:float;
+pro:float;
+begin
+r:= rsi(lrsi,0);
+sk :=(100 * (r - lowest(r,stochlen)) / (highest(r,stochlen) - lowest(r,stochlen)));
+len := round(sqrt( smoothlen ));
+nsk := 0.1 * ( sk - 50 );
+ss := mediaexp(len,mediaexp(len,nsk));
+expss := exp( ss );
+pro := ( expss - 1 )/( expss + 1 ); 
+if pro > 0.9 Then
+setplotcolor(1,clred);
+if pro < -0.9 Then
+setplotcolor(1,cllime);
+plot(pro);
+end;
+
+
+
+

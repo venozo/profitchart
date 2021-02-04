@@ -1,0 +1,42 @@
+//
+// @author LazyBear 
+// List of all my indicators: https://www.tradingview.com/v/4IneGo8h/
+//
+//study("Enhanced Index [LazyBear]", shorttitle="EIDX_LB")
+
+//src=close
+//length=input(14)
+//lengthMA=input(8)
+//dnm=(highest(src, length) - lowest(src, length))
+//closewr=2*(src-sma(src, round(length/2)))/dnm
+//ul=hline(1, color=red), ll=hline(-1, color=green), hline(0)
+//fill(ul,ll)
+//plot(closewr, color=green, linewidth=1)
+//plot(ema(closewr, lengthMA), color=red)
+
+
+input
+length(14);
+lengthMA(8);
+
+var
+src : float;
+dnm : float;
+closewr : float;
+ul : float;
+fill : float;
+
+
+begin
+src := close;
+dnm := highest(src,length) - lowest(src,length);
+closewr := ( 2* ( src-(media(round(length/2),close) ) ) /dnm );
+
+setplotcolor(1,clgreen);
+plot(closewr);
+
+setplotcolor(2,clred);
+plot2(mediaexp(lengthMA,closewr));
+
+
+end;

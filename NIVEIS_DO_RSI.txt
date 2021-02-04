@@ -1,0 +1,16 @@
+var
+  alto,baxo : float;
+begin
+  if (RSI(9,0) > 70) then
+    alto := highest(high,5);
+
+   plot(alto);
+   
+ ///////////////////
+   if (RSI(9,0) < 35) then
+    baxo := lowest(low,5);
+    plot2(baxo);
+
+
+end;
+

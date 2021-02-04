@@ -1,0 +1,46 @@
+
+input
+  BoxInferior(200);
+  PeríodoAgressão(17);
+  DP(3);
+begin
+  Plot(AgressionVolBuy + AgressionVolSell);
+  Se AgressionVolBuy > AgressionVolSell então
+    início
+      Plot2(AgressionVolBuy);
+      Plot3((AgressionVolBuy + AgressionVolSell) / 2);
+      Setplotcolor(3,clgreen);
+    fim;
+  Se AgressionVolBuy < AgressionVolSell então
+    início
+      Plot2(AgressionVolSell);
+      Plot3((AgressionVolBuy + AgressionVolSell) / 2);
+      Setplotcolor(3,clred);
+    fim;
+  Se AgressionVolBuy = AgressionVolSell então
+    início
+      Plot2(AgressionVolSell);
+      Setplotcolor(2,clwhite);
+    fim;
+  Plot4( - BoxInferior);
+  //
+  Se (close > open) e (AgressionVolBuy < AgressionVolSell) então
+    Setplotcolor(2,clyellow)
+  else Se (close < open) e (AgressionVolBuy > AgressionVolSell) então
+    Setplotcolor(2,clyellow)
+  else Se (close > open) e (AgressionVolBuy > AgressionVolSell) então
+    Setplotcolor(2,cllime)
+  else Se (close < open) e (AgressionVolBuy < AgressionVolSell) então
+    Setplotcolor(2,clmaroon);
+  //
+  Se AgressionVolBuy = AgressionVolSell então
+    setplotcolor(4,clwhite)
+  else Se (AgressionVolBuy > AgressionVolSell) e (AgressionVolBuy > StdDevs(AgressionVolBuy,PeríodoAgressão) * dp) então
+    setplotcolor(4,cllime)
+  else Se (AgressionVolSell > AgressionVolBuy) e (AgressionVolSell > StdDevs(AgressionVolSell,PeríodoAgressão) * dp) então
+    setplotcolor(4,clmaroon)
+  else Se volume = 0 então
+    setplotcolor(4,clgray)
+  else 
+    Setplotcolor(4,clblack);
+end;
