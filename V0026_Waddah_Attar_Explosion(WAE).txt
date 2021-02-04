@@ -1,0 +1,59 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	indicador ;
+Version	: 	1.0
+name: WAE(Wadad_Atar_Explosion)
+descrição:
+Plota um histograma das zonas calculado sobre o volume*medias
+}
+input
+  sensitivity(150);
+  fastLength(20);
+  slowLength(40);
+  channelLength(20);
+  mult(2.0);
+  deadZone(0);
+var
+  fastMA,fastMA2,fastMA3,fastMA4             : float;
+  slowMA,slowMA2,slowMA3,slowMA4             : float;
+  calc_macd,calc_macd2,calc_macd3,calc_macd4 : float;
+  basis                                      : float;
+  dev                                        : float;
+  calc_BBUpper                               : float;
+  calc_BBLower                               : float;
+  t1,t2                                      : float;
+  e1                                         : float;
+  trendUp,trenddown                          : float;
+begin
+  fastMA := mediaexp(fastLength,close);
+  slowMA := mediaexp(slowLength,close);
+  calc_macd := fastMA - slowMA;
+  fastMA2 := mediaexp(fastLength,close[1]);
+  slowMA2 := mediaexp(slowLength,close[1]);
+  calc_macd2 := fastMA2 - slowMA2;
+  fastMA3 := mediaexp(fastLength,close[2]);
+  slowMA3 := mediaexp(slowLength,close[2]);
+  calc_macd3 := fastMA3 - slowMA3;
+  fastMA4 := mediaexp(fastLength,close[3]);
+  slowMA4 := mediaexp(slowLength,close[3]);
+  calc_macd4 := fastMA4 - slowMA4;
+  basis := media(channellength,close);
+  dev := mult * stddevs(close,channellength);
+  calc_BBUpper := basis + dev;
+  calc_BBLower := basis - dev;
+  t1 := (calc_macd - calc_macd2) * sensitivity;
+  t2 := (calc_macd3 - calc_macd4) * sensitivity;
+  e1 := calc_BBUpper - calc_BBLower;
+  if t1 >= 0 then
+    trendUp := t1
+  else 
+    trendup := 0;
+  if t1 < 0 then
+    trendDown := ( - 1 * t1)
+  else 
+    trenddown := 0;
+  plot(trendUp);
+  plot2(trendDown);
+  plot3(e1);
+  plot4(deadZone);
+end;

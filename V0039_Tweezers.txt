@@ -1,0 +1,67 @@
+input
+  ema(6);
+var
+  low_1       : float;
+  low_2       : float;
+  open_2      : float;
+  open_1      : float;
+  match_lows  : boolean;
+  sprici_up   : boolean;
+  ml          : boolean;
+  prev_p_1    : float;
+  open_3      : float;
+  lo          : integer;
+  close_1     : float;
+  cl          : integer;
+  match_highs : boolean;
+  mh          : boolean;
+  high_2      : float;
+  high_1      : float;
+  sprici_down : boolean;
+  ho          : integer;
+  ch          : integer;
+begin
+  low_1 := low[1];
+  low_2 := low[2];
+  open_2 := open[2];
+  open_1 := open[1];
+  open_3 := open[3];
+  close_1 := close[1];
+  high_2 := high[2];
+  high_1 := high[1];
+  prev_p_1 := mediaexp(ema,close);
+  ml := false;
+  ml := (low_2 = low) and (open_2 = open_1);
+  match_lows := false;
+  match_lows := (low_1 = low) or ml;
+  mh := false;
+  mh := (high_2 = high) and (open_2 = open_1);
+  match_highs := false;
+  match_highs := (high_1 = high) or mh;
+  if low = open then
+    lo := 1
+  else 
+    lo := 0;
+  if close_1 = low_1 then
+    cl := 1
+  else 
+    cl := 0;
+  if high = open then
+    ho := 1
+  else 
+    ho := 0;
+  if close_1 = high[1] then
+    ch := 1
+  else 
+    ch := 0;
+  sprici_up := false;
+  sprici_up := (prev_p_1 > open) and match_lows and (open_3 > open_2) and (open_2 > open_1) and (open_1 > open) and (lo = 0) and (cl = 0);
+  sprici_down := false;
+  sprici_down := (prev_p_1 <= open) and match_highs and (open_3 < open_2) and (open_2 < open_1) and (open_1 < open) and (ho = 0) and (ch = 0);
+  if sprici_up then
+    paintbar(cllime)
+  else if sprici_down then
+    paintbar(clred)
+  else 
+    paintbar(clbranco);
+end;

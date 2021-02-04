@@ -1,0 +1,24 @@
+input
+  PeriodoTEMA(21);
+  Source(close);
+var
+  TEMA : Float;
+begin
+  TEMA := (3 * mediaexp(PeriodoTEMA,Source)) - (3 * mediaexp(PeriodoTEMA,mediaexp(PeriodoTEMA,Source))) + mediaexp(PeriodoTEMA,mediaexp(PeriodoTEMA,mediaexp(PeriodoTEMA,Source)));
+  if close > tema then
+    paintbar(cllime);
+  if close < tema then
+    paintbar(clred);
+  plot(TEMA);
+end;
+
+
+
+
+
+
+
+
+
+
+                        

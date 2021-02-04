@@ -1,0 +1,33 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	indicador ;
+Version	: 	1.0
+name: WEISS_WAVE_TOP_VOLUM
+descrição:
+Histograma calculado sobre detector de topos/fundos ponderado pelo volume
+}
+input
+  iPeriodoTBD(2);
+  iPeriodoTBD2(4);
+var
+  vVolume      : real;
+  vCor         : integer;
+  vTBDatual    : float;
+  vTBDanterior : float;
+begin
+  if not LastBarOnChart then
+    if (TopBottomDetector(iPeriodoTBD) <> 0) then
+      begin
+        vVolume := 0;
+        vTBDanterior := vTBDatual;
+        vTBDatual := TopBottomDetector(iPeriodoTBD);
+        if (vTBDanterior > vTBDatual) then
+          vCor := clgreen
+        else if (vTBDanterior < vTBDatual) then
+          vCor := clred;
+      end
+    else 
+      vVolume := vVolume[1] + volume;
+  plot(vVolume);
+  SetPlotColor(1,vCor);
+end;

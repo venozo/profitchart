@@ -1,0 +1,16 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	indicador ;
+Version	: 	1.0
+name: ZCCI_IFR
+descrição:
+Comparação do RSI com O CCI de diferentes escalas de fator
+}
+input
+IFR_Period(14);
+CCI_Period(14);
+IFR_Scale_Factor(10);
+begin
+  Plot(IFR_Scale_Factor * (IFR(IFR_Period) - 50));//IFR com a escala deslocada para o zero
+  Plot2(cci(CCI_Period));//CCI normal
+end;

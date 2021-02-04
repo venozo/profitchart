@@ -1,0 +1,41 @@
+input
+pd(22); //periodo stddev high
+bbl(20);//periodo bollinger
+mult(2.0); //bollinger desvio
+lb(50);
+ph(0.85);
+pl(1.01);
+
+
+var
+wvf:float;
+sdev:float;
+midline:float;
+lowerband:float;
+upperband:float;
+rangehigh:float;
+rangelow:float;
+col:float;
+cor:float;
+
+begin
+wvf := ((highest(close, pd)-low)/(highest(close, pd)))*100; 
+sDev := mult * stddevs(wvf, bbl);
+midLine := media(bbl,wvf);
+lowerBand := midLine - sDev;
+upperBand := midLine + sDev;
+rangeHigh := (highest(wvf, lb)) * ph;
+rangeLow := (lowest(wvf, lb)) * pl;
+if (wvf>= upperband) or (wvf >= rangehigh) then
+  cor:=wvf
+else 
+  cor:=0;
+plot(cor);
+plot2(wvf - cor);
+end;
+
+
+
+
+
+

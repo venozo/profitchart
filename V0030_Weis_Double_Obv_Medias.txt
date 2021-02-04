@@ -1,0 +1,54 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	indicador ;
+Version	: 	1.0
+name: Wave_Weiss_OBV
+descrição:
+Plota um Oscilador baseado em agressao de compra e venda acumulados ponderados pelo OBV
+}
+//Weis Wave of Obv win XAverage
+//Fábio Trevisan abril 2020
+input
+  fast(8);
+  slow(34);
+var
+  acc,acc2       : Real;
+  nVolume,nMedia : Float;
+  nMedia2        : Float;
+begin
+  nMedia := mediaexp(fast,Obv) / 1000000;
+  nMedia2 := mediaexp(slow,Obv) / 1000000;
+  nVolume := abs(obv);
+  if ((nMedia2 > nMedia2[1]) and (nMedia2[1] < nMedia2[2])) or ((nMedia2 < nMedia2[1]) and (nMedia2[1] > nMedia2[2])) then
+    begin
+      acc2 := nVolume;
+    end
+  else 
+    begin
+      acc2 := acc2[1] + nVolume;
+    end;
+  if ((nMedia2 < nMedia2[1])) then
+    begin
+      plot(acc2);
+    end
+  else 
+    begin
+      plot2(acc2);
+    end;
+  if ((nMedia > nMedia[1]) and (nMedia[1] < nMedia[2])) or ((nMedia < nMedia[1]) and (nMedia[1] > nMedia[2])) then
+    begin
+      acc := nVolume;
+    end
+  else 
+    begin
+      acc := acc[1] + nVolume;
+    end;
+  if ((nMedia < nMedia[1])) then
+    begin
+      plot3(acc);
+    end
+  else 
+    begin
+      plot4(acc);
+    end;
+end;

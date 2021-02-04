@@ -1,0 +1,43 @@
+{
+Region_trade_MArket
+interessante a coloração
+}
+input
+  rsiPeriod(11);
+  bandLength(31);
+  lengthrsipl(1);
+  lengthtradesl(9);
+var
+  r      : float;
+  ma     : float;
+  offs   : float;
+  up     : float;
+  dn     : float;
+  mid    : float;
+  fastma : float;
+  slowma : float;
+begin
+  r := rsi(rsiPeriod,0);
+  ma := media(bandLength,r);
+  offs := (1.6185 * stddevs(r,bandLength));
+  up := ma + offs;
+  dn := ma - offs;
+  mid := (up + dn) / 2;
+  fastMA := media(lengthrsipl,r);
+  slowMA := media(lengthtradesl,r);
+  if (fastma > slowma) then
+    begin
+      setplotcolor(1,cllime);
+      paintbar(cllime);
+    end;
+  if (fastma < slowma) then
+    begin
+      setplotcolor(1,clred);
+      paintbar(clred);
+    end;
+  //plot(slowMA);
+  plot(fastMA);
+  plot2(up);
+  plot3(dn);
+  plot4(mid);
+end;

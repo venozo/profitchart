@@ -1,0 +1,52 @@
+
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	Indicador;
+Version	: 	1.0
+name: VWAP_DELTA
+descrição:
+plota um histograma de agressao sobre a vwap calculada ponderada pelo delta
+}//VWAP of DELTA
+input
+Tipo(1); //1-Linhas 2-Histograma
+var 
+vwap1 : float;
+histogram : float;
+pv : float;
+Totalvolume : float;
+Barfromstart : integer;
+OncePerDay : float; 
+begin 
+If date > date[1] 
+then OncePerDay := 0  ;
+IF (OncePerDay = 0 ) then 
+begin
+OncePerDay := 1 ;	
+Barfromstart := 0;
+pv:= AccAgressSaldo(1) * volume;
+Totalvolume:=volume;
+vwap1:=pv/totalvolume;
+end
+ELSE
+begin
+Barfromstart:=Barfromstart[1]+1;
+   pv:=pv[1] + AccAgressSaldo(1) * volume;
+   Totalvolume:= Totalvolume[1] + volume;
+   vwap1:= pv/Totalvolume;
+end;
+   histogram:= AccAgressSaldo(1) - vwap1; 
+   IF Tipo = 1 then 
+begin
+   Plot(AccAgressSaldo(1)); 
+   IF AccAgressSaldo(1) > vwap1 THEN SETPLOTCOLOR(1,clazulclaro) ELSE
+   IF AccAgressSaldo(1) < vwap1 THEN SETPLOTCOLOR(1,clfucsia) ELSE
+   SETPLOTCOLOR(1,clcinza); 
+   Plot2(vwap1);SETPLOTCOLOR(2,clamarelo);
+end ELSE
+   If Tipo = 2 then
+   Plot(histogram);
+ //Regra Coloração
+   IF AccAgressSaldo(1) > vwap1 THEN PAINTBAR(clazulclaro) ELSE
+   IF AccAgressSaldo(1) < vwap1 THEN PAINTBAR(clfucsia) ELSE
+   PAINTBAR(clcinza);
+end;

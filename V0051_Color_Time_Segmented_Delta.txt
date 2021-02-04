@@ -1,0 +1,12 @@
+//Time Segmented Delta
+input
+Period(9);
+var
+rates,key,trend:float;
+begin
+  rates:= AccAgressSaldo(1) - AccAgressSaldo(1)[Period];
+  Plot((rates));
+  if rates > 0 then setplotcolor(1,clblue) else setplotcolor(1,clmaroon);
+  //Coloração
+  if rates > 0 then paintbar(clblue) else paintbar(clmaroon); 
+end;

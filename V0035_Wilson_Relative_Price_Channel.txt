@@ -1,0 +1,24 @@
+input
+  periods(34);
+  smoothing(1);
+  overbought(70);
+  oversold(30);
+  upperNeutralZone(55);
+  lowerNeutralZone(45);
+var
+  iRSI : float;
+  OB   : float;
+  OS   : float;
+  NZU  : float;
+  NZL  : float;
+begin
+  iRSI := rsi(periods,0);
+  OB := (mediaexp(smoothing,iRSI - overbought));
+  OS := (mediaexp(smoothing,iRSI - oversold));
+  NZU := (mediaexp(smoothing,iRSI - upperNeutralZone));
+  NZL := (mediaexp(smoothing,iRSI - lowerNeutralZone));
+  plot(close - (close * (OS / 100)));
+  plot2(close - (close * (OB / 100)));
+  plot3(close - (close * (NZU / 100)));
+  plot4(close - (close * (NZL / 100)));
+end;

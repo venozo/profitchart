@@ -1,0 +1,45 @@
+var
+  istopo  : integer;
+  isfundo : integer;
+  ebaixa  : integer;
+  ealta   : integer;
+  ///////////////////////////////////////////////////////////////
+  begin
+    istopo := 0;
+    isfundo := 0;
+    ebaixa := 0;
+    ealta := 0;
+    ///////////////////////////////////////////////////////////////
+    begin
+      if (close[2] < close[1]) and (close[1] > close) then
+        istopo := 1;
+      if (close[2] > close[1]) and (close[1] < close) then
+        isfundo := 1;
+    end;
+    ///////////////////////////////////////////////////////////////
+    begin
+      if (istopo[1] = 1) and (isfundo[1] = 0) then
+        ebaixa := 1
+      else if (istopo[1] = 0) and (isfundo[1] = 1) then
+        ealta := 1;
+    end;
+    ///////////////////////////////////////////////////////////////
+    begin
+      if (ebaixa[1] > 0) and (ealta[1] = 0) and (isfundo[1] = 0) then
+        ebaixa := ebaixa[1] + 1;
+      if (ebaixa[1] = 0) and (ealta[1] > 0) and (istopo[1] = 0) then
+        ealta := ealta[1] + 1;
+    end;
+    ///////////////////////////////////////////////////////////////
+    begin
+      if (istopo = 1) and (isfundo = 0) then
+        paintbar(clblue);
+      if (ebaixa > 0) and (ealta = 0) and (isfundo = 0) then
+        paintbar(clred)
+      else if (istopo = 0) and (isfundo = 1) then
+        paintbar(clyellow);
+      if (ebaixa = 0) and (ealta > 0) and (istopo = 0) then
+        paintbar(clgreen);
+    end;
+    ///////////////////////////////////////////////////////////////
+  end;

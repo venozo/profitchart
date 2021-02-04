@@ -1,0 +1,417 @@
+///////////
+//ATENCAO//
+///////////
+// INDICADOR FEITO POR GABRIEL MARTINS ALVIM PARA USO GRATUITO DE TODA A COMUNIDADE DO PROFITCHART.
+// INDICADORES FEITOS POR MIM SEMPRE SERAO GRATUITOS, DE CODIGO ABERTO E SEM DATA DE EXPIRACAO.
+// INDICADOR COMPARTILHADO EXCLUSIVAMENTE NA COMUNIDADE DO PROFITCHART NO FACEBOOK:
+// https://www.facebook.com/groups/estrategiasprofit/
+// MEU FACEBOOK PARA CONTATO:
+// https://www.facebook.com/gabrielmartins28
+// ``A VITORIA ESTA RESERVADA PARA AQUELES QUE ESTAO DISPOSTOS A PAGAR O PRECO`` - SUN TZU - A ARTE DA GUERRA
+/////////////
+//COMO USAR//
+/////////////
+// CASO QUEIRA QUE O INDICADOR SEJA APRESENTADO COMO HISTOGRAMA, MUDAR VALOR DE Modo_Histograma DE 0 PARA 1
+// NOS PARAMETROS DO INDICADOR HAVERA UM CAMPO ESCRITO INDICADOR.
+// SELECIONE QUAL INDICADOR DESEJA PROCURAR DIVERGENCIAS ATRAVES DOS CODIGOS:
+// 1- ZERO LAG MACD
+// 2- MACD CONVENCIONAL
+// 3- DIDI INDEX
+// 4- ESTOCASTICO LENTO
+// 5- OBV
+// 6- RSI
+// 7- CCI
+// 8- SQUEEZE MOMENTUM INDICATOR
+// 9- MONEY FLOW INDEX
+// APOS SELECIONAR O INDICADOR, CONFIGURE OS PARAMETROS DELE COMO DESEJAR
+// NOMENCLATURA DOS PARAMETROS E INDICADOR CORRESPONDENTE:
+// ZLMACD_ : ZERO LAG MACD
+// MACD_ : MACD CONVENCIONAL
+// DIDI_ : DIDI INDEX
+// SLOWSTOCH_ : ESTOCASTICO LENTO
+// OBV_ : ON BALANCE VOLUME
+// RSI_ : RELATIVE STRENGTH INDEX
+// CCI_ : COMMODITY CHANNEL INDEX
+// SQUEEZE_ : SQUEEZE MOMENTUM INDICATOR
+// MFI_ : MONEY FLOW INDEX
+// PARA FAZER BACKTEST COM A REGRA DE EXECUCAO BASTA DEFINIR O HORARIO DE INICIO E TERMINO CONFORME ABAIXO
+// EXEMPLO - COMECAR AS 9:00 E TERMINAR AS 16:00 BASTA COLOCAR Inicio_Execucao(0900) E Fim_Execucao(1600)
+// DEFINIR STOP GAIN/LOSS EM PONTOS(INDICE) OU TICKS(DOLAR) ATRAVES DOS PARAMETROS Stop_Gain E Stop_Loss
+// DEFINIR OS PARAMETROS DO INDICADOR QUE DESEJAR UTILIZAR
+// CLICAR NA ABA GRAFICO DENTRO EDITOR E ESCOLHER O ATIVO E TEMPO GRAFICO QUE DESEJA FAZER O BACKTEST
+// VOLTAR PARA A ABA EDITOR E CLICAR NA SETA VERDE
+// POR FIM CLICAR NA ABA ESTATISTICAS E VER O RESULTADO
+///////////////
+//PATCH NOTES//
+///////////////
+// VERSAO 1.0 - 15/01/2020
+// INICIO DO PROJETO
+// ZERO LAG MACD ADICIONADO
+// CORRECOES DE FUNCIONAMENTO NO CODIGO
+// VERSAO 1.1 - 21/01/2020
+// MACD CONVENCIONAL ADICIONADO
+// OPCAO DE ESCOLHA DE INDICADOR ADICIONADA
+// VERSAO 1.2 - 22/01/2020
+// DIDI INDEX ADICIONADO
+// MELHORA NO CODIGO DE PLOTAGEM
+// CORRECAO DE INDICADOR RETORNANDO VALORES ERRADOS EM ALGUNS CASOS
+// VERSAO 1.3 - 02/02/2020
+// ADICIONADO COLORACAO NO INDICADOR
+// ADICIONADO REGRA DE COLORACAO
+// CORRIGIDO BUG EM QUE O INDICADOR NAO ENCONTRAVA DIVERGENCIAS ALTISTAS NO MINI INDICE
+// VERSAO 2.0 - FIRST RELEASE - 03/02/2020
+// ADICIONADO ESTOCASTICO LENTO
+// FUNCOES FOR SUBSTITUIDAS POR VARIOS IFs PARA CARREGAR MAIS RAPIDO O INDICADOR (CARREGAMENTO QUASE INSTANTANEO AGORA)
+// DATA DA DIVULGACAO NO GRUPO DO PROFITCHART NO FACEBOOK : https://www.facebook.com/groups/estrategiasprofit/
+// VERSAO 2.1 - 09/02/2020
+// ADICIONADO OBV
+// VERSAO 2.2 - 10/02/2020
+// ADICIONADO RSI
+// ADICIONADO CCI
+// LISTA ``A FAZER`` ADICIONADA
+// VERSAO 3.0 - 11/02/2020
+// ADICIONADO REGRA DE EXECUCAO
+// ADICIONADO STOP GAIN PARA REGRA DE EXECUCAO
+// ADICIONADO STOP LOSS PARA REGRA DE EXECUCAO
+// ADICIONADO HORARIO DE INICIO DA REGRA DE EXECUCAO
+// ADICIONADO HORARIO DE TERMINO DA REGRA DE EXECUCAO
+// ADICIONADO TUTORIAL DE COMO FAZER BACKTEST COM REGRA DE EXECUCAO
+// ADICIONADO SQUEEZE MOMENTUM INDICATOR
+// VERSAO 4.0 - 22/05/2020
+// CORRIGIDO DELAY DE ALGUMAS DIVERGENCIAS DE ALGUNS INDICADORES
+// LISTA ``A FAZER`` REMOVIDA. NOVOS INDICADORES SERAO ADICIONADOS BASEADOS NOS PEDIDOS DO GRUPO DO FACEBOOK
+// MODO HISTOGRAMA ADICIONADO. NAS PREFERENCIAS USAR 1 PARA LIGADO E 0 PARA DESLIGADO. BOM PARA QUEM USA VISUALBOT
+// ADICIONADO MFI
+// VERSAO 4.1 - 29/05/2020
+// CORRIGIDO HORARIO LIMITE PARA OPERACOES NA ESTRATEGIA DE EXECUCAO
+/////////////////////
+//VALORES EDITAVEIS//
+/////////////////////
+input
+  Indicador(2);
+  Modo_Histograma(0);
+  Stop_Gain(200);
+  Stop_Loss(200);
+  Inicio_Execucao(0900);
+  Fim_Execucao(1600);
+  ZLMACD_Curta(12);
+  ZLMACD_Longa(26);
+  ZLMACD_Sinal(9);
+  MACD_Curta(12);
+  MACD_Longa(26);
+  MACD_Sinal(9);
+  DIDI_Curta(3);
+  DIDI_Longa(20);
+  DIDI_Sinal(8);
+  SLOWSTOCH_Periodo(14);
+  RSI_Periodo(9);
+  CCI_Periodo(14);
+  SQUEEZE_Periodo(20); //
+  SQUEEZE_Bandas_Periodo(20);
+  SQUEEZE_Multiplicador(1.5);
+  MFI_Periodo(14);
+  /////////////
+  //VARIAVEIS//
+  /////////////
+  var
+    EMAshort1,EMAshort2,DifferenceShort,ZeroLagShort,EMAlong1,EMAlong2,DifferenceLong,ZeroLagLong,ZeroLagMACD,signal1,signal2,DIFFERENCE2,SignalMACD,x,y : float; // ZERO LAG MACD
+    sto2b,sto1b,p3b,p1b,p2b,p4b,signB,hico1,hi,hico,mh,lo,lowco,lowco1,p3h,p1h,p2h,sto1h,sto2h,ml,p4h,signH,indicadornormal                              : float; // DIVERGENCIAS
+    sh,sb                                                                                                                                                : boolean; // SINAIS DE DIVERGENCIA
+    MACD_Convencional,SinalMACD                                                                                                                          : Float; // MACD CONVENCIONAL
+    Didi,DidiSinal                                                                                                                                       : float; // DIDI INDEX
+    estocastico,estocasticolentosinal                                                                                                                    : float; // ESTOCASTICO LENTO
+    sinalobv                                                                                                                                             : float; // OBV
+    iRSI,sinalRSI                                                                                                                                        : float; // RSI
+    iCCI,sinalCCI                                                                                                                                        : Float; // CCI
+    LR_line,sumx2,sumxy,sumx,sumy,a,b,c,src,avg,lowerKC,upperKC,rangema,ma,basis,upperBB,lowerBB,dev,sinalsqueeze                                        : float; // SQUEEZE MOMENTUM INDICATOR
+    i,x1                                                                                                                                                 : integer; // SQUEEZE MOMENTUM INDICATOR
+    mfii,sinalmfi                                                                                                                                        : Float; //MFI
+  begin
+    //////////////////////////////////////
+    //CALCULO SQUEEZE MOMENTUM INDICATOR//
+    //////////////////////////////////////
+    sumy := 0.0;
+    sumx := 0.0;
+    sumxy := 0.0;
+    sumx2 := 0.0;
+    basis := media(SQUEEZE_Periodo,close);
+    dev := SQUEEZE_Multiplicador * stddevs(close,SQUEEZE_Periodo);
+    upperBB := basis + dev;
+    lowerBB := basis - dev;
+    ma := media(SQUEEZE_Bandas_Periodo,close);
+    rangema := media(SQUEEZE_Bandas_Periodo,range);
+    upperKC := ma + rangema * SQUEEZE_Multiplicador;
+    lowerKC := ma - rangema * SQUEEZE_Multiplicador;
+    avg := (((highest(high,SQUEEZE_Bandas_Periodo) + lowest(low,SQUEEZE_Bandas_Periodo)) / 2) + (media(SQUEEZE_Bandas_Periodo,close))) / 2;
+    src := close - avg;
+    for i := 0 to SQUEEZE_Bandas_Periodo do
+      begin
+        sumy := sumy + src[i];
+        sumxy := sumxy + src[i] * i;
+        sumx := sumx + i;
+        sumx2 := sumx2 + (i * i);
+      end;
+    c := sumx2 * SQUEEZE_Bandas_Periodo - sumx * sumx;
+    b := (sumxy * SQUEEZE_Bandas_Periodo - sumx * sumy) / c;
+    a := (sumy - sumx * b) / SQUEEZE_Bandas_Periodo;
+    for x1 := 0 to SQUEEZE_Bandas_Periodo do
+      begin
+        LR_line[x1] := a + b * x1;
+      end;
+    sinalsqueeze := media(2,LR_line);
+    ///////////////
+    //CALCULO CCI//
+    ///////////////
+    iCCI := cci(CCI_Periodo);
+    sinalcci := media(2,icci);
+    ///////////////
+    //CALCULO RSI//
+    ///////////////
+    iRSI := RSI(RSI_Periodo,0);
+    sinalRSI := media(2,irsi);
+    ///////////////
+    //CALCULO OBV//
+    ///////////////
+    SinalOBV := media(2,OBV);
+    /////////////////////////
+    //CALCULO ZERO LAG MACD//
+    /////////////////////////
+    EMAshort1 := mediaexp(ZLMACD_Curta,close);
+    EMAshort2 := mediaexp(ZLMACD_Curta,emashort1);
+    DifferenceShort := EMAshort1 - EMAshort2;
+    ZeroLagShort := EMAshort1 + DifferenceShort;
+    EMAlong1 := mediaexp(ZLMACD_Longa,close);
+    EMAlong2 := mediaexp(ZLMACD_Longa,emalong1);
+    DifferenceLong := EMAlong1 - EMAlong2;
+    ZeroLagLong := EMAlong1 + DifferenceLong;
+    ZeroLagMACD := ZeroLagShort - ZeroLagLong;
+    signal1 := mediaexp(ZLMACD_Sinal,ZEROLAGMACD);
+    signal2 := mediaexp(ZLMACD_Sinal,signal1);
+    DIFFERENCE2 := signal1 - signal2;
+    SignalMACD := signal1 + DIFFERENCE2;
+    /////////////////////////////
+    //CALCULO MACD CONVENCIONAL//
+    /////////////////////////////
+    MACD_Convencional := MACD(MACD_Longa,MACD_Curta,MACD_Sinal);
+    SinalMACD := mediaexp(MACD_Sinal,MACD_Convencional);
+    //////////////////////
+    //CALCULO DIDI INDEX//
+    //////////////////////
+    Didi := media(Didi_Curta,close) - media(Didi_Longa,close);
+    DidiSinal := media(Didi_Sinal,Didi);
+    /////////////////////////////
+    //CALCULO ESTOCASTICO LENTO//
+    /////////////////////////////
+    estocastico := slowstochastic(slowstoch_periodo);
+    estocasticolentosinal := media(2,estocastico);
+    ///////////////
+    //CALCULO MFI//
+    ///////////////
+    mfii := moneyflowindex(MFI_Periodo);
+    sinalmfi := media(2,mfii);
+    /////////////////////////////////////////////
+    //INDICADOR USADO NO CALCULO DA DIVERGENCIA//
+    /////////////////////////////////////////////
+    if Indicador = 1 then
+      begin
+        x := ZeroLagMACD;
+        y := SignalMACD;
+      end;
+    if Indicador = 2 then
+      begin
+        x := MACD_Convencional;
+        y := SinalMacd;
+      end;
+    if Indicador = 3 then
+      begin
+        x := Didi;
+        y := DidiSinal;
+      end;
+    if Indicador = 4 then
+      begin
+        x := estocastico;
+        y := estocasticolentosinal;
+      end;
+    if Indicador = 5 then
+      begin
+        x := obv;
+        y := sinalobv;
+      end;
+    if Indicador = 6 then
+      begin
+        x := irsi;
+        y := sinalrsi;
+      end;
+    if Indicador = 7 then
+      begin
+        x := icci;
+        y := sinalcci;
+      end;
+    if Indicador = 8 then
+      begin
+        x := lr_line;
+        y := sinalsqueeze;
+      end;
+    if Indicador = 9 then
+      begin
+        x := mfii;
+        y := sinalmfi;
+      end;
+    ////////////////////////
+    //DIVERGENCIA BAIXISTA//
+    ////////////////////////
+    if hi > x then
+      hi := hi
+    else 
+      hi := x;
+    if high > high[1] then
+      mh := high
+    else 
+      mh := high[1];
+    if hico > mh then
+      hico := hico
+    else 
+      hico := mh;
+    if (x < y) and (x[1] > y[1]) then
+      begin
+        sto2b := sto1b;
+        sto1b := hi;
+        hi := 0;
+        p3b := p1b;
+        if p1b > hico1 then
+          p2b := p1b
+        else 
+          p2b := hico1;
+        if highest(high,3) > hico then
+          p1b := highest(high,3)
+        else 
+          p1b := hico;
+        if p2b = p1b then
+          if p3b > p4b then
+            p2b := p3b
+          else 
+            p2b := p4b;
+        hico := 0;
+        hico1 := 0;
+        if x < y then
+          p4b := hico1;
+        if hico1 > high then
+          hico1 := hico1
+        else 
+          hico1 := high;
+        sb := (p1b > p2b) and (sto1b < sto2b) and (x < y) and (x[1] > y[1]) and (x < x[1]) and (signb[1] = 0);
+        if sb then
+          signB := - 1
+        else 
+          signB := 0;
+      end;
+    ////////////////////////
+    // DIVERGENCIA ALTISTA//
+    ////////////////////////
+    if lo < x then
+      lo := lo
+    else 
+      lo := x;
+    if low < low[1] then
+      ml := low
+    else 
+      ml := low[1];
+    if lowco < ml then
+      lowco := lowco
+    else 
+      lowco := ml;
+    if (x > y) and (x[1] < y[1]) then
+      begin
+        sto2h := sto1h;
+        sto1h := lo;
+        lo := 100;
+        p3h := p1h;
+        if p1h < lowco1 then
+          p2h := p1h
+        else 
+          p2h := lowco1;
+        if lowest(low,3) < lowco then
+          p1h := lowest(low,3)
+        else 
+          p1h := lowco;
+        if p2h = p1h then
+          if p3h < p4h then
+            p2h := p3h
+          else 
+            p2h := p4h;
+        lowco := 999999999; //UMA GAMBIARRA MUITO BEM ELABORADA
+        lowco1 := 999999999; //PROGRAMADORES FIQUEM COM INVEJA
+        if x > y then
+          p4h := lowco1;
+        if lowco1 < low then
+          lowco1 := lowco1
+        else 
+          lowco1 := low;
+        sh := (p1h < p2h) and (signh[1] = 0) and (x[1] < y[1]) and (x > x[1]) AND (x > y) and (sto1h > sto2h);
+        if sh then
+          signH := 1
+        else 
+          signH := 0;
+      end;
+    indicadornormal := 0;
+    if signh > 0 then
+      indicadornormal := 1;
+    if signB < 0 then
+      indicadornormal := - 1;
+    //////////////////////////
+    //COLORACAO DO INDICADOR//
+    //////////////////////////
+    if (signH > 0) or (signH[1] > 0) then
+      begin
+        setplotcolor(1,ClLime);
+      end;
+    if (signB < 0) or (signB[1] < 0) then
+      begin
+        setplotcolor(1,ClRed);
+      end;
+    if (signH > 0) then
+      paintbar(ClLime)
+    else if (signB < 0) then
+      paintbar(ClRed)
+    else 
+      paintbar(ClBranco);
+    ////////////
+    //PLOTAGEM//
+    ////////////
+    if Modo_Histograma = 0 then
+      begin
+        plot(indicadornormal);
+      end;
+    If Modo_Histograma = 1 then
+      begin
+        if indicadornormal = 1 then
+          plot2(1);
+        if indicadornormal = - 1 then
+          plot3(1);
+        if indicadornormal = 0 then
+          plot4(1);
+      end;
+    //////////////////////////
+    //ESTRATEGIA DE EXECUCAO//
+    //////////////////////////
+    if (BuyPosition = 0) and (SellPosition = 0) and (time > Inicio_Execucao) and (time <= Fim_Execucao) then
+      begin
+        if signH > 0 then
+          buyatmarket;
+        if signb < 0 then
+          sellshortatmarket;
+      end;
+    if (BuyPosition = 1) then
+      begin
+        SellToCoverStop(BuyPrice + Stop_Gain,BuyPrice + Stop_Gain);
+        SellToCoverStop(BuyPrice - Stop_Loss,BuyPrice - Stop_Loss);
+      end;
+    if (SellPosition = 1) then
+      begin
+        BuyToCoverStop(SellPrice - Stop_Gain,SellPrice - Stop_Gain);
+        BuyToCoverStop(SellPrice + Stop_Loss,SellPrice + Stop_Loss);
+      end;
+    if (time >= Fim_execucao) then
+      ClosePosition;
+  end;
+

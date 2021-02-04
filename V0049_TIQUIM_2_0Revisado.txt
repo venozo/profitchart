@@ -1,0 +1,81 @@
+INPUT
+  D(1);
+  P(9);
+  T(0);
+  mexpr(9); //9
+  mexp(21); //21
+  mexpl(72); //72
+  pr(8);
+var
+  compra,venda                          : boolean;
+  Me1,Me2,Me3,bb,bc,gain,hilo,SELLLIMIT : float;
+inicio
+  hilo := HiloActivator(1);
+  BC := BollingerBands(D,P,T)|1|;
+  BB := BollingerBands(D,P,T)|0|;
+  SELLLIMIT := (BUYPRICE + GAIN * 1.6180);
+  gain := ((maxima - minima) + (maxima[1] - MINIMA[1])) / 0.6180;
+  Me1 := mediaexp(mexpr,close);
+  Me2 := mediaexp(mexp,close);
+  Me3 := media(mexpl,close);
+  Plot(me1);
+  SetPlotColor(1,clazul);
+  SetPlotWidth(1,2);
+  Plot2(me2);
+  SetPlotColor(2,clverde);
+  SetPlotWidth(2,2);
+  plot3(me3);
+  SetPlotColor(3,clAmarelo);
+  SetPlotWidth(3,2);
+  compra := (fechamento > HiloActivator(1)) e (DiPDiM(6)|0| > DiPDiM(6)|1|) e (fechamento > fechamento[1]) e (fechamento > me1) e (fechamento > me2) e (fechamento > me3) e (RSi(pr,0) > 71) e (fechamento > bc);
+  venda := (fechamento < HiloActivator(1)) e (DiPDiM(6)|0| < DiPDiM(6)|1|) e (fechamento < fechamento[1]) e (fechamento < me1) e (fechamento < me2) e (fechamento < me3) e (RSi(pr,0) < 30) e (abertura < bb);
+  Se compra então
+    paintbar(clVerde);
+  Se venda então
+    paintbar(clVermelho);
+  se (time > 905) e (time < 1635) e (buyposition = 0) e (sellposition = 0) e (ADX(6,6) > 17) então
+    Inicio
+      Se compra então
+        buystop(high + 0.01,high + 0.01);
+      Se venda então
+        sellshortstop(low - 0.01,low - 2);
+    Fim;
+  se (buyposition = 1) então
+    inicio
+      SellShortLimit(SELLLIMIT);
+      SellShortStop(buyprice - gain * 1.5,BuyPrice - gain * 1.618);
+    fim;
+  se (SellPosition = 1) então
+    inicio
+      BuyLimit(SellPrice + gain * ( - 1.6180));
+      BuyStop(sellprice + gain * 1.382,Sellprice + gain * 1.6180);
+    fim;
+  inicio
+    // Verifica se está vendido
+    se (IsSold) ou (fechamento > FECHAMENTO[1]) então
+      inicio
+        // Fecha a posição com uma compra caso
+        // o IFR 9 esteja superior a 78
+        se (ifr(9) > 78) OU (fechamento[1] > fechamento[2]) e (fechamento < minima[1]) E (ABERTURA[1] > FECHAMENTO[3]) E (ABERTURA > SellPrice + 10) ou (TopBottomDetector(4) > TopBottomDetector(4)[1]) entao
+          BuyToCoverAtMarket;
+      fim // Verifica se está comprado
+
+    senão se (IsBought) ou (fechamento < hilo) então
+      inicio
+        // Fecha a posição com uma venda caso
+        // o IFR 9 esteja inferior a 22
+        se (ifr(9) < 22) ou (TopBottomDetector(4) < TopBottomDetector(4)[1]) então
+          SellToCoverAtMarket;
+      fim;
+    { se buyposition=1 entao
+    paintbar(clazul);
+    se sellposition=1 entao
+    paintbar(clfucsia);}
+    se (time > 1735) então
+      ClosePosition;
+    {se compra entao
+    plot(cllime);
+    se venda entao
+    plot2(clred);}
+  fim;
+end;

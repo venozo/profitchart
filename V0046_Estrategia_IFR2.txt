@@ -1,0 +1,23 @@
+var
+  vprice   : Float;
+  dtCompra : integer;
+begin
+  if (IsBought) then
+    begin
+      vprice := high[2];
+      if (high[1] > vprice) then
+        vprice := high[1];
+      if (high > vprice) then
+        SellToCoverStop(vprice,vprice);
+      if (IsBought) and (Date > dtCompra + 7) then
+        SellToCoverStop(Close,Close);
+    end
+  else 
+    begin
+      if (RSI(2,0)[1] <= 30) then
+        begin
+          BuyStop(open,open);
+          dtCompra := Date;
+        end;
+    end;
+end;

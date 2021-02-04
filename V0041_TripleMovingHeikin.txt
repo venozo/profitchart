@@ -1,0 +1,31 @@
+input
+  TypicalPriceAvgLength(8);
+  HeikinAshiAvgLength(8);
+  TrendAvgLength(21);
+var
+  haClose      : Float;
+  haOpen       : Float;
+  haHigh       : Float;
+  haLow        : Float;
+  HAAverage    : Float;
+  TPAverage    : Float;
+  TrendAverage : Float;
+  TrendValue   : Float;
+  PlotColor    : Float;
+begin
+  haClose := (Open + High + Low + Close) / 4;
+  haOpen := (haOpen[1] + haClose[1]) / 2;
+  {haHigh := MaxList( High, haOpen, haClose );
+  haLow := MinList( Low, haOpen, haClose );
+  }
+  HAAverage := Media(HeikinAshiAvgLength,(haClose + haOpen) / 2);
+  TPAverage := Media(TypicalPriceAvgLength,TypicalPrice);
+  TrendAverage := Media(TrendAvgLength,Close);
+  Plot(TPAverage);
+  Plot2(HAAverage);
+  Plot3(TrendAverage);
+  if (TPAverage > HAAverage) and (Close[1] > TrendAverage) then
+    paintbar(clGreen);
+  if (TPAverage < HAAverage) and (Close[1] < TrendAverage) then
+    Paintbar(clRed);
+end;

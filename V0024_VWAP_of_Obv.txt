@@ -1,0 +1,60 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	indicador ;
+Version	: 	1.0
+name: VWAP_OBV
+descrição:
+Plota um ocilador calculado com base no OBV e VWAP
+}
+Input
+  Tipo(1); //1-Linhas 2-Histograma
+var
+  vwap1        : float;
+  histogram    : float;
+  pv           : float;
+  Totalvolume  : float;
+  Barfromstart : integer;
+  OncePerDay   : float;
+begin
+  If date > date[1] then
+    OncePerDay := 0;
+  IF (OncePerDay = 0) then
+    begin
+      OncePerDay := 1;
+      Barfromstart := 0;
+      pv := OBV * volume;
+      Totalvolume := volume;
+      vwap1 := pv / totalvolume;
+    end
+  else 
+    begin
+      Barfromstart := Barfromstart[1] + 1;
+      pv := pv[1] + OBV * volume;
+      Totalvolume := Totalvolume[1] + volume;
+      vwap1 := pv / Totalvolume;
+    end;
+  histogram := OBV - vwap1;
+  IF Tipo = 1 then
+    begin
+      Plot(OBV);
+      IF OBV > vwap1 THEN
+        SETPLOTCOLOR(1,cllime)
+      ELSE IF OBV < vwap1 THEN
+        SETPLOTCOLOR(1,clred)
+      ELSE 
+        SETPLOTCOLOR(1,clcinza);
+      ;
+      Plot2(vwap1);
+      SETPLOTCOLOR(2,clazulclaro);
+    end
+  ELSE If Tipo = 2 then
+    Plot(histogram);
+  //Regra Coloração
+  IF OBV > vwap1 THEN
+    PAINTBAR(cllime)
+  ELSE IF OBV < vwap1 THEN
+    PAINTBAR(clred)
+  ELSE 
+    PAINTBAR(clcinza);
+end;
+

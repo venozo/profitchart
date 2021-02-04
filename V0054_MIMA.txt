@@ -1,0 +1,39 @@
+input
+  currentPeriod(8);
+var
+  hl   : Float;
+  ll   : Float;
+  dist : Float;
+  hf   : Float;
+  cfh  : Float;
+  cfl  : Float;
+  lf   : Float;
+  val  : Float;
+  last : Integer;
+begin
+  hl := highest(CLOSE,currentPeriod); //High Line (Border)
+  ll := lowest(OPEN,currentPeriod); //Low Line  (Border)
+  dist := hl - ll; //range of the channel
+  hf := hl - dist * 0.236; //Highest Fibonacci line
+  cfh := hl - dist * 0.382; //Center High Fibonacci line
+  cfl := hl - dist * 0.618; //Center Low Fibonacci line
+  lf := hl - dist * 0.764; //Lowest Fibonacci line
+  last := 0;
+  if (FECHAMENTO[last] >= hf) then
+    begin
+      val := MediaExp(4,hl);
+    end
+  else if (FECHAMENTO[last] >= cfh) then
+    begin
+      val := MediaExp(4,hf);
+    end
+  else if (FECHAMENTO[last] >= cfl) then
+    begin
+      val := MediaExp(4,lf);
+    end
+  else if (FECHAMENTO[last] >= ll) then
+    begin
+      val := MediaExp(4,CLOSE);
+    end;
+  Plot(MediaExp(17,val));
+end;

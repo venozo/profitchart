@@ -1,0 +1,45 @@
+input
+  length(20);
+var
+  mult    : float;
+  e1      : float;
+  osc     : float;
+  src     : float;
+  i       : integer;
+  x       : integer;
+  sumy    : float;
+  sumxy   : float;
+  sumx    : float;
+  sumx2   : float;
+  c       : float;
+  b       : float;
+  a       : float;
+  LR_line : float;
+begin
+  sumy := 0.0;
+  sumx := 0.0;
+  sumxy := 0.0;
+  sumx2 := 0.0;
+  e1 := ((highest(high,length) + lowest(low,length)) / 2) + media(length,close);
+  src := close - (e1 / 2);
+  for i := 0 to length do
+    begin
+      sumy := sumy + src[i];
+      sumxy := sumxy + src[i] * i;
+      sumx := sumx + i;
+      sumx2 := sumx2 + (i * i);
+    end;
+  c := sumx2 * length - sumx * sumx;
+  b := (sumxy * length - sumx * sumy) / c;
+  a := (sumy - sumx * b) / length;
+  for x := 0 to length do
+    begin
+      LR_line[x] := a + b * x;
+    end;
+  osc := LR_Line;
+  if osc > 0 then
+    paintbar(cllime);
+  if osc < 0 then
+    paintbar(clred);
+  plot(osc);
+end;

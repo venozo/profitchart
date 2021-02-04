@@ -1,0 +1,67 @@
+//----------------------------
+//  Waddah Attar Explosion
+{-----------------------------
+Este indicador usa o MACD / BB para rastrear a direção e a força da tendência.
+O autor sugere o uso desse indicador em 30 minutos.
+https://br.tradingview.com/script/d9IjcYyS-Waddah-Attar-Explosion-V2-SHK/
+
+LazyBear
+https://www.tradingview.com/script/iu3kKWDI-Waddah-Attar-Explosion-LazyBear/
+--------------------------------
+}
+input
+  mFast(12);
+  mLow(26);
+  mSignal(9);
+  mDead_Zone(100);
+  mSens_DZ(1.5);
+  mMMS(20);
+var
+  wE1        : Float;
+  wBBUp      : Float;
+  wBBLow     : Float;
+  wDead_Zone : Float;
+  wT1        : Float;
+  wT2        : Float;
+begin
+  wBBUp := BollingerBands(2.00,20,0)|0|;
+  wBBLow := BollingerBands(2.00,20,0)|1|;
+  wE1 := wBBUp - wBBLow;
+  //sFast    := MediaExp(FastPeriod, Close);
+  wDead_Zone := AvgTrueRange(mDead_Zone,0) * mSens_DZ;
+  If (CurrentBar > mSignal - 1) then
+    begin
+      wT1 := (MACD(mLow,mFast,mSignal) - MACD(mLow,mFast,mSignal)[1]) * mMMS;
+      wT2 := (MACD(mLow,mFast,mSignal)[1] - MACD(mLow,mFast,mSignal)[2]) * mMMS;
+      if (wT1 >= 0) then
+        begin
+          if (wT1 <= wT2) then
+            begin
+              setPlotColor(2,rgb(0,205,50)); //Verde Limão
+              PaintBar(rgb(0,205,50));
+            end
+          else if (wT1 > wT2) then
+            begin
+              setPlotColor(2,rgb(47,79,47)); //Verde Escuro
+              PaintBar(rgb(47,79,47));
+            end;
+        end
+      else 
+        begin
+          if (wT1 >= wT2) then
+            begin
+              setPlotColor(2,rgb(255,165,0)); //Laranja
+              PaintBar(rgb(255,165,0));
+            end
+          else if (wT1 < wT2) then
+            begin
+              setPlotColor(2,rgb(255,0,0)); //Vermelho
+              PaintBar(rgb(255,0,0));
+            end;
+          wT1 := wT1 * ( - 1);
+        end;
+      plot(wE1);
+      plot2(wT1);
+      Plot3(wDead_Zone);
+    end;
+end;

@@ -1,0 +1,17 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	indicador ;
+Version	: 	1.0
+name: WMA
+descrição:
+Media WellesWilderAritmetica
+}
+input
+  Período(20);
+  Tipo(close);
+var
+  WMA : float;
+begin
+  WMA := WMA[1] + ((Tipo - WMA[1]) / Período);
+  Plot(WMA);
+end;

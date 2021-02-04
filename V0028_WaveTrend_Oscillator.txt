@@ -1,0 +1,31 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	indicador ;
+Version	: 	1.0
+name: WaweTrendOSC
+descrição:
+Plota um Oscilador (arrumar divisao por 0)
+}
+input
+  n1(10);
+  n2(21);
+var
+  ap  : float;
+  esa : float;
+  d   : float;
+  ci  : float;
+  tci : float;
+  wt1 : float;
+  wt2 : float;
+begin
+  ap := (high + low + close) / 3;
+  esa := mediaexp(n1,ap);
+  d := mediaexp(n1,abs(ap - esa));
+  ci := (ap - esa) / (0.015 * d);
+  tci := mediaexp(n2,ci);
+  wt1 := tci;
+  wt2 := media(4,wt1);
+  plot(wt1);
+  plot2(wt2);
+  plot3(wt1 - wt2);
+end

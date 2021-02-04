@@ -1,0 +1,32 @@
+//Time Segmented Volume and Delta
+input
+  Period(25);
+  Fator(1);
+var
+  rates,rates_delta,key,trend : float;
+begin
+  if close > close[1] then
+    rates := QuantityVol(false)
+  else if close < close[1] then
+    rates := - QuantityVol(false)
+  else if close = close[1] then
+    rates := 0;
+  rates := summation(rates,Period) - rates;
+  rates_delta := Fator * (AccAgressSaldo(1) - AccAgressSaldo(1)[Period]);
+  if rates > 0 then
+    Plot(rates)
+  else 
+    Plot(rates); //cor azul
+  if rates < 0 then
+    Plot2(rates); //cor marron
+  if rates_delta > 0 then
+    Plot3(rates_delta); //cor verde claro
+  if rates_delta < 0 then
+    Plot4(rates_delta); //cor rosa
+  //Coloração...
+  if ((rates > 0) and (rates_delta < 0)) then
+    paintbar(RGB(153,15,153))
+  else if ((rates < 0) and (rates_delta > 0)) then
+    paintbar(RGB(255,25,155));
+end;
+

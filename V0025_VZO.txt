@@ -1,0 +1,23 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	indicador ;
+Version	: 	1.0
+name: VZO(Volum Zone Oscilator)
+descrição:
+Plota um ocilador das zonas calculado sobre o volume
+}
+input
+  Period(17);
+var
+  R     : float;
+  VP    : float;
+  TV    : float;
+  VZO_i : float;
+begin
+  R := Sign(Close - Close[1]) * QuantityVol(false);
+  VP := XAverage(R,Period);
+  TV := XAverage(QuantityVol(false),Period);
+  if TV <> 0 then
+    VZO_i := VP / TV * 100;
+  Plot(VZO_i);
+end;

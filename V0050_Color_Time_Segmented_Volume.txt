@@ -1,0 +1,13 @@
+//Time Segmented Volume
+input
+Period(25);
+var
+rates,key,trend:float;
+begin
+  rates:= obv - obv[Period];
+  Plot((rates));
+  if rates > 0 then setplotcolor(1,clblue) else setplotcolor(1,clmaroon);
+  //Coloração
+  if rates > 0 then paintbar(clblue) else paintbar(clmaroon); 
+end;
+//tentar adaptar linha nos cruzamentos

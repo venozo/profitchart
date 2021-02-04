@@ -1,0 +1,16 @@
+input
+  trlen1(6);
+  trlen2(12);
+  trlen3(24);
+var
+  trix1 : float;
+  trix2 : float;
+  trix3 : float;
+begin
+  trix1 := trix(trlen1,1);
+  trix2 := trix(trlen2,1);
+  trix3 := trix(trlen3,1);
+  plot(trix1);
+  plot2(trix2);
+  plot3(trix3);
+end;
