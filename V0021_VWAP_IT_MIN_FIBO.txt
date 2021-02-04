@@ -1,0 +1,137 @@
+////////////////////////////////////////////
+// VWAP Intraday de Minima com Fibonacci  //  
+///////////////////////////////////////////
+input
+Horario(0);    // Horário de início do cálculo e da plotagem
+Data(0);
+
+var
+Tipo,
+nSup,
+nAlvo,
+nAlvo2,
+nInit,
+nData ,
+nHorario,
+sSum,
+sSumVol, 
+nVWAP : Float;
+
+begin
+
+Tipo := low;
+
+if (Data = 0) and (Horario = 0) then
+begin
+  if (Date <> Date[1]) then
+  begin
+    nInit := Tipo;
+  end
+  else
+  begin
+    nInit := nInit[1];
+  end;
+  Plot(nInit);
+end
+else
+begin
+  if (Data = 0) then
+  begin
+    nData := CurrentDate;
+  end
+  else if (Data < 100) then
+  begin
+    nData := CalcDate(CurrentDate,Round(Neg(Data)));
+  end 
+  else if (Data > 100) then
+  begin 
+    nData := 1000000+Data;
+  end;     
+
+  nHorario := Horario;
+  if (nHorario = 0) then
+  begin
+     nHorario := 900;
+  end;
+
+  if (Date = nData) then
+  begin
+    if (Time >= nHorario) then
+    begin
+      sSumVol:= sSumVol[1] + Volume;
+      sSum := sSum[1] + Tipo * Volume;
+      nVWAP := sSum/sSumVol;
+    end;
+
+    if (Time = nHorario) then
+    begin
+      nSup := ((maxima - minima) * 0.618);
+      nAlvo := (((maxima - minima) * 2.618));
+      nAlvo2 := (((maxima - minima) * 4.618));
+      //170, 340,420 e 680
+    end
+    else
+    begin
+      nSup := nSup[1];
+      nAlvo := nAlvo[1];
+      nAlvo2 := nAlvo2[1];
+      
+    end;
+  end
+  else if (Date > nData) then
+  begin
+    sSumVol:= sSumVol[1] + Volume;
+    sSum := sSum[1] + Tipo * Volume;
+    nVWAP := sSum/sSumVol;
+
+    nSup := nSup[1];
+      nAlvo := nAlvo[1];
+      nAlvo2 := nAlvo2[1]; 
+  end; 
+end;
+
+if (nVWAP > 0) then
+  Plot(nVWAP);
+
+//** Projeção Baixa
+if (tipo = High)then
+begin
+  if (nSup > 0) then
+    Plot2(nVWAP+nSup);
+
+  if (nAlvo > 0) then
+    Plot3(nVWAP-nAlvo);
+
+  if (nAlvo2 > 0) then
+    Plot4(nVWAP-nAlvo2);
+end;
+
+//** Projeção ALTA
+if (tipo = Low)then
+begin
+  if (nSup > 0) then
+    Plot2(nVWAP-nSup);
+
+  if (nAlvo > 0) then
+    Plot3(nVWAP+nAlvo);
+
+  if (nAlvo2 > 0) then
+    Plot4(nVWAP+nAlvo2);
+end;
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

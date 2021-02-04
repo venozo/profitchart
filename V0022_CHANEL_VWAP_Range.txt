@@ -1,0 +1,83 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	indicador ;
+Version	: 	1.0
+name: CHANEL_VWAP_Range
+descrição:
+Plota linha da vwap intraday semanal e mensal como um range
+}
+var
+  nPriceArr         : Float;
+  nTotal            : Float;
+  nTotalVol         : Float;
+  nTotalTPV         : Float;
+  nSumDailyTPV      : Float;
+  nSumDailyVol      : Float;
+  nSumWeeklyTPV     : Float;
+  nSumWeeklyVol     : Float;
+  nSumMonthlyTPV    : Float;
+  nSumMonthlyVol    : Float;
+  nSumTimeTPV       : Float;
+  nSumTimeVol       : Float;
+  sLastDay          : Integer;
+  sLastCalcWeek     : Integer;
+  sLastDayOfWeek    : Integer;
+  sLastWeek         : Integer;
+  sLastCalcMonthly  : Integer;
+  sLastMonth        : Integer;
+  sLastBar          : Integer;
+  sLastDailyValue   : Float;
+  sLastWeeklyValue  : Float;
+  sLastMonthlyValue : Float;
+begin
+  SetPlotColor(1,clAmarelo);
+  SetPlotColor(2,clVermelho);
+  SetPlotColor(3,clAzul);
+  sLastCalcWeek := DayOfWeek(LastCalcDate);
+  if (sLastDayOfWeek <= 0) then
+    begin
+      sLastDayOfWeek := 6;
+      sLastCalcWeek := 6;
+    end;
+  if (sLastCalcWeek <= sLastDayOfWeek) e (sLastDay <> LastCalcDate) then
+    begin
+      sLastDayOfWeek := sLastCalcWeek;
+      nSumWeeklyTPV := 0;
+      nSumWeeklyVol := 0;
+    end;
+  if (sLastDay <> LastCalcDate) then
+    begin
+      sLastDay := LastCalcDate;
+      nSumDailyTPV := 0;
+      nSumDailyVol := 0;
+    end;
+  sLastCalcMonthly := Month(LastCalcDate);
+  if (sLastMonth <> sLastCalcMonthly) then
+    begin
+      sLastMonth := sLastCalcMonthly;
+      nSumMonthlyTPV := 0;
+      nSumMonthlyVol := 0;
+    end;
+  Plot(sLastDailyValue);
+  Plot2(sLastWeeklyValue);
+  Plot3(sLastMonthlyValue);
+  if (sLastBar <> CurrentBar) then
+    begin
+      sLastBar := CurrentBar;
+      nPriceArr := (Close[1] + High[1] + Low[1]) / 3;//soma da maxima+minima+fexa da barra div por 3
+      nTotalTPV := (nPriceArr * Volume[1]);//resultado da divisao vezes o volume
+      nTotalVol := Volume[1];
+      nSumDailyTPV := nSumDailyTPV + nTotalTPV;
+      nSumDailyVol := nSumDailyVol + nTotalVol;
+      nSumWeeklyTPV := nSumWeeklyTPV + nTotalTPV;
+      nSumWeeklyVol := nSumWeeklyVol + nTotalVol;
+      nSumMonthlyTPV := nSumMonthlyTPV + nTotalTPV;
+      nSumMonthlyVol := nSumMonthlyVol + nTotalVol;
+      if (nSumDailyTPV > 0) e (nSumDailyVol > 0) then
+        sLastDailyValue := nSumDailyTPV / nSumDailyVol;
+      if (nSumWeeklyTPV > 0) e (nSumWeeklyVol > 0) then
+        sLastWeeklyValue := nSumWeeklyTPV / nSumWeeklyVol;
+      if (nSumMonthlyTPV > 0) e (nSumMonthlyVol > 0) then
+        sLastMonthlyValue := nSumMonthlyTPV / nSumMonthlyVol;
+    end;
+end;

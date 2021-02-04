@@ -1,0 +1,42 @@
+var
+  compra,venda : boolean;
+  fechma,me    : float;
+begin
+  me := (maxima + minima + close + open / 4);
+  fechma := (close + close[2] + open[1]);
+
+  venda := (TopBottomDetector(4) > TopBottomDetector(4)[2]) and
+   (TopBottomDetector(3) > TopBottomDetector(3)[2]) and
+   (TopBottomDetector(2) > TopBottomDetector(2)[2]) and 
+   (me > me[4]) and 
+   ((ifr(9) > ifr(9)[2])) and (ifr(9) > 40);
+  compra := (TopBottomDetector(4) < TopBottomDetector(4)[2]) and
+  (TopBottomDetector(3) < TopBottomDetector(3)[2]) and
+  (TopBottomDetector(2) < TopBottomDetector(2)[2]) and 
+  (me < me[4]) and (ifr(9) < ifr(9)[2]) and (ifr(9) < 50);
+ 
+  if (time > 905) and (time < 1735) 
+  and (BuyPosition = 0) and (SellPosition = 0) then
+    begin
+    // if compra then  buystop(close,close);
+     if venda then  SellShortStop(close,close);
+     if venda then  paintbar(clred);
+    end;
+    if SellPosition=1 then paintbar(clred);
+
+   if (IsBought) then
+      if (ifr(9) < 23) ou 
+     (TopBottomDetector(4) > TopBottomDetector(4)[2]) e
+     (TopBottomDetector(3) > TopBottomDetector(3)[2])e
+     (TopBottomDetector(2) > TopBottomDetector(2)[2])
+      then
+          SellShortAtMarket;
+
+if (IsSold) then
+        if (TopBottomDetector(4) > TopBottomDetector(4)[2]) then
+          BuyAtMarket;
+      if time > 1735 then
+        ClosePosition;
+    end;
+
+

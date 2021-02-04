@@ -1,0 +1,55 @@
+input
+    mediaCurta(13);
+    mediaLonga(48);
+  var
+    candle : integer;
+  begin
+    if (BuyPosition=0) then
+      begin
+       
+        if (media(mediaCurta,close)[2]<media(mediaLonga,close)[2])
+        and (media(mediaCurta,close)[1]>media(mediaLonga,close)[1])
+        then
+        begin
+          BuyStop(high,high);
+          BuyStop(high,high); 
+          end;
+      end;
+
+ //////       parcial   ////////////
+ if (BuyPosition = 2) then
+    begin
+      //Alvo Parcial
+      //SellToCoverStop((((high[candle]-low[candle])*2)+high[candle])+100,((high[candle]-low[candle])*2)+high[candle]);
+      SellToCoverStop(BuyPrice + 305,BuyPrice +305);
+      //Stop
+     SellToCoverStop(BuyPrice - 80,BuyPrice - 80);
+     SellToCoverStop(BuyPrice - 80,BuyPrice - 80);
+     
+    end;
+ //////    final    ///////////
+  if (BuyPosition = 1) then
+    begin
+      //Alvo final
+      SellToCoverStop(BuyPrice + 100,BuyPrice + 100);
+      //Stop
+      SellToCoverStop(BuyPrice - 80,BuyPrice - 80);
+    end;
+ /////////////////////////////////////////////////////////////////////////
+
+
+    if (BuyPosition=2)  then
+      begin
+        candle:=candle+1;
+ SellToCoverStop((((high[candle]-low[candle])*2)+high[candle])+100,((high[candle]-low[candle])*2)+high[candle]);
+        if (media(mediaCurta,close)[0]<media(mediaLonga,close)[0])
+        then
+          ClosePosition; 
+      end;
+    if (BuyPosition=1)then
+ begin
+ if (media(mediaCurta,close)[0]<media(mediaLonga,close)[0])
+        then
+          SellToCoverStop(low-0.05,low-0.05); 
+      end;
+  end;

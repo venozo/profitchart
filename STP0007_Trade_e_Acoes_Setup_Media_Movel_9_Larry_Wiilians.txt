@@ -1,0 +1,74 @@
+//Setup 9.1 Larry Willians
+
+//YouTube
+//https://www.youtube.com/tradeeacoes
+
+//Instagram
+//https://www.instagram.com/tradeeacoes
+
+//Por Edgard Matos - edgardmatos@gmail.com
+
+
+var
+  spred, fh, ft, fatorStopGain, fatorStopLoss, points,stopGain,stopLoss, opPrice, pm : float;
+  duration, cd: integer;
+  ccc, vvv, operaNaPontaDaVenda: boolean;
+begin
+  //mude para 'true' para operar tambem na ponta da venda
+  operaNaPontaDaVenda := false;
+
+
+  ccc := false;
+  vvv := false;
+
+  if (BarDuration > 0) then
+    duration := 0
+  else 
+    duration := 1;
+
+  if (IsBMF) then
+    begin              
+      spred := 0.5;
+      fh := 0910;
+      ft := 1600;
+    end
+  else 
+    begin
+      spred := 0.01;
+      fh := 1010;
+      ft := 1500;
+    end;
+
+  if (MediaExp(9, Close) > MediaExp(9, Close)[1]) then
+    begin
+      ccc := true;
+      vvv := false;
+    end
+  else
+    begin
+      ccc := false;
+      vvv := true;
+    end;
+
+  if (BuyPosition = 0) and (SellPosition = 0) then 
+    begin
+      if (ccc = true) then
+        begin
+
+          BuyAtMarket; 
+        end;     
+    end;
+
+
+  if (BuyPosition = 1) and (vvv) then
+    begin
+      SellToCoverAtMarket;
+      if (operaNaPontaDaVenda) then
+        SellShortAtMarket;
+    end
+  else if (SellPosition = 1) and (ccc) then
+    begin
+      BuyToCoverAtMarket;
+      BuyAtMarket;
+    end; 
+end;

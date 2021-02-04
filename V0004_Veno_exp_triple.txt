@@ -1,0 +1,16 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	Indicador;
+Version	: 	1.
+name: Expo_veno_Triple
+descrição:
+plota medias triplas exponenciais
+}
+begin
+ plot2(Floor(mediaExp(9,close)));
+ plot3(Floor(mediaExp(13,close)));
+ plot4(Floor(mediaExp(23,close)));
+end;
+
+
+                                

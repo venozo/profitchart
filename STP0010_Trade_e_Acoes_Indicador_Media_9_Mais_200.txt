@@ -1,0 +1,14 @@
+//Indicador Média de 9 + 200 Média de 9 + 200 - 14 Outubro 2020
+
+//YouTube
+//https://www.youtube.com/tradeeacoes
+
+//Instagram
+//https://www.instagram.com/tradeeacoes
+
+//Por Edgard Matos - edgardmatoscavalcante@gmail.com
+
+begin
+  Plot(MediaExp(9, Close) + 200);
+  Plot2(MediaExp(9, Close) - 200);
+end;

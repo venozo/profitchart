@@ -1,0 +1,66 @@
+var
+  spred, fh, ft, fsg, fsl, points,stopGain,stopLoss : float;
+begin
+  fsg := 2;
+  fsl := 1;
+  if (IsBMF) then
+    begin              
+      spred := 0.5;
+      fh := 0910;
+      ft := 1600;
+    end
+  else 
+    begin
+      spred := 0.01;
+      fh := 1010;
+      ft := 1400;
+    end;
+           
+  if (BuyPosition = 0) and (SellPosition = 0) and (time > fh) and 
+  (Low < Lowest(Low[1],2)) and (Close > Close[1]) and (Close > Media(5, Close)) //and (Close > Media(80, Close))
+  
+  then
+    begin
+      PaintBar(clBlue);
+      BuyStop((High + spred),(High + spred));
+      points := High - Low;
+      stopGain := points * fsg;
+      stopLoss := points * fsl;
+    end
+  else if (BuyPosition = 0) and (SellPosition = 0) and (time > fh) and 
+  (High > Highest(High[1],2)) and (Close < Close[1]) and (Close < Media(5, Close)) //and (Close > Media(80, Close))
+  then
+    begin
+      PaintBar(clGray);
+      SellShortStop((Low - spred),(Low - spred));
+      points := High - Low;
+      stopGain := points * fsg;
+      stopLoss := points * fsl;
+    end;
+
+
+  if (BuyPosition = 1) then
+    begin
+      SellToCoverStop(BuyPrice + stopGain,BuyPrice + stopGain);
+      SellToCoverStop(BuyPrice - stopLoss,BuyPrice - stopLoss);
+      if (time >= ft) then
+        SellToCoverAtMarket;
+    end
+  else if (SellPosition = 1) then
+    begin
+      BuyToCoverStop(SellPrice - stopGain,SellPrice - stopGain);
+      BuyToCoverStop(SellPrice + stopLoss,SellPrice + stopLoss);
+      if (time >= ft) then
+        BuyToCoverAtMarket;
+    end; 
+
+  if (BuyPosition = 1) and ((High > (BuyPrice +stopGain)) or (Low < (BuyPrice -stopLoss))) then
+    begin
+      SellToCoverAtMarket;
+    end
+  else if (SellPosition = 1) and ((Low < (SellPrice-stopGain)) or (High > (SellPrice+stopLoss))) then
+    begin
+      BuyToCoverAtMarket;
+    end; 
+
+end;

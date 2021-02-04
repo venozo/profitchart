@@ -1,0 +1,70 @@
+var
+  spred, fh, ft, fsg, fsl, points,stopGain,stopLoss, opPrice : float;
+  duration: integer;
+begin
+  fsg := 2;
+  fsl := 1;
+
+  if (BarDuration > 0) then
+    duration := 0
+  else 
+    duration := 1;
+
+  if (IsBMF) then
+    begin              
+      spred := 0.5;
+      fh := 0910;
+      ft := 1600;
+    end
+  else 
+    begin
+      spred := 0.01;
+      fh := 1010;
+      ft := 1500;
+    end;
+
+  if (BuyPosition = 1) then
+    begin
+      stopGain := BuyPrice + (points * fsg);
+      stopLoss := BuyPrice - (points * fsl);
+      SellToCoverStop(stopGain,stopGain);
+      SellToCoverStop(stopLoss,stopLoss);
+    end
+  else if (SellPosition = 1) then
+    begin
+      stopGain := SellPrice - (points * fsg);
+      stopLoss := SellPrice + (points * fsl);
+      BuyToCoverStop(stopGain,stopGain);
+      BuyToCoverStop(stopLoss,stopLoss);
+    end;  
+   
+  if (BuyPosition = 1) and ((High > stopGain) or (Low < stopLoss)) then
+    begin
+      SellToCoverAtMarket;
+    end
+  else if (SellPosition = 1) and ((Low < stopGain) or (High > stopLoss)) then
+    begin
+      BuyToCoverAtMarket;
+    end;    
+           
+  if (BuyPosition = 0) and (SellPosition = 0) and
+  (Low[duration] > Low[duration+1]) and (High[duration] < High[duration+1]) 
+  then
+    begin
+      PaintBar(clLime);
+      BuyStop(High[duration],High[duration]);
+      SellShortStop(Low[duration],Low[duration]);
+      points := High[duration] - Low[duration];
+    end
+  else if (BuyPosition = 0) and (SellPosition = 0) and  
+  (Low[duration] > Low[duration+1]) and (High[duration] < High[duration+1])  
+  then
+    begin
+      PaintBar(clLime);
+      BuyStop(High[duration],High[duration]);
+      SellShortStop(Low[duration],Low[duration]);
+      points := High[duration] - Low[duration];
+    end;
+
+
+end;

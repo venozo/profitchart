@@ -1,0 +1,54 @@
+//Setup Estocástico Lento - 13 Outubro 2020
+
+//YouTube
+//https://www.youtube.com/tradeeacoes
+
+//Instagram
+//https://www.instagram.com/tradeeacoes
+
+//Por Edgard Matos - edgardmatoscavalcante@gmail.com
+
+
+var
+  spred, fh, ft, fatorStopGain, fatorStopLoss, points,stopGain,stopLoss, opPrice, pm : float;
+  duration, cd: integer;
+  ccc, vvv: boolean;
+begin
+
+  ccc := false;
+  vvv := false;
+
+  if (BarDuration > 0) then
+    duration := 0
+  else 
+    duration := 1;
+
+  if (IsBMF) then
+    begin              
+      spred := 0.5;
+      fh := 0910;
+      ft := 1600;
+    end
+  else 
+    begin
+      spred := 0.01;
+      fh := 1010;
+      ft := 1500;
+    end;
+
+  if (BuyPosition = 0) and (SellPosition = 0) then
+    begin
+      if (SlowStochastic(14) < 20) then
+        begin  
+          BuyAtMarket;
+        end;
+     end; 
+
+  if (BuyPosition = 1) then
+    begin
+      if (SlowStochastic(14) > 80) then
+        begin
+          SellToCoverAtMarket;
+        end;
+    end;
+end;

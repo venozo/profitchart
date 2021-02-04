@@ -1,0 +1,45 @@
+Inicio
+
+//Setup Ponto Continuo - Compra
+
+  Se (Abertura < Media(21,Close[1])) e (Fechamento > Media(21,Close[1])) e (Maxima > Fechamento[1]) então
+    PaintBar(clVerde)
+
+//Setup Ponto Continuo - Venda
+
+  Senão Se (Abertura > Media(21,Close[1])) e (Fechamento < Media(21,Close[1])) e (Minima < Fechamento[1]) então
+    PaintBar(clVermelho)
+
+//Setup 9.1 - Compra
+
+Senão se (Abertura < MediaExp(9,close)) e (Fechamento > MediaExp(9,Close[1])) então
+PaintBar(ClVerde)
+
+//Setup 9.1 - Venda
+
+Senão se (Abertura > MediaExp(9,close)) e (Fechamento < MediaExp(9,Close[1])) então
+PaintBar(ClVermelho)
+
+//Setup 9.2 - Compra
+                                                    
+Senão se (Fechamento < Maxima[1]) e (Maxima < Maxima[1]) e (Fechamento > MediaExp(9,Close[1])) então
+PaintBar(clVerde)
+
+//Setup 9.2 - Venda
+                                                    
+Senão se (Fechamento > Maxima[1]) e (Maxima > Maxima[1]) e (Fechamento < MediaExp(9,Close[1])) então
+PaintBar(clVermelho)
+
+//Setup 9.3 - Compra
+                                                    
+Senão se (Fechamento < Maxima[2]) e (Maxima < Maxima[2]) e (Fechamento > MediaExp(9,Close[1])) então
+PaintBar(clVerde)
+
+//Setup 9.3 - Venda
+                                                    
+Senão se (Fechamento > Maxima[2]) e (Maxima > Maxima[2]) e (Fechamento < MediaExp(9,Close[1])) então
+PaintBar(clVermelho)
+
+Senão PaintBar(clBranco);
+
+Fim;

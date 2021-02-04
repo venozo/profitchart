@@ -1,0 +1,57 @@
+var
+  spred, fh, fsg, fsl, points,stopGain,stopLoss, mmmx, mmmn : float;
+  ccc, vvv: boolean;
+begin
+  ccc := false;
+  vvv := false;
+  if (IsBMF) then
+    begin              
+      spred := 0.0;
+      fh := 0900;
+    end
+  else 
+    begin
+      spred := 0.00;
+      fh := 1000;
+    end;
+  
+  mmmx := Media(3, High);
+  mmmn := Media(3, Low);
+           
+  if (Media(20, Close) > Media(20, Close)[1]) then
+    begin
+      //PaintBar(clLime);
+      ccc := true;
+      vvv := false;
+    end
+  else
+    begin
+      //PaintBar(clRed);
+      ccc := false;
+      vvv := true;
+    end;
+
+  if (BuyPosition = 0) and (SellPosition = 0) then 
+    begin
+      if (ccc = true) and (Low < mmmn) then
+        begin
+          //PaintBar(clLime);
+          BuyStop(Low,Low);
+        end;
+    end;
+
+
+
+  if (BuyPosition = 1) and (vvv) and (High > mmmx) then
+    begin
+      SellToCoverStop(High,High);
+      SellShortStop(High,High);
+    end
+  else if (SellPosition = 1) and (ccc) and (Low < mmmn) then
+    begin
+      BuyToCoverStop(Low,Low);
+      BuyStop(Low,Low);
+    end; 
+
+
+end;

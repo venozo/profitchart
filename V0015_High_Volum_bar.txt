@@ -1,0 +1,19 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	Coloração;
+Version	: 	1.0
+name: High_Volum_bar
+descrição:
+Colore as Barras conf volume e nivel de fibo parametrizavel
+} 
+input
+MedVolume(9);
+Nivel(1.8);
+var
+MediaVol:real;
+begin
+  MediaVol:=media(MedVolume,volume);
+  se(volume> (mediaVol*Nivel))then
+  paintbar(clazul);
+  plot(mediaVol*Nivel);
+end;

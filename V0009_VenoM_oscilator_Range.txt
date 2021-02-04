@@ -1,0 +1,22 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	Indicador;
+Version	: 	1.
+name: VenoM_oscilator_Range
+descrição:
+plota ocilação das medias entre dois niveis de 20,
+}
+input
+MedRapida(5);
+MedLenta(34);
+var
+mPrice,AO,AC:float;
+begin
+mPrice:= (high+low)/2;  //preço medio
+ AO:= (media(MedRapida,mPrice)-media(MedLenta,mPrice)); //saldo do resultado das medias de 5 e 34
+ AC:= AO-media(MedRapida,AO);
+ plot(AO);
+ plot4(AC);
+ plot2(20);
+ plot3(-20);
+end;

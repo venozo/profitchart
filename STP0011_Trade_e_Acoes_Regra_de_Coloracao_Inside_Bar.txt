@@ -1,0 +1,13 @@
+//Regra de Coloraçao Inside Bar - 16 Outubro 2020
+
+//YouTube
+//https://www.youtube.com/tradeeacoes
+
+//Instagram
+//https://www.instagram.com/tradeeacoes
+
+//Por Edgard Matos - edgardmatoscavalcante@gmail.com
+begin
+  if (High < High[1]) and (Low > Low[1]) then 
+    PaintBar(clBlue);
+end;

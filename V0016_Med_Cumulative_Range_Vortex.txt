@@ -1,0 +1,35 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	indicador e Coloração;
+Version	: 	1.0
+name: Med_Cumulative_Range
+descrição:
+Colore as Barras conf resultado da acumulação dos resultados das max e min das barras divididas pelo true range
+} 
+input
+  Length(14);
+var
+  VMPlus,VMMinus,VMPlusSum,VMMinusSum,TR,TRSum,VIPlusSumRge,VIMinusSumRge : Float;
+Begin
+  VMPlus := Abs(High - Low[1]); //max-minima[anterior]
+  VMMinus := Abs(Low - High[1]);//min-max[anterior]
+  VMPlusSum := Summation(VMPlus,Length); //acumulação positiva da diferenças do resultado das barras d periodo
+  VMMinusSum := Summation(VMMinus,Length);//acumulação negativa da diferenças do resultado das barras d periodo
+  TR := TrueRange;
+  TRSum := Summation(TR,Length);//acumulo do truerange do periodo
+  if TRSum > 0 then
+    begin
+      VIPlusSumRge := VMPlusSum / TRSum;
+      VIMinusSumRge := VMMinusSum / TRSum;
+    end;
+  Plot(VIPlusSumRge);
+  Plot2(VIMinusSumRge);
+
+  If VIPlusSumRge > VIMinusSumRge then
+    paintbar(clGreen);
+  If VIPlusSumRge < VIMinusSumRge then
+    paintbar(clred);
+end;
+
+
+

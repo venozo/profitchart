@@ -1,0 +1,38 @@
+input
+  Periodo(17);
+  CandlesStop(4);
+var
+  fMediaMovel, fDados : float;
+  iOnTrade, iPlotColor : integer;
+
+begin
+  if (currentBar >= Periodo) then 
+    begin
+      fDados := close;
+      fMediaMovel := media(Periodo,fDados);
+      iOnTrade := iOnTrade[1]; 
+      if (close > Open) then
+        begin
+          if (fMediaMovel > lowest(fMediaMovel[1],CandlesStop)) and (close >  high[1]) and (low > fMediaMovel) then iOnTrade := +1;
+          if (iOnTrade < 0) and (high > highest(high[1],CandlesStop)) then iOnTrade := 0;
+          if (iOnTrade > 0) and (iOnTrade[1] < 0) then iOnTrade := 0;
+        end;
+
+     if (close < Open) then                 
+        begin
+          if (fMediaMovel < highest(fMediaMovel[1],CandlesStop)) and (close <  low[1]) and (low < fMediaMovel) then iOnTrade := -1;
+          if (iOnTrade > 0) and (low < lowest(low[1],CandlesStop)) then iOnTrade := 0;
+          if (iOnTrade < 0) and (iOnTrade[1] > 0) then iOnTrade := 0;
+        end;
+
+       iPlotColor := iPlotColor[1];
+       if (iOnTrade > 0) then iPlotColor := clAzul;
+       if (iOnTrade < 0) then iPlotColor := clvermelho;
+       if (iOnTrade = 0) then if (iOnTrade[1] <> 0) then iPlotColor := clAmarelo else iPlotColor:= clCinza;
+       setPlotColor(1,iPlotColor);
+       plot(fMediaMovel);
+       paintbar(iPlotColor);
+    end;
+end;
+
+

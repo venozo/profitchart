@@ -1,0 +1,40 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	Coloração;
+Version	: 	1.0
+name: Volum_color_bar
+descrição:
+Colore as Barras conf volume, vermelho alto volume,azul pouco volume
+} 
+//** Red bar - extrime high volume 
+//** Orange bar - volume is high 
+//** Grayish bar - volume is normal 
+//** Green bar - volume is low 
+//** Blue bar - almost no volume 
+//************************************************************************
+input
+  std_len(40);
+  thresshold1(200);
+  thresshold2(300);
+  thresshold3(50);
+  thresshold4(25);
+var
+  avg,nThresshold1,nThresshold2,nThresshold3,nThresshold4 : float;
+  highvol1,highvol2,lowvol1,lowvol2                       : boolean;
+begin
+  avg := StdDevs(volume,std_len);
+  highvol1 := volume > avg * (thresshold1 / 100);
+  highvol2 := volume > avg * (thresshold2 / 100);
+  lowvol1 := volume < avg * (thresshold3 / 100);
+  lowvol2 := volume < avg * (thresshold4 / 100);
+  if (highvol2) then
+    PaintBar(RGB(255,0,0))
+  else if (highvol1) then
+    PaintBar(rgb(255,145,0))
+  else if (lowvol2) then
+    PaintBar(rgb(0,153,255))
+  else if (lowvol1) then
+    PaintBar(rgb(0,221,35))
+  else 
+    PaintBar(rgb(136,136,24));
+end;

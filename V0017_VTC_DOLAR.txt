@@ -1,0 +1,53 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	indicador ;
+Version	: 	1.0
+name: VTC_DOL
+descrição:
+Plota os Niveis Delta do VTC(deve-se pesquisar o preço do VTC do Dia e colocar no input
+} 
+Input
+  Strike(5335);
+  PDelta(0.5);
+  periodo(2);
+Var
+  DCB,DCC,D,DMB,DMC,DMC75,DMB75,nAbertura : float;
+begin
+  if (LastCalcDate > CalcDate(CurrentDate, - (2))) then
+    begin
+      D := PDelta / Neg(100);
+      DCB := Round2Fraction(Strike + (Strike * D));
+      DCC := Round2Fraction(Strike - (Strike * D));
+      DMB := Round2Fraction(Strike + (Strike * D) / 2);
+      DMC := Round2Fraction(Strike - (Strike * D) / 2);
+      DMC75 := DCC + DMC;
+      DMB75 := DCB + DMB;
+      plot(strike);
+      setplotwidth(1,3);
+      se (fechamento[1] > strike) e (fechamento > strike) então
+        inicio
+          plot2(dmc);
+        fim;
+      se (fechamento > dmc) então
+        inicio
+          plot3(dcc);
+        fim;
+      se (fechamento > dcc) então
+        inicio
+          plot4(dcc - (strike * d * 0.5));
+        fim;
+      ////////////////////////////////////////
+      se (fechamento[1] < strike) e (fechamento < strike) então
+        inicio
+          plot2(dmb);
+        fim;
+      se (fechamento < dmb) então
+        inicio
+          plot3(dcb);
+        fim;
+      se (fechamento < dcb) então
+        inicio
+          plot4(dcb + (strike * d * 0.5));
+        fim;
+    fim;
+fim;

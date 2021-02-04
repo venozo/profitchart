@@ -1,0 +1,70 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	Indicador;
+Version	: 	1.
+name: VMA'z
+descrição:
+plota variação media movel
+}
+input
+  src(close);
+  l(6);
+var
+  k    : float;
+  pdm  : float;
+  x    : float;
+  y    : float;
+  mdm  : float;
+  pdms : float;
+  mdms : float;
+  s    : float;
+  pdi  : float;
+  mdi  : float;
+  pdis : float;
+  mdis : float;
+  d    : float;
+  s1   : float;
+  is   : float;
+  hhv  : float;
+  llv  : float;
+  d1   : float;
+  vi   : float;
+  vma  : float;
+begin
+ if (CurrentBar >20) then
+    begin
+  k := 1.0 / l;
+  x := (src - src[1]);
+  y := (src[1] - src);
+  if x > 0 then
+    pdm := x
+  else if x <= 0 then
+    pdm := 0;
+  if y > 0 then
+    mdm := y
+  else if y <= 0 then
+    mdm := 0;
+  pdmS := ((1 - k) * (pdmS[1]) + k * pdm);
+  mdmS := ((1 - k) * (mdmS[1]) + k * mdm);
+  s := pdmS + mdmS;
+  pdi := pdmS / s;
+  mdi := mdmS / s;
+  pdiS := ((1 - k) * (pdiS[1]) + k * pdi);
+  mdiS := ((1 - k) * (mdiS[1]) + k * mdi);
+  d := abs(pdiS - mdiS);
+  s1 := pdiS + mdiS;
+  iS := ((1 - k) * (iS[1]) + k * d / s1);
+  hhv := highest(iS,l);
+  llv := lowest(iS,l);
+  d1 := hhv - llv;
+  vI := (iS - llv) / d1;
+  vma := (1 - k * vI) * (vma[1]) + k * vI * src;
+  if vma = vma[1] then
+    setplotcolor(1,clbranco);
+  if vma > vma[1] then
+    setplotcolor(1,cllime);
+  if vma < vma[1] then
+    setplotcolor(1,clred);
+  plot(vma);
+end;
+end;

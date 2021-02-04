@@ -1,0 +1,139 @@
+//Setup 9.1 Larry Willians
+
+//YouTube
+//https://www.youtube.com/tradeeacoes
+
+//Instagram
+//https://www.instagram.com/tradeeacoes
+
+//Por Edgard Matos - edgardmatos@gmail.com
+
+
+var
+  spred, fh, ft, fatorStopGain, fatorStopLoss, points,stopGain,stopLoss, opPrice, pm : float;
+  duration, cd: integer;
+begin
+
+
+  //Altere para modificar os testes.
+  fatorStopGain := 2; //Quantidade de vezes o risco.
+  fatorStopLoss := 1; //Quantidade de vezes o candle marcado para stop loss.
+
+
+
+
+
+  if (BarDuration > 0) then
+    duration := 0
+  else 
+    duration := 1;
+
+  if (IsBMF) then
+    begin              
+      spred := 0.5;
+      fh := 0910;
+      ft := 1600;
+    end
+  else 
+    begin
+      spred := 0.01;
+      fh := 1010;
+      ft := 1500;
+    end;
+
+  if (BuyPosition = 1) then
+    begin
+      if (Close < mediaexp(9,Close)) then
+        begin
+          stopGain := Close;
+        end
+      else 
+        stopGain := 10000000;
+
+      stopLoss := BuyPrice;
+      SellToCoverStop(stopGain,stopGain);
+      SellToCoverStop(stopLoss,stopLoss);
+    end  
+  else if (BuyPosition = 2) then
+    begin
+      stopGain := BuyPrice + (points * fatorStopGain);
+      stopLoss := BuyPrice - (points * fatorStopLoss);
+      SellToCoverStop(stopGain,stopGain);
+      SellToCoverStop(stopLoss,stopLoss);
+      SellToCoverStop(stopLoss,stopLoss);
+    end;    
+  
+  if (BuyPosition = 2) and ((High > stopGain) or (Low < stopLoss)) then
+    begin
+      SellToCoverAtMarket;
+      SellToCoverAtMarket;
+    end
+  else if (BuyPosition = 1) and ((High > stopGain) or (Low < stopLoss)) then
+    begin
+      SellToCoverAtMarket;
+    end;
+
+  if (SellPosition = 1) then
+    begin
+      if (Close > mediaexp(9,Close)) then
+        begin
+          stopGain := Close;
+        end
+      else 
+        stopGain := 0;
+
+      stopLoss := SellPrice;
+      BuyToCoverStop(stopGain,stopGain);
+      BuyToCoverStop(stopLoss,stopLoss);
+    end  
+  else if (SellPosition = 2) then
+    begin
+      stopGain := SellPrice - (points * fatorStopGain);
+      stopLoss := SellPrice + (points * fatorStopLoss);
+      BuyToCoverStop(stopGain,stopGain);
+      BuyToCoverStop(stopLoss,stopLoss);
+      BuyToCoverStop(stopLoss,stopLoss);
+    end;    
+  
+  if (SellPosition = 2) and ((Low < stopGain) or (High > stopLoss)) then
+    begin
+      BuyToCoverAtMarket;
+      BuyToCoverAtMarket;
+    end
+  else if (SellPosition = 1) and ((Low < stopGain) or (High > stopLoss)) then
+    begin
+      BuyToCoverAtMarket;
+    end;
+
+
+  pm := mediaexp(9,close);         
+  if (BuyPosition = 0) and (SellPosition = 0) then
+    if (close[5] < mediaexp(9,close)[5]) and
+    (close[4] < mediaexp(9,close)[4]) and
+    (close[3] < mediaexp(9,close)[3]) and
+    (close[2] < mediaexp(9,close)[2]) and
+    (close[1] < mediaexp(9,close)[1]) and
+    (close > pm) and
+    (low < pm)
+    then
+      begin
+        PaintBar(clBlue);
+        BuyStop(High,High);
+        BuyStop(High,High);
+        points := High - Low;
+      end
+    else if (false) and (close[5] > mediaexp(9,close)[5]) and
+    (close[4] > mediaexp(9,close)[4]) and
+    (close[3] > mediaexp(9,close)[3]) and
+    (close[2] > mediaexp(9,close)[2]) and
+    (close[1] > mediaexp(9,close)[1]) and
+    (close < pm) and
+    (high > pm)
+    then
+      begin
+        PaintBar(clGray);
+        SellShortStop(Low,Low);
+        SellShortStop(Low,Low);
+        points := High - Low;
+      end;
+end;

@@ -1,0 +1,32 @@
+{
+name: Vector_Amok01
+@venozzo venozo2017@gmail.com
+Tipo	: 	Indicador;
+Version	: 	1.0
+descrição:
+plota lionhas LTA LTB com angulos predefinidos pelo input
+}
+input
+  periodo(45);
+  angulo(90);
+Var
+  X,z,c : float;
+Begin
+  c := angulo / 100;
+  If (low = lowest(low,periodo)) then
+    Begin
+      Noplot(1);
+      X := low;
+    End;
+  If (high = highest(high,periodo)) then
+    Begin
+      Noplot(2);
+      z := high;
+    End;
+  if (close > x) then
+    x := x + c;
+  if (close < z) then
+    z := z - c;
+  Plot(x);
+  plot2(z);
+End;

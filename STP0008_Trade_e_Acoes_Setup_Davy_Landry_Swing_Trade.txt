@@ -1,0 +1,101 @@
+//Setup Dave Landry - 7 de Outubro de 2020
+
+//YouTube
+//https://www.youtube.com/tradeeacoes
+
+//Instagram
+//https://www.instagram.com/tradeeacoes
+
+//Por Edgard Matos - edgardmatoscavalcante@gmail.com
+
+var
+  spred, fh, ft, fsg, fsl, points,stopGain,stopLoss, pc : float;
+  as, conds, cond1, cond2, cond3, cond4, cond5: boolean;
+  duration, dt, cd: integer;
+begin
+  if (BarDuration > 0) then
+    duration := 0
+  else 
+    duration := 1;
+
+  fsg := 2;
+  fsl := 1;
+  if (IsBMF) then
+    begin              
+      spred := 0.5;
+      fh := 0910;
+      ft := 1600;
+    end
+  else 
+    begin
+      spred := 0.01;
+      fh := 1010;
+      ft := 1400;
+    end;
+  
+  //arma setup
+  cond1 := (Media(20, Close) > Media(20, Close)[1]);
+  cond2 := Close > Media(20, Close);
+  cond3 := (Media(9, Close) > Media(9, Close)[1]);
+  cond4 := (Media(50, Close) > Media(50, Close)[1]);
+  cond5 := (Low < Low[1]) and (Low < Low[2]);
+  conds := (cond1 and cond2 {and cond3 and cond4});
+           
+  if not (as) then
+    begin
+      if (conds and cond5) then                                         
+        begin
+          as := true;
+        end;
+    end;
+  
+  //desararma setup
+  if (as) then
+    begin
+      if not (conds) then
+        begin
+          as := false;
+        end;
+    end;
+  
+  if (BuyPosition = 1) then
+  begin
+    as := false;
+    dt := 0;
+    stopGain := BuyPrice + (points * fsg);
+    stopLoss := BuyPrice - (points * fsl);
+    SellToCoverStop(stopGain,stopGain);
+    SellToCoverStop(stopLoss,stopLoss);
+  end;
+
+  if (BuyPosition = 1) and ((High > stopGain) or (Low < stopLoss)) then
+    begin
+      SellToCoverAtMarket;
+      as := false;
+    end
+  else if (SellPosition = 1) and ((Low < stopGain) or (High > stopLoss)) then
+    begin
+      BuyToCoverAtMarket;
+      as := false;
+    end; 
+      
+
+                 
+  if (as) and (BuyPosition = 0) and (SellPosition = 0) then
+    begin
+      if (duration = 1)  then
+
+        begin        
+          points := High[1] - Low[1];
+          if (cd = dt+1) then
+            begin
+              BuyStop(High[1], High[1]);
+            end;
+          dt := cd;        
+        end
+      else
+        BuyStop(High, High);
+        
+    end;
+  cd := cd+1;
+end;

@@ -1,0 +1,18 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	Coloração;
+Version	: 	1.0
+descrição:
+colore acima da vwap de verde abaixo da vwap de vermelho
+}
+begin
+  plot(vwap(1));
+  if (close > vwap(1)) then
+    begin
+      PaintBar(clLime);
+    end;
+  if (close < vwap(1)) then
+    begin
+      PaintBar(clRed);
+    end;
+end;

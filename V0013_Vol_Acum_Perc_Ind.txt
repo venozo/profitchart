@@ -1,0 +1,36 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	Indicador;
+Version	: 	1.0
+name: VOL_Acum_percent
+descrição:
+plota a porcentagem acumulada* resolver erro divisao por 0
+}
+input
+  length(10);
+var
+  x   : float;
+  tva : float;
+  tv  : float;
+  va  : float;
+  i   : integer;
+  m   : integer;
+begin
+if (CurrentBar > 20) then
+    begin  
+  x:=  MidPoint(((2 * close) - high - low),length);
+  //x := ((2 * close) - high - low) / (high - low);
+  tva := volume * x;
+  tv := volume;
+  for i := 1 to length do
+    begin
+      tva := tva + (volume[i] * x[i]);
+    end;
+  for m := 1 to length do
+    begin
+      tv := tv + volume[m];
+    end;
+  va := (100 * tva) / tv;
+  plot(va);
+end;
+end;

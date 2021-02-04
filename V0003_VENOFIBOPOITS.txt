@@ -1,0 +1,24 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	Indicador;
+Version	: 	1.
+name: Veno_Fibopoints
+descrição:
+plota linhas conforme os niveis de fibo adiquiridos pelo ajuste anterior
+}
+Input
+  Nivel1(0.23);
+  Nivel2(0.61);
+  Nivel3(0.89);
+  Nivel4(1.61);
+  a(close);
+var
+  x,v : float;
+begin
+  x := (PriorCote(0));
+  Plot(x * (1 - Nivel1 / 100));
+  Plot2(x * (1 - Nivel2 / 100));
+  Plot3(x * (1 - Nivel3 / 100));
+  Plot4(x * (1 - Nivel4 / 100));
+  setPlotcolor(2,clVermelho);
+end;

@@ -1,0 +1,92 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	Indicador e execução;
+Version	: 	1.
+name: SANTO
+descrição:
+santo graao
+}
+var
+  compra,venda : boolean;
+  fechma,me    : float;
+begin
+  me := (maxima + minima + Close + open / 4);
+  fechma := (close + close[2] + open[1]);
+  ////////////////////////////////////////////////////condição de venda
+  venda := (TopBottomDetector(3) > TopBottomDetector(3)[2]) e (TopBottomDetector(2) > TopBottomDetector(2)[2]) e (me > me[3]) e ((ifr(9) > ifr(9)[1])) e (ifr(9) > 40);
+  /////////////////////////////////////////////////////////condição de compra
+  compra := (TopBottomDetector(3) < TopBottomDetector(3)[2]) e (TopBottomDetector(2) < TopBottomDetector(2)[2]) e (me < me[3]) e ((ifr(9) < ifr(9)[1])) e (ifr(9) < 50);
+  se (time > 905) e (time < 1735) e (buyposition = 0) e (sellposition = 0) entao
+    ////////////////////////////////////////////////////////
+    inicio
+      se compra entao
+        BuyStop(close,close);
+      se venda entao
+        SellShortstop(CLOSE,CLOSE);
+      se venda entao
+        paintbar(clred);
+      se compra entao
+        paintbar(clverde);
+    end;
+  /////////////////////////////////////////////////////////
+  se (sellposition = 1) entao
+    PaintBar(clred);
+  se (buyposition = 1) entao
+    PaintBar(clverde);
+  se (IsBought) entao
+    se (ifr(9) < 23) ou (TopBottomDetector(3) > TopBottomDetector(3)[2]) e (TopBottomDetector(2) > TopBottomDetector(2)[2]) entao
+      begin
+        SellShortAtMarket;
+        /////// BuyStop(close,close);
+      end;
+  se (IsSold) entao
+    se (ifr(9) > 69) ou (TopBottomDetector(3) > TopBottomDetector(3)[2]) e (TopBottomDetector(2) > TopBottomDetector(2)[2]) entao
+      begin
+        BuyAtMarket;
+        /////// SellShortstop(high,high);
+      end;
+  se time > 1736 entao
+    closeposition;
+end;
+var
+  compra,venda : boolean;
+  fechma,me    : float;
+begin
+  me := (maxima + minima + Close + open / 4);
+  fechma := (close + close[2] + open[1]);
+  ////////////////////////////////////////////////////condição de venda
+  venda := (TopBottomDetector(3) > TopBottomDetector(3)[2]) e (TopBottomDetector(2) > TopBottomDetector(2)[2]) e (me > me[3]) e ((ifr(9) > ifr(9)[1])) e (ifr(9) > 40);
+  /////////////////////////////////////////////////////////condição de compra
+  compra := (TopBottomDetector(3) < TopBottomDetector(3)[2]) e (TopBottomDetector(2) < TopBottomDetector(2)[2]) e (me < me[3]) e ((ifr(9) < ifr(9)[1])) e (ifr(9) < 50);
+  se (time > 905) e (time < 1735) e (buyposition = 0) e (sellposition = 0) entao
+    ////////////////////////////////////////////////////////
+    inicio
+      se compra entao
+        BuyStop(close,close);
+      se venda entao
+        SellShortstop(CLOSE,CLOSE);
+      se venda entao
+        paintbar(clred);
+      se compra entao
+        paintbar(clverde);
+    end;
+  /////////////////////////////////////////////////////////
+  se (sellposition = 1) entao
+    PaintBar(clred);
+  se (buyposition = 1) entao
+    PaintBar(clverde);
+  se (IsBought) entao
+    se (ifr(9) < 23) ou (TopBottomDetector(3) > TopBottomDetector(3)[2]) e (TopBottomDetector(2) > TopBottomDetector(2)[2]) entao
+      begin
+        SellShortAtMarket;
+        /////// BuyStop(close,close);
+      end;
+  se (IsSold) entao
+    se (ifr(9) > 69) ou (TopBottomDetector(3) > TopBottomDetector(3)[2]) e (TopBottomDetector(2) > TopBottomDetector(2)[2]) entao
+      begin
+        BuyAtMarket;
+        /////// SellShortstop(high,high);
+      end;
+  se time > 1736 entao
+    closeposition;
+end;
