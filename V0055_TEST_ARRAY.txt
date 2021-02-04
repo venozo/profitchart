@@ -1,0 +1,9 @@
+input
+t(10);
+z(2);
+var
+x:array[1..10]of integer;
+begin
+x:=x[t];
+  Plot(x[z]);
+end;

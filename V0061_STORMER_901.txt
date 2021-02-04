@@ -1,0 +1,24 @@
+var
+  candle : integer;
+  x      : float;
+begin
+  if (Abertura > Minima[1]) e (Fechamento > Minima[1]) e (Maxima < Abertura[1]) then
+    begin
+      BuyStop(low,low);
+      x := close[1];
+      noplot(1);
+      candle := 0;
+    end;
+  if buyposition = 0 then
+    candle := 0;
+  if buyposition >= 1 then
+    candle := candle + 1;
+  if candle = 1 then
+    paintbar(clgreen);
+  if candle = 5 then
+    begin
+      paintbar(255);
+    end;
+  plot(x);
+end;
+

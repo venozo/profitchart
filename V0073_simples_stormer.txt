@@ -1,0 +1,28 @@
+var  
+  compra,venda : boolean;
+  gain  : float;
+inicio 
+  gain := (maxima - minima)*1.6180; 
+compra:= (fechamento[1]<abertura[1])
+    e (abertura[1]>fechamento[1])    
+    E (abertura<FECHAMENTO)
+    e (minima[1]<minima[2])
+    e(minima<>minima[1])
+    e (abertura>=fechamento[1]);
+    
+venda:=  (fechamento[1]>abertura[1])
+    e (abertura[1]<fechamento[1])     
+    E (abertura>FECHAMENTO)
+    e (maxima[1]>maxima[2])
+    e(maxima<>maxima[1])
+    e (abertura<=fechamento[1]); 
+       
+    
+  Se compra então
+    paintbar(clVerde)
+    senao paintbar(clMedGray);
+  Se venda então
+  paintbar(clVermelho);   
+fim;
+
+

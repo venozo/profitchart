@@ -1,0 +1,25 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	Indicador;
+Version	: 	1.
+name: PVPC proibido Comprar Proibido Vender
+descrição:
+plota pontos de decisao onda ha regioes onde mostra suportes e resistencias
+}
+Input
+  Periodo(305); //padrao 72
+Var
+  hl   : Float;
+  ll   : Float;
+  dist : Float;
+  hf   : Float;
+  lf   : Float;
+Begin
+  hl := highest(high,Periodo); //High Line (Border)
+  ll := lowest(low,Periodo); //Low Line (Border)
+  dist := hl - ll; //Range of the channel
+  hf := hl - dist * 0.236; //Highest Fibonacci line
+  lf := hl - dist * 0.618; //Lowest Fibonacci line
+  Plot(hf);
+  Plot2(lf);
+End;

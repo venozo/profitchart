@@ -1,0 +1,23 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	Indicador;
+Version	: 	1.
+name: Fibo_range
+descrição:
+plota niveis de fibonacci
+}
+Input
+  Nivel1(0.50);
+  Nivel2(1);
+  Nivel3(1.50);
+  Nivel4(2);
+var
+  x,v : float;
+begin
+  x := (PriorCote(4));
+  Plot(x * (1 + Nivel1 / 100));
+  Plot2(x * (1 + Nivel2 / 100));
+  Plot3(x * (1 + Nivel3 / 100));
+  Plot4(x * (1 + Nivel4 / 100));
+  setPlotcolor(2,clVermelho);
+end;

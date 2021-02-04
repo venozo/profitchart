@@ -1,0 +1,30 @@
+//Super Passband Filter
+input
+  Period1(40);
+  Period2(60);
+var
+  a1,a2,PB,count,RMS : Float;
+begin
+  Count := Period1 - Period2;
+  a1 := 5 / Period1;
+  a2 := 5 / Period2;
+  PB := (a1 - a2) * Close + (a2 * (1 - a1) - a1 * (1 - a2)) * Close[1] + ((1 - a1) + (1 - a2)) * PB[1] - (1 - a1) * (1 - a2) * PB[2];
+  If PB > RMS then
+    PB := PB;
+  If PB < RMS then
+    PB := (neg(pb));
+  RMS := 0;
+  //for (count = 0) to  Count = 49 do
+  begin
+    RMS := RMS + PB[0] * PB[0];
+  end;
+  RMS := SQRT(RMS / 50) * 2;
+  Plot(PB);
+  Plot2(0);
+  Plot3(RMS);
+  Plot4(neg(RMS));
+  If PB > RMS then
+    paintbar(CLgreen);
+  If PB < RMS then
+    paintbar(CLred);
+end;

@@ -1,0 +1,67 @@
+input
+  length(20); //
+  lengthKC(20);
+  multKC(1.5);
+  source(close);
+var
+  upperBB   : float;
+  lowerBB   : float;
+  dev       : float;
+  basis     : float;
+  ma        : float;
+  rangema   : float;
+  upperKC   : float;
+  lowerKC   : float;
+  avg       : float;
+  src       : float;
+  a         : float;
+  b         : float;
+  c         : float;
+  sumy      : float;
+  sumx      : float;
+  sumxy     : float;
+  sumx2     : float;
+  x         : integer;
+  i         : integer;
+  LR_line   : float;
+  indicador : float;
+  cor       : float;
+begin
+  sumy := 0.0;
+  sumx := 0.0;
+  sumxy := 0.0;
+  sumx2 := 0.0;
+  // Calculate BB
+  basis := media(length,source);
+  dev := multKC * stddevs(source,length);
+  upperBB := basis + dev;
+  lowerBB := basis - dev;
+  // Calculate KC
+  ma := media(lengthKC,source);
+  rangema := media(lengthKC,range);
+  upperKC := ma + rangema * multKC;
+  lowerKC := ma - rangema * multKC;
+  avg := (((highest(high,lengthKC) + lowest(low,lengthKC)) / 2) + (media(lengthKC,close))) / 2;
+  src := source - avg;
+  for i := 0 to lengthKC do
+    begin
+      sumy := sumy + src[i];
+      sumxy := sumxy + src[i] * i;
+      sumx := sumx + i;
+      sumx2 := sumx2 + (i * i);
+    end;
+  c := sumx2 * lengthKC - sumx * sumx;
+  b := (sumxy * lengthKC - sumx * sumy) / c;
+  a := (sumy - sumx * b) / lengthKC;
+  for x := 0 to lengthKC do
+    begin
+      LR_line[x] := a + b * x;
+    end;
+  indicador := LR_Line;
+  if indicador < 0 then
+    cor := indicador
+  else 
+    cor := 0;
+  plot(cor);
+  plot2(indicador - cor);
+end;

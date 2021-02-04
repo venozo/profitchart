@@ -1,0 +1,42 @@
+/////////////////////////////////////////////////////////
+//                                                     //
+//                      Stop ATR                       //
+//                                                     //
+//                 by: Rafael Peres                    //
+//                                                     //
+//     Parâmetros ATR: Período: 14                     //
+//                     Desvio: 2.0                     //
+//                     Aritmético 0 - Exponencial 1    //
+//                                                     //
+/////////////////////////////////////////////////////////
+
+input
+Periodo(14);
+Desvio(2.0);
+Modo(1);
+
+begin
+  // Verifica se possui posição vendida em aberto
+  if (IsSold) then
+    begin
+      // Cobre a posição com uma compra à mercado
+      if (Fechamento > Abertura) and (Fechamento > StopATR(Desvio, Periodo, Modo)) then
+        BuyToCoverAtMarket;
+                          
+    end     
+  // Verifica se possui posição comprada em aberto
+  else if (IsBought) then
+    begin
+      // Cobre a posição com uma venda à mercado
+      if (Fechamento < Abertura) and (Fechamento < StopATR(Desvio, Periodo, Modo)) then
+        SellToCoverAtMarket;
+                           
+    end
+
+  // Verifica se deve abrir uma posição     
+  else if Fechamento > StopATR(Desvio, Periodo, Modo) then
+    BuyAtMarket
+  else if Fechamento < StopATR(Desvio, Periodo, Modo) then
+    SellShortAtMarket;
+end;
+

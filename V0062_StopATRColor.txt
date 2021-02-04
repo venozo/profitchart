@@ -1,0 +1,27 @@
+/////////////////////////////////////////////////////////
+//                                                     //
+//               Stop ATR - Coloração                  //
+//                                                     //
+//                 by: Rafael Peres                    //
+//                                                     //
+//     Parâmetros ATR: Período: 14                     //
+//                     Desvio: 2.0                     //
+//                     Aritmético 0 - Exponencial 1    //
+//                                                     //
+/////////////////////////////////////////////////////////
+input
+  Periodo(14);
+  Desvio(2.0);
+  Modo(1);
+begin
+  if Fechamento > StopATR(Desvio,Periodo,Modo) then
+    Paintbar(ClVerde)
+  else if Fechamento < StopATR(Desvio,Periodo,Modo) then
+    Paintbar(ClVermelho);
+end;
+
+
+
+
+
+

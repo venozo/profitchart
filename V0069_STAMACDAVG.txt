@@ -1,0 +1,36 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	Indicador+ coloração;
+Version	: 	1.
+name: MACD_AVG
+descrição:
+Indicador MACD com medias ponderadas
+}
+
+input
+  Periods(46);
+  FastavgLength(6);
+  SlowAvgLength(21);
+  STMACDLength(10);
+var
+
+x:float;
+  HHigh,LLow,FastAvgValue,SlowAvgValue,FastStoch,SlowStoch,STMACD,STMACDAvg,OverBought,OverSold : float;
+begin
+
+  HHigh := Highest(High,Periods);
+  LLow := Lowest(Low,Periods);
+  FastAvgValue := XAverage(Close,FastavgLength);
+  SlowAvgValue := XAverage(Close,SlowAvgLength);
+  if HHigh <> LLow then
+    FastStoch := (FastAvgValue - LLow) / (HHigh - LLow);
+  SlowStoch := (SlowAvgValue - LLow) / (HHigh - LLow);
+  STMACD := (FastStoch - SlowStoch) * 100;
+  STMACDAvg := XAverage(STMACD,STMACDLength);
+  Plot(STMACD);
+  Plot2(STMACDAvg);
+
+  if (STMACD[1]< STMACDAvg[1])and(STMACD>STMACDAvg)then
+   x:=close;
+ if(close>x)then paintbar(clVerde) else paintbar(clVermelho);
+end;

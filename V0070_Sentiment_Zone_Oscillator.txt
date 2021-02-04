@@ -1,0 +1,47 @@
+{
+@venozzo venozo2017@gmail.com
+Tipo	: 	Indicador;
+Version	: 	1.
+name: Sentiment_Zone_ocilator
+descrição:
+oscilador de zona de decisao
+}
+input
+  Periodo(14);
+  PeriodoLongo(30);
+var
+  r                   : Integer;
+  ema1,ema2,ema3      : Float;
+  out                 : Float;
+  tema                : Float;
+  sentPos             : Float;
+  sentimentOscillator : Float;
+  hhLevel             : Float;
+  llLevel             : Float;
+  szoRange            : Float;
+  pRange              : Float;
+  upperBorder         : Float;
+  lowerBorder         : Float;
+begin
+  if close > close[1] then
+    r := 1
+  else 
+    r := - 1;
+  ema1 := mediaexp(Periodo,r);
+  ema2 := mediaexp(Periodo,ema1);
+  ema3 := mediaexp(Periodo,ema2);
+  out := (3 * (ema1 - ema2)) + ema3;
+  tema := out;
+  sentPos := tema;
+  sentimentOscillator := 100 * (sentPos / Periodo);
+  hhLevel := highest(sentimentOscillator,PeriodoLongo);
+  llLevel := lowest(sentimentOscillator,PeriodoLongo);
+  szoRange := hhLevel - llLevel;
+  pRange := szoRange * (95 / 100);
+  upperBorder := llLevel + pRange;
+  lowerBorder := hhLevel - pRange;
+  plot(sentimentOscillator);
+  plot2(upperBorder);
+  plot3(lowerBorder);
+  plot4((upperborder + lowerborder) / 2);
+end;

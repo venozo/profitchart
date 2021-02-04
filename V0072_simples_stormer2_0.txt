@@ -1,0 +1,68 @@
+input
+ mediaslow(1);
+ mediafast(1); 
+ mediamae (1); 
+
+
+var
+  compra,venda         : boolean;
+  gain                 : float;
+  max_d,mini_d,close_d : float;
+  Med1,Med2,Medmae     : float;
+
+inicio
+  med1:=(media(mediaslow,close));
+   med2:=(media(mediafast,close));
+   medmae :=(media(mediamae,close)); 
+  max_d := (HighD(1));
+  mini_d := (LowD(1));
+  close_d := (closed(1));
+
+  If (volume > 0) then
+  
+  gain := (RANGE) * 1.6180;
+  
+  compra := (med1>med1[1])
+  e (med2>med2[1]) 
+  e (medmae>medmae[1])
+  e (fechamento[1] < abertura[1]) 
+  e (abertura[1] > fechamento[1]) 
+  E (abertura < FECHAMENTO) 
+  e (minima[1] < minima[2]) 
+  e (minima <fechamento[1]) 
+  e (abertura >= fechamento[1]);
+
+  venda  := (med1<med1[1])
+  e (med2<med2[1]) 
+  e (medmae<medmae[1])
+  e (fechamento[1] > abertura[1]) 
+  e (abertura[1] < fechamento[1]) 
+  E (abertura > FECHAMENTO) 
+  e (maxima[1] > maxima[2]) 
+  e (maxima >fechamento[1]) 
+  e (abertura <= fechamento[1]);
+  
+  se compra entao
+      paintbar(clVerde)
+  senao se venda entao      
+    paintbar(clVermelho);
+
+
+ begin
+  Plot  (PriorCote(0) + (PriorCote(0)*(0))); 
+  SETPLOTCOLOR(1,clamarelo);
+  SetPlotWidth(1,2); //fechamneto d-1 
+  
+  Plot2 (PriorCote(2) + (PriorCote(0)*(0))); 
+  SETPLOTCOLOR(2,clvermelho); 
+  SetPlotWidth(2,2);//maxima d-1
+
+  Plot3 (PriorCote(3) - (PriorCote(0)*(0))); 
+  SETPLOTCOLOR(3,clverde);
+  SetPlotWidth(3,2);//minima d-1
+
+  
+ end; 
+
+
+fim;

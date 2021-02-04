@@ -1,0 +1,42 @@
+/// Esse codigo foi pensado, para simplificar informações no gráfico, pois eu utilizo um setup que tem o indicador BALANÇA DE PODER e MACD.///
+/// E observando os 2 indicadores juntos, percebi que quando os 2 ficam para cima ou para baixo, vai mostrar força de tendência.///
+/// regra de cor tem que ser utilizada no renko.///
+/// caso queira fazer uma melhor analise, coloque no gráfico o MACD histograma(26,12,9) e  BALANÇA DE PODER(9)  que você vai perceber um padrão.///
+/// o que eu fiz foi fazer esse padrão de analise em uma regra de cor, para ficar menos poluido e para tambem eu não ter que ficar toda hora.///
+/// analisando o histograma e tambem o grafico, logo agora eu so olho a cor, e já sei que está indicando que os dois indicadores estão para o mesmo rumo.///
+VAR
+  a,b,c,d,f,h,i,j,k,m : float;
+begin
+  a := (macd(26,12,9));
+  b := MediaExp(9,macd(26,12,9));
+  c := BalanceOfPower(9,0);
+  d := (MediaExp(3,IFR(5)));
+  f := (MediaExp(8,IFR(5)));
+  h := ROC(3,9,1);
+  i := MediaExp(13,(ROC(3,9,1)));
+  j := (MediaExp(5,IFR(6)));
+  k := (MediaExp(12,IFR(9)));
+  m := (MediaExp(5,IFR(5)));
+  se (d > f) então
+    PaintBar(clazulclaro); ///essa linha mostra filtro com base no indicador que analisa preço IFR.///
+  se (d < f) então
+    PaintBar(clvermelho); ///essa linha mostra filtro com base no indicador que analisa preço IFR.///
+  /// Esses codigo agora, ele vai mostrar força de sentido.///
+  Se (d > f) e (a > b) e (c > 0) então
+    PaintBar(cllime); /// essa linha mostra quando tem o filtro do MACD e BALANÇA DE PODER atuando no mesmo sentido.///
+  Se (d < f) e (a < b) e (c < 0) então
+    PaintBar(clfucsia); /// essa linha mostra quando tem o filtro do MACD e BALANÇA DE PODER atuando no mesmo sentido.///
+  //// gatilho do ROC /////
+  se (h > i) e (h[1] < i[1]) então
+    PaintBar(clazul);
+  se (h < i) e (h[1] > i[1]) então
+    PaintBar(clamarelo);
+fim;
+Casoqueiratrocarogatilho,bastasubstituir ////// gatilho do IFR_02 /////
+Se (j > k) e (j[1] < k[1]) então
+  PaintBar(clazul);
+Se (m < k) e (m[1] > k[1]) então
+  PaintBar(clamarelo);
+Tambémvocêpodeutilizararegra de coloraçãoemumamediamovel,euindicoa de 9,norenko
+
+

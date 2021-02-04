@@ -1,0 +1,65 @@
+///////////////////////////////////////////////////////////////////
+// MediaExpDiario
+// Autor: Lucas Anschau
+// Data: 18/11/2020
+// Descrição: Uma média exponencial normal, mas ao invés de considerar
+// valores de do dia anterior, considera apenas do dia atual. Também
+// tem um filtro para começar a contar a partir de X horário.
+// Funciona parecido com a VWAP.  
+///////////////////////////////////////////////////////////////////
+input
+  Periodo(15);
+  Dados(Close);
+  Horario(0900);
+var
+  nIndex  : Integer;
+  nAux    : Integer;
+  sSum    : Float;
+  sResult : Float;
+  sFactor : Float;
+  nPrimeiroCandleDia: Integer;
+  nPrimeiroCandleMedia: Integer;
+begin
+  if(Date > Date[1]) then
+  begin
+    nPrimeiroCandleDia := CurrentBar;
+    nPrimeiroCandleMedia := 0;
+  end
+  else
+  begin
+    nPrimeiroCandleDia := nPrimeiroCandleDia[1];
+    nPrimeiroCandleMedia := nPrimeiroCandleMedia[1];
+  end;
+
+  if ((Time >= Horario) and (nPrimeiroCandleMedia = 0)) then
+  begin
+    nPrimeiroCandleMedia := CurrentBar;
+  end;
+
+  if (Time >= Horario) then
+  begin
+    Plot2((CurrentBar - nPrimeiroCandleMedia));
+
+    if((CurrentBar - nPrimeiroCandleMedia) = 0) then
+    begin
+      noplot(1);
+    end
+    else if((CurrentBar - nPrimeiroCandleMedia) <= (Periodo-1)) then
+    begin
+      sSum := 0;
+      for nIndex := 0 to ((CurrentBar - nPrimeiroCandleMedia)-1) do
+        sSum := sSum + Dados[nIndex];
+      sResult := sSum / (CurrentBar - nPrimeiroCandleMedia);
+      Plot(sResult);
+    end
+    else 
+    begin
+      sFactor := 2 / (Periodo + 1);
+      sResult := Dados * sFactor + sResult[1] * (1 - sFactor);
+     Plot(sResult);
+     
+    end;
+     plot2(vwap(1));
+  end;
+end;
+

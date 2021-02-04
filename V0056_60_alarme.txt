@@ -1,0 +1,52 @@
+Input
+  LoopBack(20);
+var
+  volLowest  : float;
+  value2     : float;
+  value3     : float;
+  highvalue2 : float;
+  highvalue3 : float;
+  lowValue3  : float;
+  tempv2     : float;
+  tempv3     : float;
+  tempv      : float;
+  n          : integer;
+  coisa      : float;
+begin
+  plot(coisa);
+  value2 := abs(agressionvolbalance) * range;
+  if (range <> 0) then
+    value3 := abs(agressionvolbalance) / range;
+  if (abs(agressionvolbalance)<= lowest(abs(agressionvolbalance),LoopBack)) then
+    paintbar(clazulclaro);
+  if (abs(agressionvolbalance) > 2.5 * media(60,abs(agressionvolbalance))) and (abs(agressionvolbalance) < 3.5 * media(60,abs(agressionvolbalance))) then
+    if maxima - close > 250 then
+      if close > open then
+        coisa := 1;
+  if (abs(agressionvolbalance) = highest(abs(agressionvolbalance),LoopBack)) and (range = highest(range,LoopBack)) and (close > open) then
+    if maxima - close > 250 then
+      if close > open then
+        coisa := 1;
+  if (abs(agressionvolbalance) = highest(abs(agressionvolbalance),LoopBack)) and (range = highest(range,LoopBack)) and (close < open) then
+    if close - minima > 250 then
+      if open > close then
+        coisa := - 1;
+  if (abs(agressionvolbalance) > 2.5 * media(60,abs(agressionvolbalance))) and (abs(agressionvolbalance) < 3.5 * media(60,abs(agressionvolbalance))) then
+    if close - minima > 250 then
+      if open > close then
+        coisa := - 1;
+  tempv2 := abs(agressionvolbalance) * range;
+  highvalue2 := highest(tempv2,LoopBack);
+  if (abs(agressionvolbalance) * range <> 0) then
+    tempv3 := abs(agressionvolbalance) / range;
+  highvalue3 := (highest(tempv3,LoopBack));
+  lowvalue3 := (lowest(tempv3,LoopBack));
+  if (value2 = highvalue2) and (value3 = highvalue3) then
+    if close - minima > 250 then
+      if open > close then
+        coisa := - 1;
+  if (value2 = highvalue2) and (value3 = highvalue3) then
+    if maxima - close > 250 then
+      if close > open then
+        coisa := 1;
+end;
