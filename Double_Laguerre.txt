@@ -1,0 +1,129 @@
+input
+  alpha (0.2);
+  src(close);
+  gama(0.8);
+   alpha2 (0.2);
+  src2(close);
+  gama2(0.6);
+var
+  L0,L1,L2,L3,cu,cd,temp,llaRSI
+    ,L02,L12,L22,L32,cu2,cd2,temp2,llaRSI2 : Float;
+
+begin
+  
+  L0 := 0.0;
+  L0 := (1 - gama) * src + gama * L0[1];
+
+  L1 := 0.0;
+  L1 := -gama * L0 + L0[1] + gama * L1[1];
+
+  L2 := 0.0;
+  L2 := -gama * L1 + L1[1] + gama * L2[1];
+
+  L3 := 0.0;
+  L3 := -gama * L2 + L2[1] + gama * L3[1];
+
+    L02 := 0.0;
+  L02 := (1 - gama2) * src2 + gama2 * L0[1];
+
+  L12 := 0.0;
+  L12 := -gama2 * L02 + L02[1] + gama2 * L12[1];
+
+  L22 := 0.0;
+  L22 := -gama2 * L12 + L12[1] + gama2 * L22[1];
+
+  L32 := 0.0;
+  L32 := -gama2 * L22 + L22[1] + gama2 * L32[1];
+
+  //cu := (L0>L1 ? L0-L1 : 0) + (L1>L2 ? L1-L2 : 0) + (L2>L3 ? L2-L3 : 0);
+  cu := 0;
+  if L0>L1 then
+    cu := L0-L1
+  else if L1>L2 then
+    cu := cu + (L1-L2)
+  else if L1<L2 then
+    cu := cu + 0
+  else if L2>L3 then
+    cu := cu + (L2-L3)
+  else if L2<L3 then
+    cu := cu + 0;
+
+    cu2 := 0;
+  if L02>L12 then
+    cu2 := L02-L12
+  else if L12>L22 then
+    cu2 := cu2 + (L12-L22)
+  else if L12<L22 then
+    cu2 := cu2 + 0
+  else if L22>L32 then
+    cu2 := cu2 + (L22-L32)
+  else if L22<L32 then
+    cu2 := cu2 + 0;
+
+  //cd= (L0<L1 ? L1-L0 : 0) + (L1<L2 ? L2-L1 : 0) + (L2<L3 ? L3-L2 : 0);
+  cd := 0;
+  if L0<L1 then
+    cd := L1-L0
+  else if L1<L2 then
+    cd := cd + (L2-L1)
+  else if L1>L2 then
+    cd := cd + 0
+  else if L2<L3 then
+    cd := cd + (L3-L2)
+  else if L2>L3 then
+    cd := cd + 0;
+
+     cd2 := 0;
+  if L02<L12 then
+    cd2 := L12-L02
+  else if L12<L22 then
+    cd2 := cd2 + (L22-L12)
+  else if L12>L22 then
+    cd2 := cd2 + 0
+  else if L22<L32 then
+    cd2 := cd2 + (L32-L22)
+  else if L22>L32 then
+    cd2 := cd2 + 0;
+
+  //temp= cu+cd==0 ? -1 : cu+cd
+  temp := 0;
+  if cu + cd = 0 then
+    temp := -1
+  else
+    temp := cu + cd;
+
+    temp2 := 0;
+  if cu2 + cd2 = 0 then
+    temp2 := -1
+  else
+    temp2 := cu2 + cd2;
+
+  //LaRSI=temp==-1 ? 0 : cu/temp
+  llaRSI := 0;
+  if temp <> -1 then
+    llaRSI := cu / temp;
+
+    llaRSI2 := 0;
+  if temp2 <> -1 then
+    llaRSI2 := cu2 / temp2;
+
+    //REGRA DE COLORAÇÃO///
+    SE llaRSI > llaRSI2 ENTÃO PAINTBAR(CLVERMELHO);
+     SE (llaRSI = llaRSI2) E  (llaRSI2 < 0.20) E  (llaRSI < 0.20) ENTÃO PAINTBAR(CLVERMELHO);
+    SE llaRSI < llaRSI2 ENTÃO PAINTBAR(CLVERDE);
+     SE (llaRSI = llaRSI2) E  (llaRSI2 > 0.80) E  (llaRSI > 0.80) ENTÃO PAINTBAR(CLVERDE);
+  Plot(100*llaRSI);setplotcolor(1,clvermelho);
+  Plot4(100*llaRSI2);setplotcolor(4,clazul);
+  
+
+  SetPlotWidth(1,1);
+ 
+  Plot2(20);setplotcolor(2,clazulceleste);
+
+  SetPlotWidth(1,1);
+ 
+  Plot3(80);setplotcolor(3,clazulceleste);
+
+end;
+
+

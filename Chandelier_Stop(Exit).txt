@@ -1,0 +1,53 @@
+input
+  Periodo(22);
+  ATR(22);
+  Mult(3);
+var
+  curto,longo    : float;
+  shortvs,longvs : float;
+  direction      : float;
+  indicador      : float;
+begin
+  curto := lowest(low,Periodo) + Mult * AvgTrueRange(ATR,0);
+  longo := highest(high,Periodo) - Mult * AvgTrueRange(ATR,0);
+  if (shortvs[1] = curto) then
+    shortvs := curto
+  else if close > shortvs[1] then
+    shortvs := curto
+  else if curto < shortvs[1] then
+    shortvs := curto
+  else if shortvs[1] < curto then
+    shortvs := shortvs[1];
+  if (longvs[1] = longo) then
+    longvs := longo
+  else if close < longvs[1] then
+    longvs := longo
+  else if longo > longvs[1] then
+    longvs := longo
+  else if longvs[1] > longo then
+    longvs := longvs[1];
+  direction := 1;
+  if close > shortvs[1] then
+    direction := 1
+  else if close < longvs[1] then
+    direction := - 1
+  else if (direction[1] = 1) or (direction[1] = - 1) then
+    direction := direction[1]
+  else 
+    direction := 1;
+  if direction = 1 then
+    indicador := longvs
+  else 
+    indicador := shortvs;
+  if close > indicador then
+    begin
+      setplotcolor(1,cllime);
+      paintbar(clNavy);
+    end;
+  if close < indicador then
+    begin
+      setplotcolor(1,clred);
+      paintbar(clMaroon);
+    end;
+  plot(indicador);
+end;

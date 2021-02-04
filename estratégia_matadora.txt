@@ -1,0 +1,20 @@
+begin
+  Plot (media(200,close));
+  Plot (media(8,close));
+  Plot   (hiloactivator(8));
+
+  se currentbar < fechamento[1] then
+
+  Begin
+  Se (Fechamento > Media(8,Close)) e (media(8,close)>media(8,close)[1])e (Fechamento > HiloActivator(8)) e (Fechamento > StopATR(2.00,8,0)) e (fechamento > media(200,close))então
+    PaintBar(clVerde)
+    else  Se (Fechamento > Media(8,Close)) e (Fechamento > HiloActivator(8)) e (Fechamento > StopATR(2.00,8,0)) e (fechamento < media(200,close))então
+    PaintBar(clblue) 
+  else Se (Fechamento < Media(8,Close)) e (media(8,close)<media(8,close)[1]) e (Fechamento < HiloActivator(8)) e (Fechamento < StopATR(2.00,8,0))e (fechamento < media(200,close)) então
+    PaintBar(clVermelho) 
+    else se    (Fechamento < Media(8,Close)) e (Fechamento < HiloActivator(8)) e (Fechamento < StopATR(2.00,8,0))e (fechamento > media(200,close)) então
+    PaintBar(clfucsia);
+
+
+end;
+end;

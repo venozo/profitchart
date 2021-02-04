@@ -1,0 +1,38 @@
+input
+Período(4);
+HorárioAbertura(0900);
+var
+DataInício,Aj,aj1,aj2,aj3 : Integer;
+Ajuste : float;
+begin
+////////////////////////////////////////////////////////
+DataInício := CalcDate(CurrentDate, - Período);
+Se (Date >= DataInício) e (Time >= HorárioAbertura) então
+Aj := Aj[1] + 1;
+Ajuste := VWAP(1);
+Se (Date >= DataInício) então
+Plot(Ajuste[Aj]);
+/////////////////////////////////////////////////////////
+DataInício := CalcDate(CurrentDate, - (Período+1));
+Se (Date >= DataInício) e (Time >= HorárioAbertura) então
+Aj1 := Aj1[1] + 1;
+Ajuste := VWAP(1);
+Se (Date >= DataInício) então
+Plot2(Ajuste[Aj1]);
+/////////////////////////////////////////////////////////////////////////////
+DataInício := CalcDate(CurrentDate, - (Período+2));
+Se (Date >= DataInício) e (Time >= HorárioAbertura) então
+Aj2 := Aj2[1] + 1;
+ Ajuste := VWAP(1);
+Se (Date >= DataInício) então
+Plot3(Ajuste[Aj2]);
+////////////////////////////////////////////////////////////////////
+DataInício := CalcDate(CurrentDate, - (Período+3));
+Se (Date >= DataInício) e (Time >= HorárioAbertura) então
+Aj3 := Aj3[1] + 1;
+Ajuste := VWAP(1);
+Se (Date >= DataInício) então
+Plot4(Ajuste[Aj3]);
+////////////////////////////////////////////////////////////////////
+
+end;

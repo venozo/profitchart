@@ -1,0 +1,39 @@
+input
+  stochlen(7);
+  smoothlen(17);
+var
+  sk,x,z : float;
+  len    : integer;
+  nsk    : float;
+  ss     : float;
+  expss  : float;
+  pso    : float;
+begin
+  sk := slowstochastic(stochlen);
+  len := round(sqrt(smoothlen));
+  nsk := 0.1 * (sk - 60);
+  ss := mediaexp(len,mediaexp(len,nsk));
+  expss := exp(ss);
+  pso := (expss - 1) / (expss + 1);
+  if (pso > 0.7) then
+    begin
+      z := high;
+      noplot(1);
+    end;
+  if (pso < - 0.7) then
+    begin
+      noplot(3);
+      x := low;
+    end;
+  plot(z);
+  plot3(x);
+  if (close > highest(x,stochlen)) then
+    begin
+      paintbar(cllime);
+    end;
+  if (close < highest(x,stochlen)) then
+    begin
+      paintbar(255);
+    end;
+end;
+

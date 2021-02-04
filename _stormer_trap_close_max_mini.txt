@@ -1,0 +1,76 @@
+input
+  comprimento(14);
+  fator(2);
+var
+  oHammer,oHangingMan,doji,gain1,gain2 : integer;
+  compra1,compra2,venda1,venda2        : boolean;
+  Martelo,Maxi,Mini,Close_d            : float;
+  loss1,loss2,alvo                     : float;
+inicio
+  begin
+    Plot(PriorCote(0) + (PriorCote(0) * (-0.001)));
+    SETPLOTCOLOR(1,clamarelo);
+    SetPlotWidth(1,2); //fechamneto d-1
+    Plot2(PriorCote(2) + (PriorCote(0) * (0)));
+    SETPLOTCOLOR(2,clvermelho);
+    SetPlotWidth(2,2); //maxima d-1
+    Plot3(PriorCote(3) - (PriorCote(0) * (0)));
+    SETPLOTCOLOR(3,clverde);
+    SetPlotWidth(3,2); //minima d-1;
+  end;
+  Maxi := (PriorCote(2) + (PriorCote(0) * ( - 0.001)));
+  Mini := (PriorCote(3) - (PriorCote(0) * (0)));
+  Close_d := (PriorCote(0) + (PriorCote(0) * (-0.001)));
+  Martelo := C_Hammer_HangingMan(comprimento,Fator,oHammer,oHangingMan);
+  doji := (C_Doji(5));
+  gain1 := round(maxima - minima) * 1;
+  gain2 := (round(maxima - minima) * 2);
+  loss1 := (alvo);
+  loss2 := (low[1]);
+  se doji = 1 entao
+    paintbar(rgb(230,85,20));
+  if (Martelo = 1) e (maxima = abertura+1) e (range > 7) then
+    inicio
+      PaintBar(clYellow);
+    fim;
+  compra1 := (abertura<=fechamento[1])
+  e (minima<minima[1]) 
+  e (abertura>=fechamento[1])
+  e(fechamento > fechamento[1]) 
+   e (minima < mini) 
+  e (maxima > mini)    
+  ou (fechamento > abertura) 
+  e (abertura>=fechamento[1]) 
+  e (minima < close_d) 
+  e (maxima > close_d) 
+  ou (martelo = 1) 
+  e ((maxima - fechamento) <= 0.5) e (Range > 5);
+
+  venda1 :=  (fechamento < fechamento[1]) 
+  e (range >= 9) e (maxima > maxi) 
+  e (minima < maxi) ou (fechamento < abertura) 
+  e (abertura<=fechamento[1])e(maxima > close_d) 
+  e (minima < close_d) ou (fechamento >abertura[1])
+   e (fechamento<=fechamento[1]) e (maxima>maxima[1]);
+
+  venda2 :=  (abertura<=fechamento[1])
+  e(fechamento <> fechamento[1])
+   e (range < 9)  e (maxima > maxi)  
+   e (fechamento[1]>fechamento )  
+   ou (abertura<=fechamento[1])
+   e(fechamento < abertura)
+    e (maxima > close_d) 
+    e (minima < close_d);
+
+  se (time > 1735) ou (time > 1700) então
+    ClosePosition;
+  se (time > 900) e (time < 1635) entao
+    inicio
+      //se range > 21 entao PaintBar(rgb(250,0,250));
+      se venda1 ou venda2 entao
+        PaintBar(clred);
+      se compra1 ou compra2 entao
+        PaintBar(cllime);
+    fim;
+fim;
+

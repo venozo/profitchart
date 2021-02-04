@@ -1,0 +1,13 @@
+Inicio
+  Se (IsBought) então
+    Inicio
+      Se (fechamento > KELTNERCH(2.01,20,1)|1|) então
+        SellToCoverAtMarket;
+    Fim
+  Senão 
+    Inicio
+      Se (fechamento < KELTNERCH(2.01,20,1)|1|) então
+        BuyAtMarket;
+    Fim;
+Fim;
+

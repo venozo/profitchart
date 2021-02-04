@@ -1,0 +1,47 @@
+input
+DailyLimit(10000);
+
+var
+AbsHighClose:float;
+AbsLowClose:float;
+AbsCloseOpen:float;
+K:float;
+R:float;
+RFlag:integer;
+Nres:float;
+
+begin
+AbsHighClose := abs(high - close[1]);
+AbsLowClose := abs(low - close[1]);
+AbsCloseOpen := abs(close[1] - open[1]);
+
+if (AbsHighClose >= AbsLowClose) then 
+  K := AbsHighClose
+else
+  K:= AbsLowClose;
+
+if (AbsHighClose >= AbsLowClose) then
+  begin
+    if (AbsHighClose >= (high - low)) then
+      R:= AbsHighClose - 0.5 * AbsLowClose + 0.25 * AbsCloseOpen
+    else
+      R:= (high - low) + 0.25 * AbsCloseOpen;
+
+    if (AbsLowClose >= (high - low)) then
+      R:= AbsLowClose - 0.5 * AbsHighClose + 0.25 * AbsCloseOpen
+    else
+      R:= (high - low) + 0.25 * AbsCloseOpen; 
+  end;
+
+if (R>0) or (R<0) then
+  RFlag:=1
+else
+  Rflag:=0;   
+
+if RFlag = 1 then
+nRes := (50 * (((close - close[1]) + 0.50 * (close - open) + 0.25 * (close[1] - open[1])) / R ) * K / DailyLimit) + nRes[1]
+else
+nRes:= 0 + nRes[1];       
+        
+plot(nRes); 
+end;

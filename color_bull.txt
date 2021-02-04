@@ -1,0 +1,4 @@
+Inicio
+  Se (Trades > bullPower(9,0,1)) e (trades > 2100) então
+    PaintBar(clVerde);
+Fim;

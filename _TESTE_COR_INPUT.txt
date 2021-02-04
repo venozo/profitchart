@@ -1,0 +1,14 @@
+input
+cor1(02300);
+Cor2(clverde);
+begin
+begin
+Plot(mediaexp(09,close));
+Plot2(media(34,close));
+Plot3(mediaexp(200,close));
+Se (MediaExp(09,Close ) > Media(34,Close)) então
+PaintBar(cor2)
+Senão Se (MediaExp(09,Close) < Media(34,Close)) então
+PaintBar(cor1);
+end;
+end;

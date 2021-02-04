@@ -1,0 +1,18 @@
+input
+length(13);
+src(close);
+
+var
+s_ma:float;
+s_bulls:float;
+s_bears:float;
+
+begin
+s_ma := media(length,src);
+s_bulls := high - s_ma;
+s_bears := low - s_ma;
+plot(s_bulls);
+setplotcolor(1,cllime);
+plot2(s_bears);
+setplotcolor(2,clred);
+end;

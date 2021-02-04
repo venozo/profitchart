@@ -1,0 +1,20 @@
+input
+length(14);
+p(9);
+ema1(5);
+ema2(3);
+
+var
+s1:float;
+s2:float;
+
+begin
+
+s1:=mediaexp(ema2,mediaexp(ema1, rsi(length,0)));
+s2:=s1 - media(p,s1);
+if s2 > 0 then
+paintbar(cllime);
+if s2 < 0 then
+paintbar(clred);
+plot(s2);
+end;

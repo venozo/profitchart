@@ -1,0 +1,5 @@
+Inicio
+  Se (myPrice > abERTURDODIA(Open,Verdadeiro)) então
+    PaintBar(clVerde);
+    plot(abERTURDODIA(Open,Verdadeiro));
+Fim;

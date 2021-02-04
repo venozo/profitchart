@@ -1,0 +1,28 @@
+  input
+periodoMM(20);
+var
+  candle : integer;
+begin
+  if (BuyPosition = 0) and (SellPosition = 0) and (time < 1600) then
+    begin
+      candle := 0;
+      if (low < mediaExp(periodoMM,close)) and (close > mediaExp(periodoMM,close)) and (close[1] > mediaExp(periodoMM,close)) and (close[2] > mediaExp(periodoMM,close)) then
+        BuyStop(high,high);
+      if (high > mediaExp(periodoMM,close)) and (close < mediaExp(periodoMM,close)) and (close[1] < mediaExp(periodoMM,close)) and (close[2] < mediaExp(periodoMM,close)) then
+        SellShortStop(low,low);
+    end;
+  if (BuyPosition = 1) then
+    begin
+      candle := candle + 1;
+      SellToCoverStop(((((high[candle] - low[candle]) * 2) + high[candle])) + 100,(((high[candle] - low[candle]) * 2) + high[candle]) + 0.02);
+      SellToCoverStop(low[candle],low[candle]);
+    end;
+  if (SellPosition = 1) then
+    begin
+      candle := candle + 1;
+      BuyToCoverStop(abs(((high[candle] - low[candle]) * 2) - low[candle]) - 100,abs(((high[candle] - low[candle]) * 2) - low[candle]));
+      BuyToCoverStop(high[candle],high[candle]);
+    end;
+  if (time >= 1610) then
+    ClosePosition;
+end;

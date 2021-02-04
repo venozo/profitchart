@@ -1,0 +1,49 @@
+Input
+MediaROC1(10);
+PeriodoROC1(6);
+
+MediaROC2(10);
+PeriodoROC2(10);
+
+MediaROC3(9);
+PeriodoROC3(15);
+
+MediaROC4(15);
+PeriodoROC4(20);
+
+var
+nPos,
+xROC6,
+xROC10,
+xROC15,
+xROC20,
+nRes:float;
+
+begin
+
+xROC6 := Media(MediaROC1, ROC_RateOfChange(PeriodoROC1,Close));
+xROC10 := Media(MediaROC2, ROC_RateOfChange(PeriodoROC2,Close));
+xROC15 := Media(MediaROC3, ROC_RateOfChange(PeriodoROC3,Close) );
+xROC20 := Media(MediaROC4, ROC_RateOfChange(PeriodoROC4,Close) );
+nRes := xROC6 + (2 * xROC10) + (3 * xROC15) + (4 * xROC20);
+
+if (nRes > 0) then npos := 1
+else if(nRes < 0) then npos := -1
+else npos := npos[1]; 
+
+plot(nRes);
+
+//** Aplicação da Coloração
+if (npos = -1) then
+begin
+   paintBar(clred);
+end
+else if (npos = 1) then
+begin
+  paintBar(clGreen) ;
+end
+else 
+  paintBar(clblue);
+
+  
+end;

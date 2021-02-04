@@ -1,0 +1,47 @@
+input
+  Pe(14);
+  Dp(2);
+  Pm(20);
+  Tm(0);
+  Gain(4);
+  Loss(2);
+VAR
+  Compra,Venda : boolean;
+  Bb,Bc,Mc     : float;
+INICIO
+  Bc := BollingerBands(Dp,Pm,Tm)|0|;
+  Bb := BollingerBands(Dp,Pm,Tm)|1|;
+  Mc := Media(Pm,close);
+  Plot(Bc);
+  Setplotcolor(1,clamarelo);
+  Plot2(Bb);
+  Setplotcolor(2,clamarelo);
+  Plot3(Mc);
+  Setplotcolor(3,clverde);
+  Compra := (minima < Bb) e (fechamento > Bb) e (volume > Media(9,close)) e (SlowStochastic(pe) < 20) e (SlowStochastic(pe) > media(3,(SlowStochastic(pe))));
+  Venda := (maxima > Bc) e (fechamento < Bc) e (Volume > Media(9,close)) e (SlowStochastic(pe) > 75) e (SlowStochastic(pe) < media(3,(SlowStochastic(pe))));
+  SE Compra e (time < 1700) ENTÃO
+    Paintbar(clverde);
+  SE venda e (time < 1700) ENTÃO
+    Paintbar(clvermelho);
+  SE (time > 905) e (time < 1630) e (buyposition = 0) e (sellposition = 0) ENTÃO
+    INICIO
+      SE compra ENTÃO
+        Buystop(maxima,maxima);
+      SE venda ENTÃO
+        Sellshortstop(minima,minima);
+    FIM;
+  SE buyposition = 1 ENTÃO
+    INICIO
+      SellShortLimit(buyprice + gain);
+      SellShortStop(buyprice - loss,buyprice - loss);
+    FIM;
+  SE Sellposition = 1 ENTÃO
+    INICIO
+      BuyLimit(sellprice - gain);
+      BuyStop(sellprice + loss,sellprice + loss);
+    FIM;
+  SE (time > 1700) então
+    Closeposition;
+FIM;
+

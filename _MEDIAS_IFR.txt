@@ -1,0 +1,26 @@
+
+var
+m:float;
+begin
+if (cci(9)[1]>70)and(cci(9)<70)then
+ begin
+ noplot(3);
+ m:=low;
+
+ paintbar(clvermelho);
+ end;
+if (cci(9)[1]<30)and(cci(9)>30)then
+ begin
+  noplot(3);
+  m:=low;
+  
+ paintbar(clverde);
+ end;
+plot(m);
+
+if(close>media(21,m))and
+(close>media(9,m))then paintbar(clverde) else paintbar(255); end;
+
+end;
+
+

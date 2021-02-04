@@ -1,0 +1,6 @@
+begin
+Plot (CloseD(5));
+Plot2(CloseD(4));
+Plot3(CloseD(3));
+Plot4(CloseD(2));
+end;

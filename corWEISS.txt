@@ -1,0 +1,6 @@
+Inicio
+  Se (wwEISSWAVE2(2) > 0) então
+    PaintBar(clVerde)
+  Senão Se (wwEISSWAVE2(2) < 0) então
+    PaintBar(clVermelho);
+Fim;

@@ -1,0 +1,5 @@
+begin
+Plot(0);
+Plot2(ifr(3)-ifr(8));
+Plot3(ifr(20)-ifr(8));
+end;

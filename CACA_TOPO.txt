@@ -1,0 +1,33 @@
+var
+venda1,venda2,confirmar,topoalto:boolean;
+entra, entra2:integer;
+venda3:float;
+begin
+venda2:=
+  (CLOSE[4]<CLOSE[5])AND
+  (CLOSE[3]>CLOSE[4])AND
+  (CLOSE[2]<CLOSE[3])AND
+  (CLOSE[1]>CLOSE[2])and
+  (CLOSE[1]<CLOSE[2]);
+
+ venda1:= 
+  (CLOSE[1]>CLOSE[2]) AND
+  (CLOSE[2]>CLOSE[3])AND
+  (CLOSE[3]>CLOSE[4])AND
+  (CLOSE[4]>CLOSE[5])AND
+  (CLOSE<CLOSE[1]);
+ venda3:= (high-low) ;
+
+ topoalto:= (highest(high,4)>close)and(close<close[3])and(close<close[2]); 
+
+ entra:=0;
+ se(close<close[3])and(close<close[4]) then entra:=1;
+ if entra=1 then paintbar(clvermelho);
+ 
+
+ if Topoalto then entra:=entra+1;
+ if entra=1 then SellShortAtMarket;
+ if (venda3 <(high[1]-low[1]))and (close>close[1]) then  paintbar(255);
+ if venda1 or venda2 then  PAINTBAR(CLAZUL);
+ if venda1 or venda2 then SellShortAtMarket;
+end;

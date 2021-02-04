@@ -1,0 +1,15 @@
+input
+PeriodoRAO(5);
+PeriodoLAO(34);
+var
+AO : Float;
+
+begin
+AO := (((Media(periodoRAO,high) + Media(PeriodoRAO,low)) / 2) - ((Media(PeriodoLAO,high) + Media(periodoLAO,low)) / 2));
+If ao > 0 then
+paintbar(cllime);
+if ao < 0 then 
+paintbar(clred);
+	plot(AO);
+
+end;

@@ -1,0 +1,116 @@
+input 
+  periodo(0);
+  Periodo2 (0);
+  Periodo3 (0);
+  Periodo4 (0);
+ 
+  Dados1  (Close);
+  Dados2  (Close);
+  Dados3  (Close);
+  Dados4  (Close);
+
+var
+  diffVal1 : Float;
+  diffVal2 : Float;
+  diffVal3 : Float;
+  diffVal4 : Float;
+
+   nIndex : Integer;
+  nIndex2 : Integer;
+  nIndex3: Integer;
+  nIndex4: Integer;
+
+
+  soldAtMarket : Integer;
+  boughtAtMarket : Integer;
+
+begin
+
+  diffVal1 :=Volume + (Highest( HIGH, 0) - Lowest( LOW, 0));
+  SetPlotColor(1, clFuchsia);
+  SetPlotWidth(1, 2);
+  Plot(diffVal1);
+   diffVal1:= Periodo;
+
+  diffVal2 := Volume + (Highest( HIGH, 0) - Lowest( LOW, 0));
+  SetPlotColor(2, clTeal);
+  SetPlotWidth(2, 2);
+  Plot2(Neg(diffVal2));
+  diffVal2:= Periodo2 ;
+
+  diffVal3 := Volume + (Highest( HIGH, 0) - Lowest( LOW, 0));
+  SetPlotWidth(3, 2);
+  Plot3(diffVal3);
+    diffVal3:= Periodo3 ;
+
+
+  diffVal4 := Volume +(Highest( HIGH, 0) - Lowest( LOW, 0));
+  SetPlotColor(4, clYellow);
+  SetPlotWidth(4, 2);
+  Plot4(Neg(diffVal4));
+  diffVal4:= Periodo4 ;
+
+  
+    if ( diffVal1 > -1 ) then
+  begin
+
+    if (( diffVal2 <= diffVal1 ) and ( boughtAtMarket = 0 )) then
+   begin
+     
+      BuyAtMarket;
+      boughtAtMarket := -1;
+      soldAtMarket := 0;
+    end
+    else if (( diffVal3 <= diffVal2 ) and ( soldAtMarket = 0 )) then
+    begin
+    
+      SellShortAtMarket;
+      soldAtMarket := -1;
+      boughtAtMarket := 0;
+
+
+  if ( diffVal4 > -1 ) then
+  begin
+
+    if (( diffVal3 <= diffVal2 ) and ( boughtAtMarket = 0 )) then
+   begin
+      
+      BuyAtMarket;
+      boughtAtMarket := -1;
+      soldAtMarket := 0;
+    end
+    else if (( diffVal4 <= diffVal3 ) and ( soldAtMarket = 0 )) then
+    begin
+      
+      SellShortAtMarket;
+      soldAtMarket := -4;
+      boughtAtMarket := 2;
+    end;
+
+  end;
+
+end;
+
+
+
+   if ( diffVal1 > -1 ) then
+  begin
+
+    if (( diffVal2 <= diffVal1 ) and ( boughtAtMarket = 0 )) then
+   begin
+     
+      BuyAtMarket;
+      boughtAtMarket := -1;
+      soldAtMarket := 0;
+    end
+    else if (( diffVal3 <= diffVal2 ) and ( soldAtMarket = 0 )) then
+    begin
+    
+      SellShortAtMarket;
+      soldAtMarket := -1;
+      boughtAtMarket := 0;
+   
+end;
+end;
+end;
+end

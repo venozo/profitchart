@@ -1,0 +1,90 @@
+input
+Fractal(2);
+Inverter_Onda_Bearish(false);
+var
+mov : Integer;
+trend : Integer;
+isTrending : Integer;
+wave : Integer;
+vol : Float;
+up : Float;
+dn : Float;
+isTrendingUp : Integer;
+isTrendingDown : Integer;
+trendIdx : Integer;
+begin
+if ( MaxBarsBack > Fractal ) then
+//mov = close>close[1] ? 1 : close<close[1] ? -1 : 0
+if ( Close > Close[Fractal] ) then
+begin
+mov := 1;
+end
+else if ( Close < Close[Fractal] ) then
+begin
+mov := -1;
+end
+else
+begin
+mov := 0;
+end;
+//trend= (mov != 0) and (mov != mov[1]) ? mov : nz(trend[1])
+if ( ( mov <> 0 ) and ( mov <> mov[1] ) ) then
+begin
+trend := mov;
+end
+else
+begin
+trend := trend[1];
+end;
+//isTrending = rising(close, trendDetectionLength) or falling(close, trendDetectionLength) //abs(close-close[1]) >= dif
+for trendIdx := 0 to Fractal-1 do
+begin
+isTrendingUp := 1;
+isTrendingDown := 1;
+if ( Close[trendIdx] <= Close[trendIdx+1] ) then
+begin
+isTrendingUp := 0;
+end;
+if ( Close[trendIdx] >= Close[trendIdx+1] ) then
+begin
+isTrendingDown := 0;
+end;
+end;
+if ( isTrendingUp > 0 ) or ( isTrendingDown > 0 ) then
+begin
+isTrending := 1;
+end;
+//wave=(trend != nz(wave[1])) and isTrending ? trend : nz(wave[1])
+//if ( trend <> wave[1] ) then
+if ( trend <> wave[1] ) and ( isTrending = 1 ) then
+begin
+wave := trend;
+end
+else
+begin
+wave := wave[1];
+end;
+//vol= (wave==wave[1]) ? (nz(vol[1])+volume) : volume
+if ( wave = wave[1] ) then
+begin
+vol := vol[1]+(ACCAGressSaldo(1) - AccAgressSaldo(1)[1]);
+end
+else
+begin
+vol :=(ACCAGressSaldo(1) - AccAgressSaldo(1)[1]);
+end;
+//up=wave == 1 ? vol : 0
+if ( wave = 1 ) then
+begin
+SetPlotColor(1,clverdelimão);
+PaintBar(clverdelimao);
+Plot(vol);
+end
+else if ( wave = -1 ) then
+begin
+SetPlotColor(1,clvermelho);
+PaintBar(clvermelho);
+if Inverter_Onda_Bearish then Plot(-vol) else Plot(vol);
+end;
+end;
+

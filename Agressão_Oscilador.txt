@@ -1,0 +1,40 @@
+input
+nMedia(1);
+nFatorCompra(1);
+nFatorVenda(1);
+
+Begin
+
+Begin
+
+Plot (Mediaexp(nMedia,AgressionVolBuy[nFatorCompra]));
+SetPlotColor(1, clGreen);
+
+end;
+
+Begin
+
+Plot2 (Mediaexp(nMedia,AgressionVolsell[nFatorVenda]));
+SetPlotColor(2,clred);
+
+end;
+
+//Begin
+
+//if 
+// (Mediaexp(nMedia,AgressionVolBuy[1])) > (Mediaexp(nMedia,AgressionVolsell[1]))
+// then
+// Paintbar(clGreen);
+
+//end;
+
+
+//Begin
+// if 
+// (Mediaexp(nMedia,AgressionVolBuy[1])) < (Mediaexp(nMedia,AgressionVolsell[1]))
+// then
+// Paintbar(clred);
+
+ //end;
+
+ end;

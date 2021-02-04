@@ -1,0 +1,43 @@
+{
+ Trendflex Indicator
+ (C) 2019 John F. Ehlers
+}
+Input
+Length(20);
+Var
+sum:float;
+count:inteiro;
+a1, b1,c1,c2,c3,Filt,MS, Trendflex:float;
+
+begin
+//Gently smooth the data in a SuperSmoother
+a1 := expvalue(-1.414*3.14159 / (0.5*Length));
+b1 := 2*a1*Cosine(1.414*180 / (0.5*Length));
+c2 := b1;
+c3 := -a1*a1;
+c1 := 1 - c2 - c3;
+Filt := c1*(Close + Close[1]) / 2 + c2*Filt[1] + c3*Filt[2];
+//Sum the differences
+Sum := 0;
+For count := 1 to Length Do
+Begin
+Sum := Sum + Filt - Filt[count];
+End;
+Sum := Sum / Length;
+//Normalize in terms of Standard Deviations
+MS := 0.04*Sum*Sum + 0.96*MS[1];
+If MS <> 0 Then Trendflex := Sum / Square(MS);
+Se (Trendflex > 0) então
+  begin
+  Plot(1);
+  PaintBar(clAzul);
+  end
+Senão
+  begin
+  Plot(-1);
+  PaintBar(clVermelho);
+  end;
+//Plot(Trendflex);
+// Plot2(0);
+
+end;

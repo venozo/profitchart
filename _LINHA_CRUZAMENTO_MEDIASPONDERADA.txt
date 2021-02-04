@@ -1,0 +1,44 @@
+Input
+  Periodo(21);
+   Periodos(3);
+  x_dados(high);
+  Y_dados(close);
+var
+  x,y                 : float;
+  compra,vende,candle : integer;
+  tf,z,c:Real;
+Begin
+  X := x_dados;
+  Y := Y_dados;
+  if WAverage(Open,Periodo) > WAverage(Close,Periodo) then
+    begin
+      X := X[1];
+      PLOT(X);
+      PaintBar(clred);
+      plot2(WAverage(Open,Periodo));
+    end;
+  if WAverage(Open,Periodo) < WAverage(Close,Periodo) then
+    begin
+      Y := y[1];
+      PLOT3(y);
+      PaintBar(clGreen);
+      plot2(WAverage(Open,Periodo));
+end;
+  if(close[1]< WAverage(Open,Periodo))and(close>WAverage(Open,Periodo))then paintbar(clbranco);
+  if(close[1]> WAverage(close,Periodo))and(close<WAverage(close,Periodo))then paintbar(clbranco);
+   tf := TopBottomDetector(Periodos);
+  Se (tf <> 0) entao
+    inicio
+      Se (z = 0) então z := tf
+      Senao c := tf;
+      
+    fim;
+  Se (z <> 0) e (c <> 0) entao
+    inicio
+   se (z> c) então paintbar(rgb(18,90,23) )
+   senão se (z < c) então paintbar(rgb(184,7,12));
+    
+    z := c;
+    c:= 0;
+  fim;
+End

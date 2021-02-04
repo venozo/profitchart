@@ -1,0 +1,62 @@
+////////////////////////////////////
+//
+// salvar em formato psf ou 
+// editar no editor de estrategias(recomendado)
+//
+////////////////////////////////////
+input
+periodo(4);
+periodo2(6);
+nivel1(0.0);
+nivel2(0.23);
+nivel3(0.61);
+nivel4(1.00);
+
+var
+topo, fundo, tf: float;
+begin
+topo := topo[1];
+if (TopBottomDetector(periodo) = high) then topo := high;
+fundo := fundo[1];
+if (TopBottomDetector(periodo2) = low) then fundo := low;
+
+if (topo <> topo[1]) then tf := -1;
+if (fundo <> fundo[1]) then tf := +1;
+
+if (tf < 0) then
+begin
+plot(fundo + (topo - fundo) * nivel1);PaintBar(clvermelho);
+plot2(fundo + (topo - fundo) * nivel2);
+plot3(fundo + (topo - fundo) * nivel3);
+plot4(fundo + (topo - fundo) * nivel4);   
+end;
+
+end;
+//////////////////////////segunda parte
+
+ //plota nas regioes de LTA//
+      var
+topo, fundo, tf: float;
+begin
+topo := topo[1];
+if (TopBottomDetector(10) = high) then topo := high;
+fundo := fundo[1];
+if (TopBottomDetector(1) = low) then fundo := low;
+
+if (topo <> topo[1]) then tf := -1;
+if (fundo <> fundo[1]) then tf := +1;
+
+if (tf > 0) then
+begin
+plot(topo - (topo - fundo) * 0.0);
+plot2(topo - (topo - fundo) * 0.23);
+plot3(topo - (topo - fundo) * 0.38);
+plot4(topo - (topo - fundo) * 0.50);
+SetPlotColor(1,clgray);SetPlotWidth(1,2);//0% cinza
+SetPlotColor(2,clamarelo);SetPlotWidth(2,2);//23% amarelo
+SetPlotColor(4,clvermelho);SetPlotWidth(4,2);//50% vermelho
+end;
+
+
+
+end;

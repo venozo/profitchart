@@ -1,0 +1,6 @@
+begin
+
+
+  Plot(____PERCENTUAIS_NEGATIVOS(0.23,0.61,0.89,1.61,close));
+  plot4(___PERCENTUAIS_FIBO(0.23,0.61,0.89,1.61,close));
+end;

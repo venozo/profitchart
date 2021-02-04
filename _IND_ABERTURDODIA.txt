@@ -1,0 +1,28 @@
+//PriorCote(2) = maxima do dia amterior
+//PriorCote(0) = fexamento dia anterior
+//PriorCote(3) = minima do dia anterior
+//PriorCote(1) = abertura do dia anterior
+//PriorCote(4) = ajuste do dia anterior
+input
+  Dados(open);
+  limitarPlotagem(true);
+var
+  candle  : integer;
+  valor,x : float;
+begin
+  if (time[1] > 1600) and (time < 1100) then
+    begin
+      valor := Dados;
+    end;
+  if (limitarPlotagem = true) then
+    begin
+      if (time < 1730) then
+        begin
+          plot(valor);//ABERTURA DO DIA ATUAL
+         
+        end;
+    end;
+  if (limitarPlotagem = false) then
+    plot(valor);
+end;
+

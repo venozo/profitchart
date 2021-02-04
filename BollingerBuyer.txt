@@ -1,0 +1,42 @@
+/////////////////////////////////////////////////////////
+//                                                     //
+//                  Bollinger Buyer                    //
+//                                                     //
+//                 by: Rafael Peres                    //
+//                                                     //
+//     Parâmetros      Período: 20                     //
+//                     Desvio: 3.0                     //
+//                     Aritmético 0 - Exponencial 1    //
+//                     Welles Wilder 2 - Ponderada 3   //
+//                                                     //
+/////////////////////////////////////////////////////////
+
+input
+Periodo(20);
+Desvio(3.0);
+Modo(3);
+
+begin
+  // Verifica se possui posição vendida em aberto
+  if (IsSold) then
+    begin
+      // Cobre a posição com uma compra à mercado
+      if (Fechamento <= Media(Periodo, Fechamento)) or (SellPrice < Fechamento[1])  then
+        BuyToCoverAtMarket;
+                          
+    end     
+  // Verifica se possui posição comprada em aberto
+  else if (IsBought) then
+    begin
+      // Cobre a posição com uma venda à mercado
+      if (Fechamento >= Media(Periodo, Fechamento)) or (BuyPrice < Fechamento[1]) then
+        SellToCoverAtMarket;
+                           
+    end
+
+  // Verifica se deve abrir uma posição     
+  else if (Fechamento < BollingerBands(Desvio, Periodo, Modo)|1|) or (Minima <= BollingerBands(Desvio, Periodo, Modo)|1|) then
+    BuyAtMarket
+  else if (Fechamento > BollingerBands(Desvio, Periodo, Modo)|0|) or (Maxima >= BollingerBands(Desvio, Periodo, Modo)|0|) then
+    SellShortAtMarket;
+end;

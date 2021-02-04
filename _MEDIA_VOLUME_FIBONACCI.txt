@@ -1,0 +1,20 @@
+input
+periodo(34);
+medX(9);
+fatorFibo(1.8);
+var
+MediaVol:real;
+x,y:float;
+begin
+
+  
+  MediaVol:=media(periodo,volume);
+  se(volume > (mediaVol*fatorFibo))then
+   begin
+    X := MidPoint(close,periodo);
+  
+  end;
+    PLOT(media(medX,x));
+   
+  
+end;

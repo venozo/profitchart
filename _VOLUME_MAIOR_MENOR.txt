@@ -1,0 +1,33 @@
+input
+  vlMedio(20);
+var
+  avgVolplus,avgVolminus : float;
+  valor1,valor2          : integer;
+início
+  valor1 := 0;
+  valor2 := 0;
+  se (close > open) então
+    begin
+      valor1 := 1;
+      plot( + Volume);
+      setplotcolor(1,clLime);
+    end; // histograma em verde-limão
+  se (close < open) então
+  begin
+  valor2:= 1;
+  plot2( - Volume);
+  end;
+
+  setplotcolor(2,clPurple);
+  avgVolPlus := + Media(vlMedio,Volume);
+  avgVolMinus := - Media(vlMedio,Volume);
+  plot3(avgVolPlus);
+  setplotcolor(3,clWhite);
+  plot4(avgVolMinus);
+  setplotcolor(4,clWhite);
+  if (volume > avgVolPlus) and (valor1 = 1) then
+    paintBar(clVerde);
+  if (volume > avgVolMinus) and (valor2 = 1) then
+    paintBar(clVermelho);
+fim;
+

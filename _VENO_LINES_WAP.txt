@@ -1,0 +1,42 @@
+{
+BarType=1 tempos menores que 1 dia,qualquer periodo entre 1minuto e um dia
+BarType=2 tempo igual a dias qualquer periodo escrito em dias ex 360 dias
+BarType=3 tempo de semanas
+BarType=4 tempo de meses
+BarType=-1 de anos ou de renko ou range
+BarType=0   de trades
+}
+input
+Período(1);
+HorárioAbertura(0900);
+  Nivel1negativo(0.50);
+  Nivel2negativo(1.61);
+  Nivel1Positivo(0.50);
+  Nivel2Positivo(1.61);
+var
+DataInício,Aj : Integer;
+Ajuste,a,b,c,d : float;
+início
+DataInício := CalcDate(CurrentDate, - Período);
+
+Se  (Date < DataInício) e (Time < HorárioAbertura) então
+Aj := 1;
+Se (Date >= DataInício) e (Time >= HorárioAbertura) então
+Aj := Aj[1] + 1;
+Ajuste := VWAP(1);
+
+Se (Date >= CurrentDate) então
+begin
+a:= (Ajuste[Aj] * (1 - Nivel1negativo / 100));
+b:= (Ajuste[Aj] * (1 - Nivel2negativo / 100));
+c:= (Ajuste[Aj] * (1 + Nivel1Positivo / 100));
+d:= (Ajuste[Aj] * (1 + Nivel2Positivo / 100));
+
+Plot(d) ;
+Plot2(a);SetPlotColor(2,clVermelho);SetPlotWidth(2,3);
+Plot3(b);SetPlotColor(3,clVerde);
+Plot4(c);
+ end;
+fim;
+
+  

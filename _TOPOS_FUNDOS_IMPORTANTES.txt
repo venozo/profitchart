@@ -1,0 +1,28 @@
+input
+periodo(9);
+var
+x,z,c,v:float;
+begin
+ if TopBottomDetector(2) = low then
+ begin
+ noplot(1);
+ x:=low;
+ end;
+ if TopBottomDetector(4) = low then
+ begin
+ noplot(2);
+ z:=low;
+ end;
+  if TopBottomDetector(4) = high then
+ begin
+ noplot(3);
+ c:=high;
+
+ end;
+
+ plot(x);
+ plot2(z);
+ plot3(c);
+
+
+end;

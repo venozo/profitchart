@@ -1,0 +1,16 @@
+INPUT
+  periodo(7);
+inicio
+  inicio //COMPRA
+    Se (fechamento > HiloActivator(periodo)) e (buyposition = 0) entao
+      BuyatMarket;
+  Fim;
+  //SAIDAS 
+  inicio Se (BuyPosition=1) então 
+  Se (fechamento < HiloActivator(periodo)) então SellToCoverAtMarket;
+Fim;
+
+//saida provisoria as 16:00
+if(time=1650)then closeposition;
+end;
+

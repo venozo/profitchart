@@ -1,0 +1,22 @@
+Parametro
+  Periodos(3);
+Var
+  tf,x,y:Real;
+Inicio
+  //detecta o topo/fundo atual e guarda em memoria
+  tf := TopBottomDetector(Periodos);
+  Se (tf <> 0) entao
+    inicio
+      Se (x = 0) então x := tf
+      Senao y := tf;
+      
+    fim;
+  Se (x <> 0) e (y <> 0) entao
+    inicio
+   se (y > x) então paintbar(clvermelho)
+   senão se (y < x) então paintbar(clLime);
+    
+    x := y;
+    y := 0;
+  fim;
+fim;

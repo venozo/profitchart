@@ -1,0 +1,15 @@
+input
+PeriodoDEMA(21);
+Source(close);
+
+var
+DEMA : Float;
+
+begin
+DEMA := (2 * mediaexp(PeriodoDEMA,Source)) - mediaexp(PeriodoDEMA,mediaexp(PeriodoDEMA,Source));  
+if close > dema then
+paintbar(cllime);
+if close < dema then
+paintbar(clred);
+plot(DEMA);
+end;

@@ -1,0 +1,75 @@
+input
+  periodo(9);
+var
+
+  candle:integer;
+
+begin
+
+  if (BuyPosition=0) and (SellPosition=0) 
+
+  and (time<1740) // define um horario pra nao mandar mais nenhuma ordem
+  then
+
+  begin
+
+    candle:=0;
+
+    if (low<mediaExp(periodo,close))
+
+    and (close>mediaExp(periodo,close))
+
+    and (close[1]>mediaExp(periodo,close))
+
+    and (close[2]>mediaExp(periodo,close))
+
+    then
+
+      BuyStop(high,high);
+
+    if (high>mediaExp(periodo,close))
+
+    and (close<mediaExp(periodo,close))
+
+    and (close[1]<mediaExp(periodo,close))
+
+    and (close[2]<mediaExp(periodo,close))
+
+    then
+
+      SellShortStop(low,low);
+
+  end;
+
+  if (BuyPosition=1) then
+
+  begin
+
+    candle:=candle+1;
+
+    SellToCoverStop(((((high[candle]-low[candle])*2)+high[candle]))+100,(((high[candle]-low[candle])*2)+high[candle])+0.02);
+
+    SellToCoverStop(low[candle],low[candle]);
+
+  end;
+
+  if (SellPosition=1) then
+
+  begin
+
+    candle:=candle+1;
+ {
+   // if(low=Low[1]) and (IsSold) then
+    BuyToCoverStop(((high[candle]-low[candle])*2),((high[candle]-low[candle])*2));
+    BuyToCoverStop(high[candle],high[candle]);
+ }
+    BuyToCoverStop(abs(((high[candle]-low[candle])*2)-low[candle])-100,abs(((high[candle]-low[candle])*2)-low[candle]));
+
+    BuyToCoverStop(high[candle],high[candle]);
+  
+
+  end;
+
+  if (time>=1750) then ClosePosition;
+
+end;

@@ -1,0 +1,6 @@
+input
+Periodo(21);
+Source(Close);
+begin
+  plot(((Close - close[Periodo]) / close[Periodo]) * 100);
+end;

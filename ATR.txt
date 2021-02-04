@@ -1,0 +1,33 @@
+// Welles Wilder - Average True Range
+// Code by Rafael Peres
+
+
+input
+AverageTrueRange(14);
+
+var
+
+TRa  : float; // Max - Min
+TRb  : float; // Absoluto (Max - Fech[1])
+TRc  : float; // Absoluto (Min - Fech[1])
+TR   : float; // Maior(TRa, TRb, TRc)
+ATRmed  : float; // Media Exponencial do True Range
+ATRind : float; // (MediaExp(TR) * (n-1)) + TR[1] / n
+
+início
+TRa := (High - Low);
+TRb := abs((High - Close[1]));
+TRc := abs((Low - Close[1]));
+
+TR := TRc;
+se TRa > TR então
+  TR := TRa;
+se TRb > TR então
+  TR := TRb;
+
+ATRmed := MediaExp(AverageTrueRange, TR);
+ATRind := ((ATRmed * (AverageTrueRange - 1)) + TR) / AverageTrueRange;
+
+Plot(ATRind);
+
+fim;

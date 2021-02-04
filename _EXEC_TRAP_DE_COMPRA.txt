@@ -1,0 +1,20 @@
+var
+  stopLoss : Float;
+  alvo     : Float;
+Inicio
+  Se (IsBought) então
+    Inicio
+      SellToCoverStop(alvo,alvo);
+      SellToCoverStop(stopLoss,stopLoss);
+      se (time >= 1645) então
+        SellToCoverAtMarket;
+    Fim
+  Senão 
+    Inicio
+      Se (time <= 1400) e (Minima <= PriorCote(3)) e (maxima > PriorCote(3)) e (minima <= lowd(0)) então
+        BuyStop(maxima + 0.01,maxima + 0.01);
+      stopLoss := minima - 0.01;
+      alvo := maxima + (maxima - minima);
+    fim;
+Fim;
+

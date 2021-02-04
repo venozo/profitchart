@@ -1,0 +1,30 @@
+Inicio
+  Se ( (abs(Abertura-Fechamento)<=(maxima-minima)*0.1)) e (SlowStochastic(12)<= 20)e ((media(20,close)-fechamento)>3*media(20,avgtruerange(20,0))) então       
+    PaintBar(clazul);
+  Se((abs(abertura-fechamento)<=(maxima-minima)*0.1)) e (SlowStochastic(12)>=80)e ((fechamento-media(20,close))>3*(media(20,avgtruerange(20,0)))) então 
+    PaintBar(clfucsia);
+  Se (abertura[1]>fechamento[1]) e (abertura>abertura[1]) e (fechamento>abertura) e (SlowStochastic(12)<=20)e ((media(20,close)-fechamento)>3*(media(20,avgtruerange(20,0)))) então 
+    PaintBar(clazul);
+  Se (abertura[1]<fechamento[1]) e (abertura<=abertura[1]) e (fechamento<=abertura) e (SlowStochastic(12)>=80)e((fechamento-media(20,close))>3*(media(20,avgtruerange(20,0)))) então 
+    PaintBar(clfucsia);
+  Se (abertura[1]>fechamento[1]) e (abertura<fechamento[1]) e (fechamento>abertura[1])e(SlowStochastic(12)[1]<=25)e ((media(20,close[1]-fechamento[1])>3*(media(20,avgtruerange(20,0)[1])))) então 
+    PaintBar(clazul);
+  Se (fechamento[1]>abertura[1]) e (abertura>fechamento[1]) e (fechamento<abertura[1])e (SlowStochastic(12)[1]>=75)e((fechamento[1]-media(20,close[1]))>3*media(20,avgtruerange(20,0)[1])) então 
+    PaintBar(clfucsia);
+  Se (((maxima-minima)>3*(abertura-fechamento)) e ((fechamento-minima)/(0.001+maxima-minima)>=0.6) e ((abertura-minima)/(0.001+maxima-minima)>0.6))e (SlowStochastic(12)<=20)e ((media(20,close)-fechamento)>3*(media(20,avgtruerange(20,0)))) então 
+    PaintBar(clazul);
+  Se (((maxima-minima)>4*(abertura-fechamento)) e ((abertura-fechamento)/(0.001+maxima-minima)>=0.75) e ((maxima-abertura)/(0.001+maxima-minima)>=0.75))e (SlowStochastic(12)>=80) então 
+    PaintBar(clfucsia); 
+  Se ((abertura[1]>fechamento[1]) e (fechamento>abertura) e (fechamento<=abertura[1]) e (fechamento[1]<=abertura) e ((fechamento-abertura)<(abertura[1]-fechamento[1])) e (SlowStochastic(12)<=20)e ((media(20,close)-fechamento)>3*(media(20,avgtruerange(20,0)) ))) então 
+    PaintBar(clazul);
+  Se (((maxima-minima)>4*(abertura-fechamento)) e ((fechamento-minima)/(0.001+maxima-minima)>=0.75) e ((abertura-minima)/(0.001+maxima-minima)>=0.75) e (SlowStochastic(12)>=80))e((fechamento-media(20,close))>3*(media(20,avgtruerange(20,0)))) então 
+    PaintBar(clfucsia);// shooting star
+  Se ((maxima-minima)>3*(abertura-fechamento)) e ((maxima-minima)/(0.001+maxima-minima)>0.6) e ((maxima-abertura)/(0.001+maxima-minima)>0.6) e (SlowStochastic(12)<=20)e ((media(20,close)-fechamento)>3*(media(20,avgtruerange(20,0)))) então 
+    PaintBar(clazul); //hammer
+  Se ((fechamento[1]<abertura[1])e ((abertura[1]+fechamento[1])/2<fechamento) e (abertura<fechamento) e (abertura<fechamento[1]) e (fechamento<abertura[1]) e((fechamento-abertura)/0.001+(maxima-minima)>0.6) e (SlowStochastic(12)<=20))e ((media(20,close)-fechamento)>3*(media(20,avgtruerange(20,0)))) então 
+    PaintBar(clazul);
+  Se ((fechamento[1]>abertura[1])e ((fechamento[1]+abertura[1]/2)>fechamento) e (abertura>fechamento)e (abertura>fechamento[1])e (fechamento>abertura[1]) e ((abertura-fechamento)/0.001+(maxima-minima)>0.6) e (SlowStochastic(12)>=80))e((fechamento-media(20,close)>3*(media(20,avgtruerange(20,0)))))  então 
+    PaintBar(clfucsia);
+  
+ 
+Fim;

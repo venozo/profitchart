@@ -1,0 +1,33 @@
+input
+periodoLongo(21);
+periodoCurto(9);
+VAR
+  X,Y : FLOAT;
+INICIO
+  X := high;
+  Y := high;
+  SE (MEDIAEXP(periodoCurto,CLOSE) > (MEDIAEXP(periodoLongo,CLOSE[1]))) THEN
+    INICIO
+      X := X[1];
+      PLOT(X);
+      SetPlotColor(1,clverde);
+      PaintBar(clverde);
+    FIM;
+  SE (MEDIAEXP(periodoCurto,CLOSE) < (MEDIAEXP(periodoLongo,CLOSE[1]))) THEN
+    INICIO
+      Y := Y[1];
+      plot2(Y);
+      SetPlotColor(2,clvermelho);
+      PaintBar(clvermelho);
+    FIM;
+  SE (MEDIAEXP(periodoCurto,CLOSE[1]) > MEDIAEXP(periodoLongo,CLOSE[1])) and (MEDIAEXP(periodoCurto,CLOSE) < MEDIAEXP(periodoLongo,CLOSE[1])) then
+    begin
+      PaintBar(clbranco);
+    end;
+  SE (MEDIAEXP(periodoCurto,CLOSE[1]) < MEDIAEXP(periodoLongo,CLOSE[1])) and (MEDIAEXP(periodoCurto,CLOSE) > MEDIAEXP(periodoLongo,CLOSE)) THEN
+    begin
+      PaintBar(clbranco);
+    end;
+    plot3(MEDIAEXP(periodoCurto,CLOSE));
+    plot4(MEDIAEXP(periodoLongo,CLOSE));
+FIM

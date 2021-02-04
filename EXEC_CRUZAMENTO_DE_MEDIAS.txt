@@ -1,0 +1,22 @@
+parâmetro
+  MediaRapida(9);
+  MediaLenta(21);
+var
+  sMedRapida     : Real;
+  sMedLenta      : Real;
+  sPrevMedRapida : Real;
+  sPrevMedLenta  : Real;
+begin // Armazena os valores das médias em variáveis de apoio
+  sMedRapida := Media(MediaRapida,Fechamento);
+  sMedLenta := Media(MediaLenta,Fechamento);
+  sPrevMedRapida := sMedRapida[1];
+  sPrevMedLenta := sMedLenta[1];
+  se (IsBought) então
+    se (sPrevMedRapida > sPrevMedLenta) e (sMedRapida < sMedLenta) então
+      selltocoveratmarket;
+  se (sPrevMedRapida < sPrevMedLenta) e (sMedRapida > sMedLenta) então
+    inicio
+      BuyToCoverAtMarket;
+      BuyAtMarket;
+    fim;
+end

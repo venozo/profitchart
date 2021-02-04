@@ -1,0 +1,52 @@
+input
+nmedia(60);
+Vermelha(350);
+Laranja(250);
+Amarela(150);
+Branca(50);
+
+var
+nvermelha,res,avg,std,ag,nlaranja,namarela,nbranca, avg: float;
+i: integer;
+
+begin
+
+nvermelha := 350/100;
+nlaranja  := 250/100;
+namarela  := 150/100;
+nbranca   :=  -50/100;
+
+ag:=AccAgressSaldo(1)-AccAgressSaldo(1)[1];
+if (date<>date[1]) then ag:=AccAgressSaldo(1);
+avg := media(nmedia,ag);
+
+std:=stddevs(ag,nmedia);
+
+res:= (ag-avg)/std;
+
+if((res>nvermelha) ou (res<-nvermelha))    then 
+  begin
+    paintbar(clred);
+  end 
+else if((res>(nlaranja)) or (res<-nlaranja))  then 
+  begin
+    paintbar(rgb(255, 140, 0));
+  end
+else if( (res>namarela) or (res<-namarela)  )  then 
+  begin
+    paintbar(clamarelo);
+  end
+else if((res>nbranca) or( res<-nbranca) )   then 
+  begin
+    paintbar(clbranco);
+  end
+else
+  begin
+    paintbar(rgb(176,196,222));
+  end;
+
+end;
+
+
+
+

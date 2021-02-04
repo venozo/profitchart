@@ -1,0 +1,12 @@
+Inicio
+  Se (IsSold) então
+    Inicio
+      Se (Fechamento < Tilson(1,9)) e (Tilson(1.00,9) < media(9,Close)) então
+        BuyToCoverAtMarket;
+    Fim
+  Senão
+    Inicio
+      Se (Fechamento > Tilson(1,9)) e (Tilson(1.00,9) > media(9,Close)) então
+        BuyAtMarket;
+    Fim;
+Fim;

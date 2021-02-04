@@ -1,0 +1,48 @@
+Input 
+LoopBack (20);
+var    
+volLowest : float;
+value2 : float; 
+value3  : float ;
+highvalue2 :float ;
+highvalue3 : float; 
+lowValue3 : float; 
+tempv2 : float;
+tempv3 : float; 
+tempv : float; 
+n : integer ;
+nVol:float;
+
+begin 
+      nVol:= QuantityVol(false);
+      Plot(nVol);
+
+      if  abs(nVol) <   media(LoopBack, abs(nVol)) * 0.5 then
+       paintbar (clblue); //AZUL
+         if (abs(nVol) > 2.5* media(LoopBack,abs(nVol))) and (abs(nVol) < 3.5*  media(LoopBack,abs(nVol)))then
+      paintbar(RGB(255,128,0)); 
+    
+      if (abs(nVol) = highest(abs(nVol),LoopBack)) and (range = highest(range,LoopBack)) and ( close > open) then 
+        paintbar (RGB(0,128,0)); //LARANJA
+
+      if (abs(nVol) = highest(abs(nVol),LoopBack)) and (range = highest(range,LoopBack)) and ( close < open) then 
+        paintbar (clred);  //VERMELHO
+     
+      value2 := abs(nVol)*range;
+      
+      if(range <> 0) then
+      value3:= abs(nVol) /range;
+         
+      tempv2:= abs(nVol) * range ; 
+            
+      highvalue2 := highest(tempv2,LoopBack);
+
+      if (abs(nVol) * range <> 0) then 
+              tempv3 := abs(nVol) / range ; 
+              highvalue3 := (highest(tempv3,LoopBack)); 
+              lowvalue3 := (lowest(tempv3,LoopBack)); 
+
+      if (value3 = highvalue3) then paintbar(clamarelo); //AMARELO
+
+      if(value2 = highvalue2) and ( value3 = highvalue3) then paintbar(clfucsia); //FUCSIA
+  end;

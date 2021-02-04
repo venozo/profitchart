@@ -1,0 +1,17 @@
+input
+periodo(1);
+horario(0900);
+var
+dataini,aj:integer;
+ajuste:float;
+begin
+  dataini:=calcdate(currentdate,-periodo);
+  if(date<dataini)e(time< horario)then
+  aj:=1;
+  if(date>=dataini)e(time>=horario)Then
+  aj:=aj[1]+1;
+  ajuste:=vwap(1);
+  if(date>=currentdate-3)then 
+  plot(ajuste[aj]);
+//  plot2(vwap(1));
+end;

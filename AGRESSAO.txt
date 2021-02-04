@@ -1,0 +1,11 @@
+Inicio
+  Se (volume_Accumulation_Percentage_Indicator(10) > 0 )
+  and (volume_Accumulation_Percentage_Indicator(10) <20) então
+    PaintBar(clVerdeLimão)
+  Senão Se (volume_Accumulation_Percentage_Indicator(10) > 20) então
+    PaintBar(clVerde)
+  Senão Se (volume_Accumulation_Percentage_Indicator(10) < -1) então
+    PaintBar(clVermelho)
+  Senão Se (volume_Accumulation_Percentage_Indicator(10) < -20) então
+    PaintBar(clFúcsia);
+Fim;

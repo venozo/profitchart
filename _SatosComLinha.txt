@@ -1,0 +1,54 @@
+input
+nmedia(60);
+Vermelha(350);
+Laranja(250);
+Amarela(150);
+Branca(50);
+Lcor(clAmarelo);
+var
+nvermelha,nlaranja,namarela,nbranca, avg: float;
+nclose,nopen: float;
+
+
+begin
+
+nvermelha := 350/100;
+nlaranja  := 250/100;
+namarela  := 150/100;
+nbranca   :=  50/100;
+
+
+avg := media(nmedia,volume);
+
+if(volume >= (avg[1]*nvermelha))     then 
+  begin
+    paintbar(clazul);
+    nclose := close; 
+    nopen := open;  
+
+  end
+else if(volume >= (avg[1]*nlaranja))  then 
+  begin
+    paintbar(rgb(255, 140, 0));
+  end
+else if(volume >= (avg[1]*namarela))  then 
+  begin
+    paintbar(Lcor);
+  end
+else if(volume >= (avg[1]*nbranca))   then 
+  begin
+    paintbar(clbranco);
+  end
+else
+  begin
+    paintbar(clazulclaro);
+  end;
+
+
+  Plot(nclose);
+  Plot2(nopen);
+
+
+
+
+end;

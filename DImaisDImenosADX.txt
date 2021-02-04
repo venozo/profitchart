@@ -1,0 +1,120 @@
+///////////////////////////////////////////////////////////////////
+//                      DI+/DI- e ADX                            //  
+///////////////////////////////////////////////////////////////////
+input
+  nPeriod(14);
+  ADXperíodo(9);
+  ADXmédia(9);
+  Linha_Max_Min(false);
+  Max_Min(17);
+
+var
+  sWTR      : Float;   
+  sWPlusDM  : Float;
+  sWMinusDM : Float;
+  sPlusDi   : Float;
+  sMinusDi  : Float; 
+  nIndex    : Integer;
+  result1:float; 
+  result2:float;
+  result3:float; 
+
+function CalcPlusDM : Float;
+var
+  sHiDiff : Float;
+  sLoDiff : Float;
+begin
+ 
+  sHiDiff := HIGH - HIGH[1];
+  sLoDiff := LOW[1] - LOW;
+  if ((sHiDiff < 0) and (sLoDiff < 0)) or (sHiDiff <= sLoDiff)
+    then Result := 0
+    else Result := sHiDiff; 
+end;
+
+
+function CalcMinusDM : Float;
+var
+  sHiDiff : Float;
+  sLoDiff : Float;
+begin
+ 
+  sHiDiff := HIGH - HIGH[1];
+  sLoDiff := LOW[1] - LOW;
+  if ((sHiDiff < 0) and (sLoDiff < 0)) or (sHiDiff >= sLoDiff)
+    then Result := 0
+    else Result := sLoDiff;    
+end;
+
+
+begin
+  if (CurrentBar > 0) and (CurrentBar < nPeriod) then
+    begin
+    
+      sWPlusDM  := CalcPlusDM;
+      sWMinusDM := CalcMinusDM;
+      sWTR      := TrueRange;
+      result1:=(sPlusDi)-(sMinusDi);
+      
+    end   
+  else if CurrentBar >= nPeriod then
+    begin
+   
+      sWPlusDM  := CalcPlusDM;
+      sWMinusDM := CalcMinusDM;
+      sWTR      := TrueRange;
+      sWTR      := WellesSum(nPeriod, sWTR     , 1);
+      sWPlusDM  := WellesSum(nPeriod, sWPlusDM , 1);
+      sWMinusDM := WellesSum(nPeriod, sWMinusDM, 1);
+      sPlusDi   := 100 * (sWPlusDM /sWTR);
+      sMinusDi  := 100 * (sWMinusDM/sWTR); 
+      Result1:= ((sPlusDi)-(sMinusDi));
+      
+      end;
+
+      begin
+          
+     Plot (result1);
+     end;
+     begin
+     if (result1>0)
+     then paintbar(clgreen);
+     end;
+     begin
+     if (result1<0)
+     then paintbar(clmaroon);
+     end;            
+           
+     Begin
+     if (result1>2)
+     and (adx(ADXperíodo,ADXmédia)>(adx(ADXperíodo,ADXmédia)[1]))
+     then paintbar(cllime);
+    end;
+
+     begin
+     if (result1<-2)
+     and (adx(ADXperíodo,ADXmédia)>(adx(ADXperíodo,ADXmédia)[1]))
+     then paintbar (clred);
+    
+    end;  
+       
+    begin
+    if (Linha_Max_Min=true)
+    then begin
+    if (result1>0)
+    then
+    plot3 ((highest(result1,Max_Min)));
+    setplotcolor(3,clyellow);
+   
+    
+    if (result1<0)
+    then
+    plot4 (lowest(result1,Max_Min));
+    setplotcolor(4,clyellow);
+    end; 
+
+    end;
+    end;  
+end;
+
+end;

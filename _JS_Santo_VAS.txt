@@ -1,0 +1,102 @@
+Input
+Fractal_1(8);
+Fractal_2(34);
+Suave(1);
+avgPeriod(17);
+longPeriod(72);
+
+Var
+Agre   :float;
+Volq   :float;
+VAS    :float;
+Spread :float;
+Fec_Max:float;
+Fec_Min:float;
+
+MVAS1  :float;
+MVAS2  :float;
+signal : Float; //MACD -> MOBA1 - MOBA2
+avg : Float;
+long : Float;
+smoothAvg : Float;
+smoothLong : Float;
+smoothCenter : Float;
+
+
+begin
+
+Se (agressionvolbuy > agressionvolsell) entao
+  Agre:=(agressionvolbuy - agressionvolsell)
+Senão se (agressionvolbuy < agressionvolsell) entao
+  Agre:=(agressionvolsell - agressionvolbuy);
+
+VolQ:=((agressionvolbuy + agressionvolsell));
+
+Fec_Max:=Fechamento-Maxima;
+Fec_Min:=Fechamento-Minima;
+
+
+Spread:=Fec_Min+Fec_Max;
+
+Se (Spread > 0) entao inicio
+  Se (agressionvolbuy > agressionvolsell) entao
+    VAS := VAS[1] + (Spread * (VolQ + Agre));
+  Se (agressionvolbuy < agressionvolsell) entao
+    VAS := VAS[1] + (Spread * (VolQ - Agre));
+  Se (agressionvolbuy = agressionvolsell) entao
+    VAS := VAS[1] + (Spread * (VolQ));
+  fim;
+ 
+Se (Spread < 0) entao inicio
+  Se (agressionvolbuy < agressionvolsell) entao
+    VAS := VAS[1] + (Spread * (VolQ + Agre));
+  Se (agressionvolbuy > agressionvolsell) entao
+    VAS := VAS[1] + (Spread * (VolQ - Agre));
+  Se (agressionvolbuy = agressionvolsell) entao
+    VAS := VAS[1] + (Spread * (VolQ));
+  fim;
+
+Se (Spread = 0) entao
+  VAS := VAS[1];
+
+
+
+MVAS1     := MediaExp(Fractal_1,VAS);
+MVAS2     := MediaExp(Fractal_2,VAS);
+
+signal    := MediaExp(Suave,(MVAS1 - MVAS2));
+
+avg  := MediaExp( avgPeriod , signal );
+long := MediaExp( longPeriod, signal ); 
+
+smoothAvg    := Mediaexp(avgPeriod, avg);
+smoothLong   := Mediaexp(longPeriod, long);
+smoothCenter := (smoothAvg + smoothLong) / 2;
+
+Plot (signal);
+Plot2(smoothAvg);
+Plot3(smoothLong);
+Plot4(smoothCenter);
+
+SetPlotColor(1,ClCinza);
+SetPlotWidth(1,1);
+
+Se (signal > smoothCenter) e (signal > signal[1]) entao inicio
+  SetPlotColor(1,ClVerde);
+  SetPlotWidth(1,4); fim;
+Se (signal < smoothCenter) e (signal < signal[1]) entao inicio
+  SetPlotColor(1,ClVermelho);
+  SetPlotWidth(1,4); fim;
+
+
+Se (signal > smoothCenter) e (signal > signal[1]) entao inicio
+  Se (Fechamento > Abertura) entao Paintbar(ClLime);
+  Se (Fechamento < Abertura) entao Paintbar(ClVerde);
+  fim;
+Se (signal < smoothCenter) e (signal < signal[1]) entao inicio
+  Se (Fechamento > Abertura) entao Paintbar(rgb(255,180,180));
+  Se (Fechamento < Abertura) entao Paintbar(ClVermelho);  
+  fim;
+  
+    
+end;

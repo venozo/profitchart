@@ -1,0 +1,36 @@
+{
+Cáculos de projeção linear com base em saldo das agressões.
+A idéia é se antecipar aos movimentos.
+Ideal utilizar junto com uma média móvel e operar com ambas no mesmo sentido.
+@Valderi Murari Micheletti
+}
+input
+  LineUP(4);
+  LineDOWN(4);
+var
+  avb,x,y,xy,x2,y2,n,m,b,yl : float;
+  vcor                      : integer;
+begin
+     
+se(CurrentDate < CalcDate(Date,4))then
+begin
+  avb := AgressionVolBalance;
+  x := media(11,avb);
+  y := WAverage(WAverage(WAverage(WAverage(WAverage(WAverage(x,2),2),2),2),2),2);
+  xy := x * y;
+  x2 := Square(x);
+  y2 := Square(y);
+  n := 6;
+  m := (n * xy - x * y) / (n * x2 - x2);
+  b := y + m * x;
+  yl := m * x + b;
+  Plot(yl);
+  SetPlotColor(1,clwhite);
+  Plot2(LineUP * 1000);
+  SetPlotColor(2,cllime);
+  Plot3( - LineDOWN * 1000);
+  SetPlotColor(3,clred);
+ if(yl>(LineUP * 1000))then paintbar(clAzul);
+ if(yl<(-LineDOWN * 1000))then paintbar(255);
+end;
+end;

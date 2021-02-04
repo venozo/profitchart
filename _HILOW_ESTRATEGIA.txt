@@ -1,0 +1,25 @@
+var
+  c,periodo : integer;
+begin
+  periodo := 5;
+  se (IsBought) then
+    begin
+      se (close < close[c])then
+        begin
+          SellToCoverAtMarket;
+        end;
+    end;
+  se (c >= periodo)or(close<HiloActivator(17)) then
+    c := 0;
+  se (c < periodo) then
+    begin
+      se(volume>0)and (c= 1) and
+       (close > HiloActivator(17)) and
+       (close > media(9,close)) then
+        begin
+          Buystop(high,high);
+        end;
+      c := c + 1;
+    end;
+end;
+

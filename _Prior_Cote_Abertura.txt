@@ -1,0 +1,6 @@
+begin
+Plot (OpenD(5));
+Plot2(OpenD(4));
+Plot3(OpenD(3));
+Plot4(OpenD(2));
+end;

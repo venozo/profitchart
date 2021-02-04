@@ -1,0 +1,16 @@
+input
+  DesvioCh(1.50);
+  mediaCh(12);
+  tipoMediaCh(1);
+var
+  kcTopo  : float;
+  kcFundo : float;
+begin
+  kcTopo := KeltnerCh(DesvioCh,mediaCH,tipoMediaCh)[0];
+  SetPlotColor(1,clGreen);
+  Plot(kcTopo);
+  kcFundo := KeltnerCh(DesvioCh,mediaCh,tipoMEdiaCh)[1];
+  SetPlotColor(2,clRed);
+  Plot2(kcFundo);
+end;
+

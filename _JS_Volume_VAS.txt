@@ -1,0 +1,58 @@
+Var
+Agre   :float;
+Volq   :float;
+Force  :float;
+xForce :float;
+Spread :float;
+Fec_Max:float;
+Fec_Min:float;
+
+
+begin
+
+Se (agressionvolbuy > agressionvolsell) entao
+  Agre:=(agressionvolbuy - agressionvolsell)
+Senão se (agressionvolbuy < agressionvolsell) entao
+  Agre:=(agressionvolsell - agressionvolbuy);
+
+VolQ:=((agressionvolbuy + agressionvolsell));
+
+Fec_Max:=Fechamento-Maxima;
+Fec_Min:=Fechamento-Minima;
+
+Spread:=Fec_Min+Fec_Max;
+
+Se (Spread > 0) entao inicio
+  Se (agressionvolbuy > agressionvolsell) entao
+    Force := (Spread * (VolQ + Agre));
+  Se (agressionvolbuy < agressionvolsell) entao
+    Force := (Spread * (VolQ - Agre));
+  Se (agressionvolbuy = agressionvolsell) entao
+    Force := (Spread * (VolQ));
+  fim;
+ 
+Se (Spread < 0) entao inicio
+  Se (agressionvolbuy < agressionvolsell) entao
+    Force := (Spread * (VolQ + Agre));
+  Se (agressionvolbuy > agressionvolsell) entao
+    Force := (Spread * (VolQ - Agre));
+  Se (agressionvolbuy = agressionvolsell) entao
+    Force := (Spread * (VolQ));
+  fim;
+
+Se (Spread = 0) entao
+  Force := 0;
+
+xForce  := Force;
+
+Se (xForce < 0) entao xForce := -1 * xforce;
+  
+Plot (xForce);
+SetPlotColor(1,ClAzulCeleste);
+Se (Force > 0) entao
+Setplotcolor(1,ClVerde);
+Se (Force < 0) entao
+Setplotcolor(1,ClVermelho);
+
+        
+end;

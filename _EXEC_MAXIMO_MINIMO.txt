@@ -1,0 +1,19 @@
+var
+  vprice      : Float;
+  barraCompra : integer;
+Inicio
+  Se (IsBought) então
+    Inicio
+      Se (CurrentBar > barraCompra + 7) então
+        SellShortAtMarket
+      Senão 
+        SellToCoverStop(Highest(high,2),Highest(high,2));
+    Fim
+  Senão 
+    Inicio
+      Se (RSI(2,0) <= 15) e (Fechamento > Media(20,Close)) então
+        BuyAtMarket;
+      barraCompra := CurrentBar;
+    Fim;
+Fim;
+

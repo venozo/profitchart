@@ -1,0 +1,30 @@
+var
+  abriu,abriu2,fexou1,fexou : float;
+begin
+  if (time[1] > 1600) and (time < 0910) then
+    begin 
+      noplot(1);
+abriu:=high;
+    
+    end;
+{
+if(findbar(date,0900)=1)Then 
+begin
+fexou:=low[1];
+end; 
+} 
+if(findbar(date,0915)=1)Then 
+begin
+noplot(2);
+fexou:=high;
+  
+end; 
+   
+
+  if (time < 1830) then
+    begin
+  plot(abriu);
+   plot2(fexou);
+ 
+end;
+  end;

@@ -1,0 +1,223 @@
+input              
+  FastPeriod(12);
+  SlowPeriod(26);
+  TriggerPeriod(40);
+  MedTriggerPeriod(20);
+  FastTriggerPeriod(5);
+  Periodo(14);
+  FastPeriodTend(14);
+  SlowPeriodTend(305);
+  TriggerPeriodTend(305);
+  FastTriggerPeriodTend(9);
+ 
+
+var
+  sFast    : float;
+  sSlow    : float;
+  sTrigger : float;
+  sMedTrigger : float;
+  sFastTrigger : float;
+  resultbar : float;
+  resulttrigger : float;
+  resultfasttrigger : float;
+  resultmedtrigger : float;
+  sFastTend    : float;
+  sSlowTend    : float;
+  sTriggerTend : float;
+  sFastTriggerTend : float;
+  resultbarTend : float;
+  resulttriggerTend : float;
+  resultfasttriggerTend : float;
+  sHighs  : Float;
+  sLows   : Float;          
+  nIndex  : Integer;
+  sRatio  : Float;
+  sResult : Float;
+  Venda : Integer;
+  VendaContra : Integer;
+  CompraContra : Integer;
+  PVendaContra : Integer;
+  PCompraContra : Integer;
+  Compra : Integer;
+  DifTrigger : Float;
+  MinimaMarteloCompra : Float;
+ 
+Inicio
+  if (CurrentBar = Periodo-1) then
+    begin
+      //////////////////////////////
+      // Primeira cotação
+      sHighs := 0;
+      sLows  := 0;
+      For nIndex := 0 to Periodo-2 do
+        begin
+          if (Close[nIndex] > Close[nIndex+1])
+            then sHighs := sHighs + Close[nIndex] - Close[nIndex+1]
+            else sLows  := sLows  - Close[nIndex] + Close[nIndex+1];
+        end;
+
+      if (sLows <> 0)
+        then sResult := 100 - (100/(1+(sHighs/sLows)))
+        else sResult := 100;
+      Plot(sResult);
+    end
+  else if (CurrentBar >= Periodo) then
+    begin
+      //////////////////////////////
+      // Demais cotações
+      sRatio := (Periodo-1) / Periodo;
+      sHighs := sHighs[1] * sRatio;
+      sLows  := sLows[1]  * sRatio;
+      if (Close > Close[1])
+        then sHighs := sHighs + ( Close - Close[1])*sRatio
+        else sLows  := sLows  + (-Close + Close[1])*sRatio;
+
+      if (sLows <> 0)
+        then sResult := 100 - (100/(1+(sHighs/sLows)))
+        else sResult := 100;
+      Plot(sResult);
+
+
+  if (CurrentBar > SlowPeriod) then
+    begin
+      /////////////////////////
+      // Calcula os necessários
+      sFast    := MediaExp(FastPeriod, Close);
+      sSlow    := MediaExp(SlowPeriod, Close);
+      sTrigger := MediaExp(TriggerPeriod, sFast - sSlow);
+      sMedTrigger := MediaExp(MedTriggerPeriod, sFast - sSlow);
+      sFastTrigger := MediaExp(FastTriggerPeriod, sFast - sSlow);
+
+      /////////////////////
+      // Desenha o resultado
+      resultbar := (sFast - sSlow) ;
+      resulttrigger := (sTrigger);
+      resultmedtrigger := (sMedTrigger);
+      resultfasttrigger := (sFastTrigger);
+      DifTrigger := (resultbar[1] - resulttrigger[1]);
+    end;
+
+    ///MACD_Tendencia///
+
+  if (CurrentBar > SlowPeriodTend) then
+    begin
+      /////////////////////////
+      // Calcula os necessários
+      sFastTend    := MediaExp(FastPeriodTend, Close);
+      sSlowTend    := MediaExp(SlowPeriodTend, Close);
+      sTriggerTend := MediaExp(TriggerPeriodTend, sFastTend - sSlowTend);
+      sFastTriggerTend := MediaExp(FastTriggerPeriodTend, sFastTend - sSlowTend);
+
+      /////////////////////
+      // Desenha o resultado
+      resultbarTend := (sFastTend - sSlowTend) ;
+      resulttriggerTend := (sTriggerTend);
+      resultfasttriggerTend := (sFastTriggerTend);
+    end;
+ 
+           /// Martelo Venda ///
+
+     /// Martelo Venda CONTRA TENDENCIA ///
+
+    Se (fechamento[1] > fechamento[2])
+    e (fechamento[2] > fechamento[3])
+    e (resultbar[1] >= resultbar[2])
+    e (resultbar <= resultbar[1])
+    //e (resultbar[3] >= resultbar[4])
+    //e (resultbar[2] >= resultbar[3])
+    e (maxima > maxima[1])
+    e (fechamento < fechamento[1])
+    e (resultbar > 0.2)
+    e (resultbar < 1.5)
+    e (resultbar [1] > 0)
+    e (resultbar [2] > 0)
+    e (resultTrigger > 0)
+    e (resultfastTrigger > 0)
+    e (resultfastTrigger < ResultTrigger)
+    //e (resultbar < resulttrigger)
+    e (DifTrigger < 0.2)
+    então
+    VendaContra := (1);
+
+    Se VendaContra = 1
+    então
+    Inicio
+   
+    Se (fechamento[1] < fechamento[2])
+    e (fechamento < fechamento[1])
+    então
+    PVendaContra := (1);
+
+    Se (fechamento[1] > fechamento[2])
+    e (fechamento > fechamento[1])// e (resultbar[1] > resulttrigger[1]))
+    e (resulttrigger[1] < resultbar[1])
+    e (DifTrigger[1] > 0.15)
+    então
+    VendaContra := (0);
+    Fim;
+         
+    Se PVendaContra = 1
+    então
+    Inicio
+    PaintBar(clvermelho);
+
+    Se VendaContra = (0)
+    então
+    PVendaContra := (0);
+    Fim;
+       
+    
+    /// Martelo Compra CONTRA TENDENCIA ///
+
+    Se (fechamento[1] < fechamento[2])
+    //e (fechamento[2] > fechamento[3])
+    e (resultbar[1] <= resultbar[2])
+    e (resultbar >= resultbar[1])
+    e (minima < minima[1])
+    e (fechamento > fechamento[1])
+    e (resultbar < -0.2)
+    e (resultbar > -1.5)
+    e (resultbar [1] < -0.2)
+    e (resultbar [2] < -0.2)
+    //e (resultbar [3] < 0)
+    e (resultTrigger < 0)
+    e (resultfastTrigger < 0)
+    e (resultfastTrigger > ResultTrigger)
+    //e (resultbar > resulttrigger)
+    e (DifTrigger > -0.1)
+    então
+    CompraContra := (1);
+
+    Se CompraContra = 1
+    então
+    Inicio
+
+    Se (fechamento[1] > fechamento[2])
+    e (fechamento > fechamento[1])
+    então
+    PCompraContra := (1);
+         
+    Se (fechamento[1] < fechamento[2])
+    e (fechamento < fechamento[1])
+    e (resulttrigger[1] > resultbar[1])
+    e (DifTrigger[1] < -0.1)
+    
+    então
+    CompraContra := (0);
+
+    Fim;
+
+    Se PCompraContra = 1
+    então
+    Inicio
+    PaintBar(clVerdelimao);
+
+    Se CompraContra = (0)
+    então
+    PCompraContra := (0);
+    Fim;
+
+             
+    Fim;
+ 
+ Fim;

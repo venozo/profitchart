@@ -1,0 +1,29 @@
+input
+  length(10);
+var
+  x   : float;
+  tva : float;
+  tv  : float;
+  va  : float;
+  i   : integer;
+  m   : integer;
+begin
+  if (CurrentBar >= length) then
+    begin
+     // x := ((2 * close) - high - low) / (high - low);
+      x:=((2*close)-high-low);
+      tva := volume * x;
+      tv := volume;
+      for i := 1 to length do
+        begin
+          tva := tva + (volume[i] * x[i]);
+        end;
+      for m := 1 to length do
+        begin
+          tv := tv + volume[m];
+        end;
+      va := (100 * tva) / tv;
+      plot(va);
+    end;
+end;
+

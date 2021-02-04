@@ -1,0 +1,49 @@
+       Parametro
+     PE(8);
+     PMEC(8);
+     PMEL(80);
+
+      Var
+      compra,venda:boolean;
+      Result1, Result2: float;
+/////////////////////////////////////////////////////////////////////////////
+      Inicio
+                          
+Compra:= (fechamento >= mediaexp(PMEC,close)) e 
+         (fechamento >= mediaexp(PMEL,close)) e
+         (volume >= mediaexp(20,close))e
+         (SlowStochastic(PE)> 25);
+
+ Venda:= (fechamento <= mediaexp(PMEC,close)) e 
+         (fechamento <= mediaexp(PMEL,close)) e
+         (volume >= mediaexp(20,close))e
+         (SlowStochastic(PE)< 75);
+
+//////////////////////////////////////////////////////////////////////////
+
+//Verifica condições de compra//
+
+      Se compra então
+      Result1:= 10 senão
+      Result1:= 0;
+      Se compra então
+      paintbar(clverde);
+
+//Verifica condições de venda//    
+
+      Se venda então
+      Result2:= -10 senão
+      Result2:= 0;
+      Se venda então
+      paintbar(clvermelho);
+
+////////////////////////////////////////////////////////////////////////////
+
+//Plota condições de compra e venda// 
+
+      Se (Result1)=10 então
+      plot(10);
+
+      Se (Result2)= -10 então
+      plot(-10);
+      Fim;

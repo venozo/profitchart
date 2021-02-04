@@ -1,0 +1,7 @@
+Begin
+If (IFDT(13,close)>0.05) then paintbar(clgreen)
+Else
+If (IFDT(13,close)<-0.05) then paintbar(clred)
+Else
+paintbar(clgray);
+end;

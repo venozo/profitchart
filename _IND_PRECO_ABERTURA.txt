@@ -1,0 +1,42 @@
+input 
+ Nivel1(0.23);
+ Nivel2(0.50);
+ Nivel3(1.61);
+ plotaracima(true); 
+
+ var
+   vVolFin, vPrecoAbertura  : float;
+   vFlagAbertura:boolean;
+   vPlot : float;
+
+begin  
+   vVolFin := FinancialVol(false);
+
+   if (date <> date[1]) then 
+   begin
+      vPrecoAbertura := 0; 
+      vFlagAbertura := True;
+   end;
+
+
+   if ((vVolFin > 0) and vFlagAbertura) then
+   begin
+      vPrecoAbertura := open;
+      vFlagAbertura := False;
+   end; 
+   Plot(vPrecoAbertura);
+se(plotaracima=true)then
+begin
+ 
+ Plot2(vPrecoAbertura * (1 + Nivel1 / 100)); 
+ Plot3(vPrecoAbertura * (1 + Nivel2/ 100)); 
+ Plot4(vPrecoAbertura * (1 + Nivel3/ 100)); 
+  end;
+  se(plotaracima=false)then
+begin
+
+ Plot2(vPrecoAbertura * (1 - Nivel1 / 100)); 
+ Plot3(vPrecoAbertura * (1 - Nivel2/ 100)); 
+ Plot4(vPrecoAbertura * (1 - Nivel3/ 100)); 
+  end;
+end;

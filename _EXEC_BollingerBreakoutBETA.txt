@@ -1,0 +1,53 @@
+/////////////////////////////////////////////////////////
+//                                                     //
+//                Bollinger Breakout                   //
+//                                                     //
+//        Compra/Vende no rompimento confirmado        //
+//                das Bandas de Bollinger.             //
+//                                                     //
+//                                                     //
+//                  by  Rafael Peres                   //
+//                                                     //
+/////////////////////////////////////////////////////////
+
+input
+Periodo(21);    // Período a ser utilizado
+Desvio(1.0);    // Desvio Padrão a ser utilizado 
+Modo(0);        // Aritmético 0 // Exponencial 1 // Welles Wilder 2 // Ponderado 3 //
+Encerrar(1900); // Horário que deve parar de operar e fechar posições em aberto - Não modifique se não sabe o horário do candle (varia conforme o timeframe).
+StopLoss(1.5);  // Em Variação Percentual. Como o backtest considera o candle fechado, vai passar do preço e stopar mais longe.
+
+Var
+VariacaoV : Float;  //Armazena a Variação da Posição Vendida 
+VariacaoC : Float;  //Armazena a Variação da Posição Comprada
+                    
+begin
+
+
+  // Verifica se possui posição vendida em aberto
+  if (IsSold) then
+    begin
+      VariacaoV := ((SellPrice / Fechamento)-1)*100;
+      // Cobre a posição com uma compra à mercado
+      if (Fechamento > Abertura) and (Fechamento > Media(Periodo, Fechamento)) or (VariacaoV <= -StopLoss) or (LastCalcTime[1] >= Encerrar) then
+        BuyToCoverAtMarket;
+         
+                          
+    end     
+  // Verifica se possui posição comprada em aberto
+  else if (IsBought) then
+    begin
+      VariacaoC := ((Fechamento / Buyprice)-1)*100;
+      // Cobre a posição com uma venda à mercado      
+      if (Fechamento < Abertura) and (Fechamento < Media(Periodo, Fechamento)) or (VariacaoC <= -StopLoss) or (LastCalcTime[1] >= Encerrar) then
+        SellToCoverAtMarket;    
+                                     
+    end
+
+  // Verifica se deve abrir uma posição     
+  else if (Fechamento > Abertura) and (Fechamento > BollingerBands(Desvio, Periodo, Modo)|0|) and (LastCalcTime < Encerrar) then
+    BuyAtMarket
+  else if (Fechamento < Abertura) and (Fechamento < BollingerBands(Desvio, Periodo, Modo)|1|) and (LastCalcTime < Encerrar) then
+    SellShortAtMarket;
+end;
+

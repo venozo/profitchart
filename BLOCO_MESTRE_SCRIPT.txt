@@ -1,0 +1,24 @@
+{area de declaração de parametros de entrada}
+input
+  Periodo_um(9);
+  Periodo_dois(21);
+
+{area de declaraçoes de variaveis existem tipos de variavei como Float,Integer,Float}
+  var
+    sResult  :  Float;
+    nIndex   :  Integer;
+    Vvalor   : integer;
+
+begin
+   
+   { estrutura de um laço for=
+     For variavel:=0 to Periodo_um Do
+       begin
+         resultado esperado
+       end;
+    }
+        plot2(Sqrt(volume[Periodo_dois]));
+        //plot(volume[Periodo_dois]);
+   
+ end;
+    

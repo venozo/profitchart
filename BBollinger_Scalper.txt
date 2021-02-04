@@ -1,0 +1,1245 @@
+// -----------------------------------------------------------
+//   BBollinger Scalper
+//--------------------  20190805 at 14:24
+
+
+{ Configurada para Scalping no WIN M1  -- O período é 8 porque está suavizada com regressão linear -- equivale às Bandas de Bollinger nativas de Período 20 Desvio 2.00
+
+Para outros ativos e tempos gráficos, alterar os parâmetros  PeriodBB 
+
+Cores: 
+
+Laranja => Abertura as bandas  (com Alarme no início da coloração)
+
+Marrom: 
+  (i)  Fechamento das bandas => terminada a cor marrom, pode começar uma consolidação ou inciar abertura (esta indpendentemente da coloração em laranja)
+  (ii) Fechamento das bandas 
+
+
+Tanto Laranja como Marrom e Azul:
+ => (i) Observar respeito às bandas; 
+ => (ii) fechamento nitidamente fora das bandas é forte sinal de retorno pelo menos à média das bandas (pode retornar até a outra banda)
+
+}
+
+   
+  
+
+
+
+input         
+
+// ----------------------------------------
+// ---   Bollinger Bands
+
+PeriodBB(8);    // Período
+AjusteBB(1.70); // Desvio
+
+perBB(8);            
+devBB(1.70);  // 1.75 to WIN M2
+SmthBBLen(8);
+
+BandSlopeThreshold(5);
+
+NarrowBBfactor(0.8);
+NarroWBBlookback(89);
+
+KKvsBB_Distance_Factor(1.9);
+
+// ------------
+// --- Cores
+
+VL0(clAzul); // Orange2
+
+GR1L      (4231485);    // To lines (L)
+RD1L      (2970272);   
+GR2L      (7456369);   
+RD2L      (9461965);       
+GR3L      (65407);    
+RD3L      (2895086);    
+GR4L      (4231485);   
+RD4L      (16417791);   
+GR5L      (clLime);   
+RD5L      (clRed);   
+
+ 
+OpenCL  (1219071);
+CloseCL (23179);
+
+
+// --------- Keltner Channel
+
+perKC_1(15);
+devKC(2.0);
+perATRtoKC(15);
+
+plot_reduct(0.5);
+
+perKC_2(5);
+
+devKC_TP(1.05);
+devKC_SL(0.68);
+
+slopethreshold_MidKC(40);
+
+smooth_MidKC_len(3);
+
+// ------------------------------------ Kalman Filter
+
+
+thresholdslope(10.0001);
+
+PerFast_1_QSC(3);
+PerFast_2_QSC(8);
+
+PerSlow_1_QSC(13);
+PerSlow_2_QSC(17);
+
+Dist_FactorQSC_1(0.6);
+Dist_FactorQSC_2(0.6);
+
+// ------------------------------------------ Momentum Osc
+
+Period(3);
+PerADXQSC(5);
+
+// ---------------------------------- RVI Criterion
+
+Per_RVIQSC(13);
+
+
+// -------------------------------------------------------
+//   ------       Money Flow Index + MAE
+
+
+lenMFI_1(5);
+lenMFI_2(8);
+smoothlenMFI(2);
+slopethresholdMFI(0.28);  // 0.5
+
+// ----------------------------------------
+//    MAE
+
+lenMAE(10);  // Length
+devMAE(0.5); // Deviation
+
+
+
+
+
+var
+
+Final_Cond_Open_BB,Final_Cond_Close_BB: integer;
+
+Bull_AL_QSChannel,Bear_AL_QSChannel: integer;
+
+uppBB,lowBB,BBWidth: float;
+MidKC, fTg_MidKC, uppKC_1,lowKC_1,KCWidth,uppKC_TP,lowKC_TP,uppKC_SL,lowKC_SL: float;
+fTg_KC,yrange, avgrange, avgrange_2:float;
+a1, a2, a3, AvTR, AvTRMav, Diff_BBKC: Float;
+
+KKvsBB_Distance,KKvsBB_UP_Distance,KKvsBB_DN_Distance: float;
+
+Cond_KKvsBB_Distance: integer;
+
+// ------------------------------------ Kalman Filter
+
+adjstime: Float;
+yboxindex: Float;
+FirstBarWIN: Float;
+ybarindex: Integer;
+
+Price, Value1, Value2, lambda, alpha, Value3, fTg_Value3: float;
+
+Bull_Kalman, Bear_Kalman: integer;
+
+                      
+//-------------------------------------------------  CR Avg DRD
+
+wprice, avgFast1, avgFast2, avgSlow1, avgSlow2, Diff_Fast1_Fast2, Diff_Slow1_Slow2, fTg_avgFast1, fTg_avgSlow1: float;
+Bull_AL_Fast1_Fast2, Bear_AL_Fast1_Fast2: integer;
+Bull_AL_Slow1_Slow2, Bear_AL_Slow1_Slow2: integer;
+i: integer;
+Bull_AL_AvgDRD, Bear_AL_AvgDRD,Cond_Dist_Open_1,Cond_Dist_Open_2: integer;
+
+Dist_Avg: float;
+BandWidth: float;
+
+
+// ------------------------------------------ Momentum Osc
+
+ct,S,cp,r, Ema5, Ema3, Ema3b: float;
+Cond_M_Osc: integer;
+Bull_MmOcs_Score1,Bull_MmOcs_Score2,Bear_MmOcs_Score1,Bear_MmOcs_Score2: integer;
+
+
+// ---------------------------------- RVI Criterion
+
+Diff, ind1, ind2, cond, yrangeRVI, temp, rvi, rvisig, fTg_rvi, Macd_RVI: float;
+Bull_RVI, Bear_RVI: integer;
+
+
+// ------------------------------------------------------------------------
+//   -----------------------       Money Flow Index + MAE
+
+rawmoneyflow,fTg_yMFI: float;
+ymoneyratio_1, yMFI_1, positiveMoneyFlow_1, negativeMoneyFlow_1 : float;
+ymoneyratio_2, yMFI_2, positiveMoneyFlow_2, negativeMoneyFlow_2 : float;
+
+yMacd_MFI: float;
+
+Bull_MFI_1, Bear_MFI_1, Bull_MFI_2, Bear_MFI_2: integer;
+
+// ----------------------------------------
+// ----------     MAE
+
+
+AppPrice, UP, DN, yMAE: float;
+
+
+// ----------------------------------------
+// ---   Bollinger Bands
+
+src: float;
+Cond_BB_Opening: Integer;
+Cond_Up_Dn_KCvsBB_Distance: integer;
+Cond_BandSlopeThreshold: integer;
+fBB_Sup, fBB_Inf: Float;
+fTg_BB_Sup, fTg_BB_Inf: Float;
+BullBear_BB: Integer;
+Bull_Buffer5, Bear_Buffer5: Integer;
+Bull_Overflow, Bear_Overflow: Integer;
+Bull_Reversal, Bear_Reversal: Integer;
+MidP_Bollinger,fTg_MidP_Bollinger,fTg2_MidP_Bollinger: Float;
+BBandWidth: float;
+Cond_NarrowBB: integer;
+
+begin
+
+Bull_AL_QSChannel:= 0;
+Bear_AL_QSChannel:= 0;
+    
+
+      a1:= abs(high - low);
+      a2:= abs(high - close[1]);
+      a3:= abs(close[1]- low );
+
+      AvTR:=  Max(a1,a2);
+      AvTR:=  Max(a3,AvTR);
+
+
+    avgrange:= MediaExp(perATRtoKC,AvTR);  
+    avgrange_2:= MediaExp(perKC_2,AvTR);  
+
+    
+    uppBB:= LWMAv(SmthBBLen,MediaExp(PerBB,close) + devBB * StdDevs(close,PerBB));
+    lowBB:= LWMAv(SmthBBLen,MediaExp(PerBB,close) - devBB * StdDevs(close,PerBB));
+    BBWidth:= uppBB - lowBB;
+
+    uppKC_1:= LWMAv(SmthBBLen,MediaExp(PerKC_1,close) + plot_reduct * devKC * avgrange);
+    lowKC_1:= LWMAv(SmthBBLen,MediaExp(PerKC_1,close) - plot_reduct * devKC * avgrange);
+    KCWidth:= uppKC_1 - lowKC_1;
+    Diff_BBKC:= BBWidth - KCWidth;
+
+
+
+    uppKC_TP:= LWMAv(SmthBBLen,MediaExp(PerKC_2,close) + devKC_TP * avgrange_2);
+    lowKC_TP:= LWMAv(SmthBBLen,MediaExp(PerKC_2,close) - devKC_TP * avgrange_2);
+    uppKC_SL:= LWMAv(SmthBBLen,MediaExp(PerKC_2,close) + devKC_SL * avgrange_2);
+    lowKC_SL:= LWMAv(SmthBBLen,MediaExp(PerKC_2,close) - devKC_SL * avgrange_2);
+
+
+ // -------------------------------------------  Kalman Filter
+
+
+ Bull_Kalman:= 0;
+ Bear_Kalman:= 0;
+
+
+ ////////// Barindex
+
+if (time < 0903)  then yboxindex:= 0;
+
+  if (time > 0900)  then begin
+      
+            if (time > 0900)  
+
+               then   yboxindex:= yboxindex + 1;
+
+   end;         
+
+    ybarindex:= round(yboxindex);
+
+Price:= (High+Low)/2;
+
+ 
+if(ybarindex > 5) 
+
+then
+begin
+Value1:= 0.2*(Price - Price[1]) + 0.8*Value1[1];
+Value2:= 0.1*(High - Low) + 0.8*Value2[1];
+end;
+
+if (Value2 <> 0) then 
+lambda := Abs(Value1 / Value2);
+ 
+alpha := ( -lambda*lambda + SQRT(lambda*lambda*lambda*lambda + 16*lambda*lambda)) /8;
+Value3 := alpha*Price + (1-alpha)*Value3[1];
+
+fTg_Value3:= (Value3 - Value3[1]) / (ybarindex - ybarindex[1]) * (1/AvgTrueRange(21,21));
+
+//plot(Value3); setplotcolor(1,clBlue); setplotwidth(1,5); 
+
+
+if (fTg_Value3 > + thresholdslope) then
+
+begin 
+//setplotcolor(1,clLime);
+Bull_Kalman:= 1;
+end;
+
+if (fTg_Value3 < - thresholdslope) then 
+
+begin
+//setplotcolor(1,clRed);
+Bear_Kalman:= 1;
+end;
+
+// --------------------------------------------  CR Avg DRD
+
+Bull_AL_AvgDRD:= 0;
+Bear_AL_AvgDRD:= 0;
+
+
+Bull_AL_Fast1_Fast2:= 0;
+Bear_AL_Fast1_Fast2:= 0;
+
+Bull_AL_Slow1_Slow2:= 0;
+Bear_AL_Slow1_Slow2:= 0;
+
+wprice:= (10*low+10*high+80*close)/100;
+
+avgFast1:=  LWMAv(PerFast_1_QSC,wprice);
+avgFast2:=  LWMAv(PerFast_2_QSC,wprice);
+Diff_Fast1_Fast2:=  abs(avgFast1 - avgFast2);
+
+avgSlow1:=  LWMAv(PerSlow_1_QSC,wprice);
+avgSlow2:=  LWMAv(PerSlow_2_QSC,wprice);
+Diff_Slow1_Slow2:=  abs(avgSlow1 - avgSlow2);
+
+fTg_avgFast1:= (avgFast1 - avgFast1[1]) / (time - time[1]);
+fTg_avgSlow1:= (avgSlow1 - avgSlow1[1]) / (time - time[1]);
+
+
+//plot (avgFast1); setplotcolor(1,clBlack); setplotwidth(1,3);
+//plot2(avgFast2); setplotcolor(2,clBlack);  setplotwidth(2,3);
+//plot3(avgSlow1); setplotcolor(3,clBlack);  setplotwidth(3,4);
+// plot4(avgSlow2); setplotcolor(4,clSilver);   setplotwidth(4,4);
+
+
+//// ------------- Dist Avg  Criterion
+
+Cond_Dist_Open_1:= 0;
+Cond_Dist_Open_2:= 0;
+
+Dist_Avg:= abs(open - AvgFast2);
+
+if (Dist_Avg < Dist_FactorQSC_1 * AvgTrueRange(13,13)) then Cond_Dist_Open_1:= 1;
+if (Dist_Avg < Dist_FactorQSC_2 * AvgTrueRange(13,13)) then Cond_Dist_Open_2:= 1;
+
+
+// ------------------------------------------ Momentum Osc Criterion
+
+Bull_MmOcs_Score1:= 0;
+Bull_MmOcs_Score2:= 0;
+Bear_MmOcs_Score1:= 0;
+Bear_MmOcs_Score2:= 0;
+
+Cond_M_Osc:= 0;
+
+
+
+ct     := close;                    //Today's close
+S      := 0;
+FOR i  := 0 TO Period - 1 do begin
+
+   cp  := close[i];
+  
+
+   if (ct - cp > 0) then r:= 1 else r:= 0;
+   
+   IF (r = 0) THEN
+
+   if (ct - cp < 0) then r:= -1 else r:= 0;
+
+   END;
+
+   s:= s + r;                      //Sum up all r's
+
+
+Ema5:=  LWMAv(5,s);  //Histogram
+Ema3:=  LWMAv(3,Ema5);//M-Oscillator
+Ema3b:= LWMAv(3,Ema3);//Signal Line
+
+
+if (Ema3 > Ema3b) 
+
+  then begin
+  //setplotcolor(1,clVerdeOliva);
+  Bull_MmOcs_Score1:= 1;
+  end;
+
+if (Ema3 < Ema3b) 
+
+  then begin
+  //setplotcolor(1,clMaroon);
+  Bear_MmOcs_Score1:= 1;
+  end;
+
+
+if (ADX(PerADXQSC,PerADXQSC) < 25)  then begin
+
+   Cond_M_Osc:= 0;
+   end;
+
+if (ADX(PerADXQSC,PerADXQSC) > 25) and (ADX(PerADXQSC,PerADXQSC) > ADX(PerADXQSC,PerADXQSC)[1]) then begin
+
+   Cond_M_Osc:= 1;
+     
+      if (Ema3 > Ema3b) 
+      
+      then begin
+      //setplotcolor(1,clLime);
+      Bull_MmOcs_Score2:= 1;
+      end;
+
+   if (Ema3 < Ema3b)
+   
+      then begin
+      //setplotcolor(1,clRed);
+      Bear_MmOcs_Score2:= 1;
+      end;
+
+end;
+
+
+ // ----------------------------------------- RVI Criterion
+ 
+Bull_RVI:= 0;
+Bear_RVI:= 0;
+
+YrangeRVI:= Avgtruerange (Per_RVIQSC, Per_RVIQSC);
+
+Diff:= close - open;
+
+Ind1:= (Diff + 2 * Diff [1] + 2 * Diff [2] + Diff [3]) / 6;
+Ind2:= (YrangeRVI + 2 * YrangeRVI [1] + 2 * YrangeRVI [2] + YrangeRVI [3]) / 6;
+
+//Ind1:= (1 * Diff   + 2 * Diff [1]   + 3 *  Diff [2]   + 4 *  Diff [3]) / 17;
+//Ind2:= (1 * YrangeRVI + 2 * YrangeRVI [1] + 3 *  YrangeRVI [2] + 4 * YrangeRVI [3]) / 17;
+
+Cond:= Summation (ind2, Per_RVIQSC);
+Se (COND = 0) então
+Temp:= 0.0001
+else 
+Temp:= COND;
+
+Rvi:= Summation (ind1, Per_RVIQSC) / temp;
+RVIsig:= (RVI + 2*RVI[1] + 2*RVI[2] + RVI[3]) / 6;
+fTg_rvi:= (rvi - rvi[1]) / (time - time[1]);
+Macd_RVI:= rvi - rvisig;
+
+
+if  
+   (rvi > rvisig) 
+   and (Macd_RVI > Macd_RVI[1])
+    then begin
+    Bull_RVI:= 1;
+    end;
+
+if (rvi < rvisig) 
+   and (Macd_RVI < Macd_RVI[1])
+
+    then begin
+    Bear_RVI:= 1;
+    end;
+
+
+
+// -------------------------------------- CR Avg Slow Criterion
+
+if
+   (avgSlow1 > avgSlow1[1])
+   and (avgSlow2 > avgSlow2[1])
+   and (Diff_Slow1_Slow2 > Diff_Slow1_Slow2[1])
+   and (fTg_avgSlow1 > fTg_avgSlow1[1])
+ 
+   then begin
+   Bull_AL_Slow1_Slow2:= 1;
+   end;
+
+
+if
+   (avgSlow1 < avgSlow1[1])
+   and (avgSlow2 < avgSlow2[1])
+   and (Diff_Slow1_Slow2 > Diff_Slow1_Slow2[1])
+   and (fTg_avgSlow1 < fTg_avgSlow1[1])
+ 
+   then begin
+   Bear_AL_Slow1_Slow2:= 1;
+   end;
+
+
+// ------------------------------------------------------------------------
+//   -----------------------       Money Flow Index + MAE
+
+
+Bull_MFI_1:= 0; Bear_MFI_1:= 0; Bull_MFI_2:= 0; Bear_MFI_2:= 0;
+
+wprice:= (15*high + 15*low + 70*close)/100;
+
+rawmoneyflow:= wprice * volume;
+
+for i:= 0 to lenMFI_1 - 1 do begin
+  positiveMoneyFlow_1:=0;
+  if (wprice > wprice[1]) then positiveMoneyFlow_1:= positiveMoneyFlow_1 + rawMoneyFlow; //else positiveMoneyFlow:= positiveMoneyFlow;
+end;
+
+for i:= 0 to lenMFI_1 - 1 do begin
+  negativeMoneyFlow_1:=0;
+  if (wprice < wprice[1]) then negativeMoneyFlow_1:= negativeMoneyFlow_1 + rawMoneyFlow; //else negativeMoneyFlow:= negativeMoneyFlow;
+end;
+
+for i:= 0 to lenMFI_2 - 1 do begin
+  positiveMoneyFlow_2:=0;
+  if (wprice > wprice[1]) then positiveMoneyFlow_2:= positiveMoneyFlow_2 + rawMoneyFlow; //else positiveMoneyFlow:= positiveMoneyFlow;
+end;
+
+for i:= 0 to lenMFI_2 - 1 do begin
+  negativeMoneyFlow_2:=0;
+  if (wprice < wprice[1]) then negativeMoneyFlow_2:= negativeMoneyFlow_2 + rawMoneyFlow; //else negativeMoneyFlow:= negativeMoneyFlow;
+end;
+
+ymoneyratio_1:= LWMAv(smoothlenMFI,VAWMAv(lenMFI_1,positivemoneyflow_1)) / LWMAv(smoothlenMFI,VAWMAv(lenMFI_1,negativemoneyflow_1));
+ymoneyratio_2:= LWMAv(smoothlenMFI,VAWMAv(lenMFI_2,positivemoneyflow_1)) / LWMAv(smoothlenMFI,VAWMAv(lenMFI_2,negativemoneyflow_2));
+
+yMFI_1:= 100 - (100 / (1 + ymoneyratio_1));
+yMFI_2:= 100 - (100 / (1 + ymoneyratio_2));
+
+yMacd_MFI:= yMFI_1 - yMFI_2;
+
+fTg_yMFI:= (yMFI_1 - yMFI_1[1]) / (time - time[1]);
+
+//plot2(yMFI_1); setplotcolor(2,clBlack); setplotwidth(2,3);
+//plot3(yMFI_2); setplotcolor(3,clSilver); setplotwidth(2,3);
+
+
+if  
+   (yMFI_1 > yMFI_1[1])
+   //and(yMFI_1[1] > yMFI_1[2]) 
+   //(yMacd_MFI > yMacd_MFI[1])
+   and (yMFI_1 > yMFI_1[2])
+   and (fTg_yMFI > + slopethresholdMFI)
+      
+   then begin
+   //setplotcolor(2,clGreen);
+   Bull_MFI_1:= 1;
+   end;
+
+if 
+   (yMFI_1 < yMFI_1[1]) 
+   //and(yMFI_1[1] < yMFI_1[2]) 
+   //(yMacd_MFI < yMacd_MFI[1])
+   and (yMFI_1 < yMFI_1[2])
+   and (fTg_yMFI < - slopethresholdMFI)
+   
+   then begin
+   //setplotcolor(2,clMaroon);
+   Bear_MFI_1:= 1;
+   end;
+   
+if  
+   //(yMFI_1 > yMFI_1[1])
+   //and (fTg_yMFI > + slopethreshold)
+   //and(yMFI_1[1] > yMFI_1[2]) 
+   (yMacd_MFI > yMacd_MFI[1])
+   and (yMFI_1 > yMFI_2)
+   and (yMFI_1 > yMFI_1[2])
+
+   then begin
+   //setplotcolor(2,clLime);
+   Bull_MFI_2:= 1;
+   end;
+
+if 
+   //(yMFI_1 < yMFI_1[1]) 
+   //and (fTg_yMFI < - slopethreshold)
+   //and(yMFI_1[1] < yMFI_1[2]) 
+   (yMacd_MFI < yMacd_MFI[1])
+   and (yMFI_1 < yMFI_2)
+   and (yMFI_1 < yMFI_1[2])
+   
+   then begin
+   //setplotcolor(2,clRed);
+   Bear_MFI_2:= 1;
+   end;
+
+
+
+// ------------------------------------------------------------ Colouration
+
+paintbar(clGray);
+
+
+
+
+
+
+// ---- Green/Maroon without MmOsc in Lime/Red   
+    
+ if 
+ 
+      (avgFast1 > avgFast1[1])
+  and (avgFast2 > avgFast2[1])
+  and (avgSlow1 > avgSlow1[1])
+  and (avgSlow2 > avgSlow2[1])
+  and (Diff_Fast1_Fast2 > Diff_Fast1_Fast2[1])
+  and (close > open)
+  //and (Cond_Dist_Open_1= 1)
+  and not (Bear_RVI=1)
+
+   then begin
+   //setplotcolor(3,GR4L);
+   setplotcolor(4,GR4L);
+   //Bull_AL_QSChannel:= 1;
+   end;
+  
+ if 
+ 
+      (avgFast1 < avgFast1[1])
+  and (avgFast2 < avgFast2[1])
+  and (avgSlow1 < avgSlow1[1])
+  and (avgSlow2 < avgSlow2[1])
+  and (Diff_Fast1_Fast2 > Diff_Fast1_Fast2[1])
+  and (close < open)
+  //and (Cond_Dist_Open_1= 1)
+  and not (Bull_RVI=1)
+
+   then begin
+   //setplotcolor(3,RD4L);
+   setplotcolor(4,RD4L);
+   //Bear_AL_QSChannel:= 1;
+   end;
+
+// ---- Green/Maroon candles with MmOsc in Geen/Maroon or Lime/Red   => Lime/Red Candles
+    
+ if 
+ 
+      (avgFast1 > avgFast1[1])
+  and (avgFast2 > avgFast2[1])
+  and (avgSlow1 > avgSlow1[1])
+  and (avgSlow2 > avgSlow2[1])
+  and (Diff_Fast1_Fast2 > Diff_Fast1_Fast2[1])
+  and (close > open)
+  //and (Cond_Dist_Open_1= 1)
+  and ((Bull_MmOcs_Score1=1) or (Bull_MmOcs_Score2=1))
+  and not (Bear_RVI=1)
+
+   then begin
+   //setplotcolor(3,GR4L);
+   setplotcolor(4,GR4L);
+   //Bull_AL_QSChannel:= 1;
+   end;
+  
+ if 
+ 
+      (avgFast1 < avgFast1[1])
+  and (avgFast2 < avgFast2[1])
+  and (avgSlow1 < avgSlow1[1])
+  and (avgSlow2 < avgSlow2[1])
+  and (Diff_Fast1_Fast2 > Diff_Fast1_Fast2[1])
+  and (close < open)
+  //and (Cond_Dist_Open_1= 1)
+  and ((Bear_MmOcs_Score1=1) or (Bear_MmOcs_Score2=1))
+  and not (Bull_RVI=1)
+
+   then begin
+   //setplotcolor(3,RD4L);
+   setplotcolor(4,RD4L);
+   //Bear_AL_QSChannel:= 1;
+   end;
+
+// ---- Lime/Red candles with filter "MmOsc in Score 1 our 2"   => Lime/Red Candles
+
+if
+   (avgFast1 > avgFast1[1])
+   and (avgFast2 > avgFast2[1])
+   and (Diff_Fast1_Fast2 > Diff_Fast1_Fast2[1])
+   and (fTg_avgFast1 > fTg_avgFast1[1])
+   and (Bull_AL_Slow1_Slow2=1)
+   //and (Cond_Dist_Open_1= 1)
+   and (Cond_M_Osc=1) 
+   and ((Bull_MmOcs_Score1=1) or (Bull_MmOcs_Score2=1))
+   and not (Bear_RVI=1)
+
+   then begin
+   //setplotcolor(3,GR4L);
+   setplotcolor(4,GR4L);
+   //Bull_AL_QSChannel:= 1;
+   end;
+
+
+if
+   (avgFast1 < avgFast1[1])
+   and (avgFast2 < avgFast2[1])
+   and (Diff_Fast1_Fast2 > Diff_Fast1_Fast2[1])
+   and (fTg_avgFast1 < fTg_avgFast1[1])
+   and (Bear_AL_Slow1_Slow2=1)
+   //and (Cond_Dist_Open_1= 1)
+   and (Cond_M_Osc=1) 
+   and ((Bear_MmOcs_Score1=1) or (Bear_MmOcs_Score2=1))
+   and not (Bull_RVI=1)
+
+   then begin
+   //setplotcolor(3,GR4L);
+   setplotcolor(4,GR4L);
+   //Bear_AL_QSChannel:= 1;
+   end;
+
+
+// ----------------------------------------
+// ---   Bollinger Bands
+
+
+src:= close;
+
+
+fBB_Sup:= LWMAv(SmthBBLen,Media(PeriodBB,src) + 3 * StdDevs(src,PeriodBB));
+fBB_Inf:= LWMAv(SmthBBLen,Media(PeriodBB,src) - 3 * StdDevs(src,PeriodBB));
+MidP_Bollinger:= (fBB_Sup+fBB_Inf)/2;
+
+Cond_NarrowBB:= 0;
+BBandWidth:= abs(fBB_Sup - fBB_Inf);
+if (BBandWidth < NarrowBBfactor * Media(NarroWBBlookback,BBandWidth)) then Cond_NarrowBB:= 1;
+ 
+
+
+Cond_BandSlopeThreshold:= 0; 
+
+fTg_BB_Sup:= (fBB_Sup - FBB_Sup[1]) / (ybarindex - ybarindex[1]);
+fTg_BB_Inf:= (fBB_Inf - FBB_Inf[1]) / (ybarindex - ybarindex[1]);
+
+if (fTg_BB_Sup > + BandSlopeThreshold) and (fTg_BB_Inf < - BandSlopeThreshold) then  Cond_BandSlopeThreshold:=1;
+
+
+
+
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+////  BB Plotting
+
+
+plot (fBB_Sup);      
+Plot2(fBB_Inf);
+plot3(MidP_Bollinger); setplotcolor(3,clBlue);
+
+
+
+
+
+
+
+ // ---------------  Plotting / Colouration  of KC
+
+
+        
+   if (Diff_BBKC >= 0) then begin
+
+
+
+
+  if (BBWidth <= BBWidth[1])  and (LWMAv(PerBB,close) >= LWMAv(PerBB,close)[1])
+       or ( (Bull_AL_AvgDRD=1)  )
+    then begin
+
+///////////////////////////////////////
+////   KC Plotting
+
+    //plot3(uppKC_TP);
+    //plot4(lowKC_SL);
+
+
+    KKvsBB_Distance:= abs(fBB_Sup - uppKC_TP) + abs(FBB_Inf - lowKC_SL);
+    KKvsBB_UP_Distance:= abs(fBB_Sup - uppKC_TP);
+    KKvsBB_DN_Distance:= abs(fBB_Inf - uppKC_SL);
+
+      MidKC:= LWMAv(smooth_MidKC_len,(uppKC_TP+lowKC_SL)/2);
+
+      //plot2(MidKC); setplotwidth(2,3);
+
+      fTg_MidKC:= (MidKC - MidKC[1]) / (time-time[1]);
+
+      if (MidKC > MidKC[1]) and (fTg_MidKC > +slopethreshold_MidKC)
+            and ((Bull_MFI_1=1) or (Bull_MFI_2=1))
+         and (uppKC_1 > uppKC_1[1])
+         and (lowKC_1 > lowKC_1[1])
+
+            then
+           begin
+            Bull_AL_QSChannel:= 1;
+           end
+        else 
+           begin
+           setplotcolor(4,clBlack); setplotwidth(4,2);
+           end;
+     
+      if (Bull_Kalman=1) then begin
+           setplotcolor(4,clBlack); setplotwidth(4,2);
+         end;
+    end;
+
+  if (BBWidth <= BBWidth[1])  and (LWMAv(PerBB,close) <= LWMAv(PerBB,close)[1])
+       or ( (Bear_AL_AvgDRD=1) )
+    then begin
+
+///////////////////////////////////////
+////  KC Plotting
+
+
+    KKvsBB_Distance:= abs(fBB_Sup - uppKC_SL) + abs(FBB_Inf - lowKC_TP);
+    KKvsBB_UP_Distance:= abs(fBB_Sup - uppKC_SL);
+    KKvsBB_DN_Distance:= abs(fBB_Inf - uppKC_TP);
+
+      MidKC:= LWMAv(smooth_MidKC_len,(uppKC_SL+lowKC_TP)/2);
+      fTg_MidKC:= (MidKC - MidKC[1]) / (time-time[1]);
+
+      //plot2(MidKC); setplotwidth(2,3);
+
+      if (MidKC < MidKC[1]) and (fTg_MidKC < -slopethreshold_MidKC) 
+            and ((Bear_MFI_1=1) or (Bear_MFI_2=1))
+         and (uppKC_1 < uppKC_1[1])
+         and (lowKC_1 < lowKC_1[1])
+
+       then
+           begin
+            setplotcolor(4,clFúcsia);
+            Bear_AL_QSChannel:= 1;
+            Alert(clFúcsia);
+           end
+        else 
+           begin
+            setplotcolor(4,clBlack);
+           end;
+    
+      if (Bear_Kalman=1) then begin
+         //setplotcolor(3,clRed); 
+         setplotcolor(4,clRed); 
+         //paintbar(clRed);
+         end;
+    end;
+
+/// -------- 
+
+  if
+  
+     ( (BBWidth >= BBWidth[1])  and (LWMAv(PerBB,close) >= LWMAv(PerBB,close)[1]) )
+       or ( (Bull_AL_AvgDRD=1) )
+     and (uppKC_1 > uppKC_1[1])
+     and (lowKC_1 > lowKC_1[1])
+
+    then begin
+
+///////////////////////////////////////
+//// KC  Plotting
+
+    //plot3(uppKC_TP);
+    //plot4(lowKC_SL);
+
+    KKvsBB_Distance:= abs(fBB_Sup - uppKC_TP) + abs(FBB_Inf - lowKC_SL);
+    KKvsBB_UP_Distance:= abs(fBB_Sup - uppKC_TP);
+    KKvsBB_DN_Distance:= abs(fBB_Inf - uppKC_SL);
+
+    //setplotcolor(3,GR2L); 
+    //setplotcolor(4,GR2L); 
+
+      MidKC:= LWMAv(smooth_MidKC_len,(uppKC_TP+lowKC_SL)/2);
+
+      //plot2(MidKC); setplotwidth(2,3);
+
+      fTg_MidKC:= (MidKC - MidKC[1]) / (time-time[1]);
+
+      if (MidKC > MidKC[1]) and (fTg_MidKC > +slopethreshold_MidKC)
+            and ((Bull_MFI_1=1) or (Bull_MFI_2=1))
+        
+        then
+           begin
+            setplotcolor(4,clLime);
+            Bull_AL_QSChannel:= 1;
+           end
+        else 
+           begin
+            setplotcolor(4,clBlack);
+           end;
+    
+    
+    //Bull_AL_QSChannel:= 1;
+      if (Bull_Kalman=1) or (Bull_AL_AvgDRD=1) then begin
+         setplotcolor(4,clLime); 
+         end;
+    end;
+  
+  if
+  
+    ( (BBWidth >= BBWidth[1])  and (LWMAv(PerBB,close) <= LWMAv(PerBB,close)[1])  )
+       or ( (Bear_AL_AvgDRD=1) )
+     and (uppKC_1 < uppKC_1[1])
+     and (lowKC_1 < lowKC_1[1])
+
+    then begin
+
+///////////////////////////////////////
+//// KC  Plotting
+
+
+    //plot3(uppKC_SL);
+    //plot4(lowKC_TP);
+
+    KKvsBB_Distance:= abs(fBB_Sup - uppKC_SL) + abs(FBB_Inf - lowKC_TP);
+    KKvsBB_UP_Distance:= abs(fBB_Sup - uppKC_SL);
+    KKvsBB_DN_Distance:= abs(fBB_Inf - uppKC_TP);
+
+    //setplotcolor(3,RD2L); 
+    //setplotcolor(4,RD2L); 
+
+      MidKC:= LWMAv(smooth_MidKC_len,(uppKC_SL+lowKC_TP)/2);
+      fTg_MidKC:= (MidKC - MidKC[1]) / (time-time[1]);
+
+      //plot2(MidKC); setplotwidth(2,3);
+      
+      if (MidKC < MidKC[1]) and (fTg_MidKC < -slopethreshold_MidKC) 
+         and ((Bear_MFI_1=1) or (Bear_MFI_2=1))
+      
+      then
+           begin
+            //setplotcolor(3,clFúcsia);
+            setplotcolor(4,clFúcsia);
+            Bear_AL_QSChannel:= 1;
+            Alert(clFúcsia);
+           end
+        else 
+           begin
+           //setplotcolor(3,clBlack); setplotwidth(3,2);
+           setplotcolor(4,clBlack); setplotwidth(4,2);
+           end;
+    
+    //Bear_AL_QSChannel:= 1;
+      if (Bear_Kalman=1) or (Bear_AL_AvgDRD=1) then begin
+         //setplotcolor(3,clRed); 
+         setplotcolor(4,clRed); 
+         //paintbar(clRed);
+         end;
+    end;
+
+    end;   // ----------  (end of "If Diff_BBK > 0" )
+
+  if (Diff_BBKC < 0)  
+    then begin
+    //setplotcolor(3,VL0); setplotwidth(3,5);    // ORANGE
+    setplotcolor(4,VL0); setplotwidth(4,5); // ORANGE
+    paintbar(clAzul);
+
+///////////////////////////////////////
+//// KC  Plotting
+
+
+    //plot3(uppKC_1); 
+    //plot4(lowKC_1); 
+
+    KKvsBB_Distance:= abs(fBB_Sup - uppKC_1) + abs(FBB_Inf - lowKC_1);
+
+
+        if (Bull_AL_AvgDRD=1) then
+        begin
+        //setplotcolor(3,clLime); setplotwidth(3,3);
+        //setplotcolor(4,clLime); setplotwidth(4,3);
+        paintbar(clLime);
+        //Bull_AL_QSChannel:= 1;
+        end;
+                  
+       
+        if (Bear_AL_AvgDRD=1) then
+        begin
+        //setplotcolor(3,clRed); setplotwidth(3,3);
+        //setplotcolor(4,clRed); setplotwidth(4,3);
+        paintbar(clRed);
+        //Bear_AL_QSChannel:= 1;
+        end;
+ 
+    end;
+
+                                                         
+    if  (Bull_AL_QSChannel=1) then Alert(clLime);
+    if  (Bear_AL_QSChannel=1) then Alert(clRed);
+
+
+        setplotwidth(1,3);
+        setplotwidth(2,3);
+        setplotwidth(3,3);
+        setplotwidth(4,3);
+
+//------------------------------------------------
+//------------------------------------------------
+//------------------------------------------------
+//------------------------------------------------
+//------------------------------------------------
+//----- Colouration
+
+       setplotcolor(1,clBlue);
+       setplotcolor(2,clBlue);
+       //setplotcolor(3,clBlue);
+       //setplotcolor(4,clBlue);
+
+
+//----------------  Cond_KKvsBB_Distance
+
+   Cond_KKvsBB_Distance:= 0;
+
+   
+  if 
+    
+
+    (
+     (Media(3,abs(MidP_Bollinger - MidKC))[3] < 0.6 * Media (89, abs(MidP_Bollinger - MidKC))[3])
+     or
+     (Media(3,abs(MidP_Bollinger - MidKC))[4] < 0.6 * Media (89, abs(MidP_Bollinger - MidKC))[4])
+     or
+     (Media(3,abs(MidP_Bollinger - MidKC))[5] < 0.6 * Media (89, abs(MidP_Bollinger - MidKC))[6])
+     or
+     (Media(3,abs(MidP_Bollinger - MidKC))[6] < 0.6 * Media (89, abs(MidP_Bollinger - MidKC))[6])
+     or
+     (Media(3,abs(MidP_Bollinger - MidKC))[7] < 0.6 * Media (89, abs(MidP_Bollinger - MidKC))[7])
+     or
+     (Media(3,abs(MidP_Bollinger - MidKC))[8] < 0.6 * Media (89, abs(MidP_Bollinger - MidKC))[8])
+     )
+     then  begin
+     Cond_KKvsBB_Distance:= 1;
+        //setplotcolor(1,clBranco);
+        //setplotcolor(2,clBranco);
+     end;
+
+     if 
+      (Cond_KKvsBB_Distance = 1)
+     then  begin
+     Cond_KKvsBB_Distance:= 1;
+        //setplotcolor(1,clBranco);
+        //setplotcolor(2,clBranco);
+     end;
+
+
+  /////////////////////////////////////
+  //  BB Closing
+
+  Final_Cond_Close_BB:= 0;
+
+  if
+
+  (
+   (
+   (fTg_BB_Sup[0] < 0) and (fTg_BB_Inf[0] > 0) 
+   and
+   (fTg_BB_Sup[1] < 0) and (fTg_BB_Inf[1] > 0) 
+   and
+   (fTg_BB_Sup[2] < 0) and (fTg_BB_Inf[2] > 0) 
+   and
+   (fTg_BB_Sup[3] < 0) and (fTg_BB_Inf[3] > 0) 
+   )
+   
+ or
+   
+   (
+   (fTg_BB_Sup[0] < - BandSlopeThreshold) and (fTg_BB_Inf[0] > + BandSlopeThreshold) 
+   and
+   (fTg_BB_Sup[1] < - BandSlopeThreshold) and (fTg_BB_Inf[1] > + BandSlopeThreshold) 
+   and
+   (fTg_BB_Sup[4] > + BandSlopeThreshold) and (fTg_BB_Inf[4] < - BandSlopeThreshold) 
+   )
+
+   or
+
+   (           
+             (Cond_BandSlopeThreshold=0)
+             and (Cond_NarrowBB[2]=0)
+            and (Cond_KKvsBB_Distance = 0)
+             
+              and
+                  ( 
+                  (KKvsBB_Distance[0] > KKvsBB_Distance_Factor * Media(50, KKvsBB_Distance)[0]) 
+                  or
+                  (KKvsBB_Distance[1] > KKvsBB_Distance_Factor * Media(50, KKvsBB_Distance)[1]) 
+                  or
+                  (KKvsBB_Distance[2] > KKvsBB_Distance_Factor * Media(50, KKvsBB_Distance)[2]) 
+                  )
+              
+   )  
+   )
+      
+              then 
+                Final_Cond_Close_BB:= 1; 
+
+   if 
+     (Final_Cond_Close_BB= 1)
+              then 
+                 begin
+                 setplotcolor(1,CloseCL);  
+                 setplotcolor(2,CloseCL);
+                 end;
+     
+     
+     
+  /////////////////////////////////////
+  //  BB Opening 
+
+  Final_Cond_Open_BB:= 0;
+
+  if
+
+  (
+   (
+   (fTg_BB_Sup[0] > 0) and (fTg_BB_Inf[0] < 0) 
+   and
+   (fTg_BB_Sup[1] > 0) and (fTg_BB_Inf[1] < 0) 
+   and
+   (fTg_BB_Sup[2] > 0) and (fTg_BB_Inf[2] < 0) 
+   and
+   (fTg_BB_Sup[3] > 0) and (fTg_BB_Inf[3] < 0) 
+   )
+   
+   or
+   
+   (
+   (fTg_BB_Sup[0] > + BandSlopeThreshold) and (fTg_BB_Inf[0] < - BandSlopeThreshold) 
+   and
+   (fTg_BB_Sup[1] > + BandSlopeThreshold) and (fTg_BB_Inf[1] < - BandSlopeThreshold) 
+   and
+   (fTg_BB_Sup[4] < - BandSlopeThreshold) and (fTg_BB_Inf[4] > + BandSlopeThreshold) 
+   )
+
+   or
+
+   (           
+             (Cond_BandSlopeThreshold=1)
+             and (Cond_NarrowBB[2]=1)
+             and (Cond_KKvsBB_Distance = 1)
+             
+              and
+                  ( 
+                  (KKvsBB_Distance[0] < KKvsBB_Distance_Factor * Media(50, KKvsBB_Distance)[0]) 
+                  or
+                  (KKvsBB_Distance[1] < KKvsBB_Distance_Factor * Media(50, KKvsBB_Distance)[1]) 
+                  or
+                  (KKvsBB_Distance[2] < KKvsBB_Distance_Factor * Media(50, KKvsBB_Distance)[2]) 
+                  )
+              
+   )
+   )
+ 
+              then 
+                Final_Cond_Open_BB:= 1; 
+
+   if 
+     (Final_Cond_Open_BB= 1)
+              then 
+                 begin
+                 setplotcolor(1,OpenCL);
+                 setplotcolor(2,OpenCL);
+                 end;
+
+
+// ---------------------------
+// ----  Alerts
+
+
+if   (Final_Cond_Open_BB[1]= 0)  and (Final_Cond_Open_BB= 1) 
+
+     then begin 
+                 plot (fBB_Sup);setplotcolor(1,OpenCL);
+                 plot2(fBB_Inf);setplotcolor(2,OpenCL);
+     end;
+
+     paintbar(clBlack);
+if   
+
+    (Final_Cond_Open_BB[1]= 1)  and (Final_Cond_Open_BB[0]= 0) 
+{
+    (
+    (Final_Cond_Open_BB[1]= 1)  and (Final_Cond_Open_BB[0]= 0) 
+    or
+    (Final_Cond_Open_BB[2]= 1)  and (Final_Cond_Open_BB[1]= 0) 
+    or
+    (Final_Cond_Open_BB[3]= 1)  and (Final_Cond_Open_BB[2]= 0) 
+    )
+    and 
+    (
+    (BBWidth[0] <= BBWidth[1])
+    or
+    (BBWidth[1] <= BBWidth[2])
+    )
+
+ }
+     then begin 
+     setplotcolor(1,OpenCL);  
+     setplotcolor(2,OpenCL);  
+     Alert(OpenCL); 
+     end;
+ 
+setplotwidth(3,2);
+end;  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,43 @@
+{
+Balance of Power Trend
+Original em: https://br.tradingview.com/script/XldP1lmA/
+Traduzido por: Jose Moraes
+}
+
+input
+  EMA(34);
+  TEMA(34);
+
+var
+  THL, BullOpen, BearOpen, BullClose, BearClose, BullOC, BearOC, BullReward, BearReward, BOP, SmoothBOP, SmootherBOP, xPrice, xEMA1, xEMA2, xEMA3, nRes : float;
+
+begin
+  if (high <> low) then THL := high - low else THL := 0.01;
+  BullOpen := (high - open)/THL;
+  BearOpen := (open - low)/THL;
+  BullClose := (close - low)/THL;
+  BearClose := (high - close)/THL;
+  if (close > open) then BullOC := (close - open)/THL else BullOC := 0;
+  if(open > close) then BearOC := (open - close)/THL else BearOC := 0;
+  BullReward := (BullOpen + BullClose + BullOC)/3;
+  BearReward := (BearOpen + BearClose + BearOC)/3;
+  BOP := BullReward - BearReward;
+  SmoothBOP := mediaExp(EMA, BOP);
+  xPrice := SmoothBOP;
+  xEMA1 := mediaExp(TEMA,SmoothBOP);
+  xEMA2 := mediaExp(TEMA,xEMA1);
+  xEMA3 := mediaExp(TEMA,xEMA2);
+  nRes := 3 * xEMA1 - 3 * xEMA2 + xEMA3;
+  SmootherBOP := nRes;
+  //plotar 0.1 manual
+  setPlotColor(1,clCinza);
+  plot(0);
+  //plotar -0.1 manual
+  setPlotColor(2,clAzul);
+  plot2(SmoothBOP);
+  setPlotColor(3,clVermelho);
+  plot3(SmootherBOP);
+  setPlotColor(4,clAzulClaro);
+  plot4(SmootherBOP[2]);
+
+end;

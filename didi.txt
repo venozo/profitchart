@@ -1,0 +1,4 @@
+Inicio
+  Se (adx(9,9) > 20) e (didiIndex(8,0,3,0,20,0) > didiIndex(8,0,3,0,20,0)[1]) e (ccI(21) >= 60) então
+    Alert(clVerde);
+Fim;

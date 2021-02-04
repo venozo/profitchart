@@ -1,0 +1,17 @@
+Inicio
+se (IsSold) então
+Inicio
+ Se (adx(9,9) > 20) e (didiIndex(4,4,3,0,4,0) > didiIndex(4,4,3,0,4,0)[1]) e (ccI(21) >= 60) então
+
+BuyToCoverAtMarket;
+Fim
+Senão Se (IsBought) então
+Inicio
+Se (ADX(9,9) < 20) e (didiIndex(4,4,3,0,4,0) < didiIndex(4,4,3,0,4,0)[1]) e (CCI(21) <= 60) então
+SellToCoverAtMarket;
+Fim
+Senão Se (ADX(9,9) > 20) e (didiIndex(4,4,3,0,4,0) > didiIndex(4,4,3,0,4,0)[1]) e (CCI(21) >= 60) então
+BuyAtMarket
+Senão Se (ADX(9,9) < 20) e (didiIndex(4,4,3,0,4,0) < didiIndex(4,4,3,0,4,0)[1]) e (CCI(21) <= 60) então
+SellShortAtMarket;
+Fim;

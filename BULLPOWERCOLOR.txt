@@ -1,0 +1,6 @@
+Inicio
+  Se (bullPower(9,0,1) > 1) e (Fechamento > media(20,Close)) então
+    PaintBar(clVerde)
+  Senão Se (bullPower(9,0,1) < 1) e (Fechamento < media(20,Close)) então
+    PaintBar(clVermelho);
+Fim;

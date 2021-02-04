@@ -1,0 +1,21 @@
+{
+begin
+plot(vwap(1)[108]);
+end;
+
+ }
+ input
+ Periodo(0);
+ tipo(1);
+ var
+  b:integer;
+Begin
+ b:= FindBar((Date-Periodo),0900);
+ if b > 0 then
+ begin
+ plot(vwap(tipo)[b]);
+ end else
+ plot(vwap(tipo));
+
+End;
+

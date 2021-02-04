@@ -1,0 +1,25 @@
+Input
+  Nivel1(0.23);
+  Nivel2(0.61);
+  Nivel3(0.89);
+  Nivel4(1.61);
+  tipodeplot(0);
+var
+  x : float;
+begin
+  x := (PriorCote(tipodeplot));
+  Plot(x * (1 - Nivel1 / 100));
+  Plot2(x * (1 - Nivel2 / 100));
+  Plot3(x * (1 - Nivel3 / 100));
+  Plot4(x * (1 - Nivel4 / 100));
+  setPlotcolor(2,clVermelho);
+end;
+//PriorCote(2) = maxima do dia amterior
+//PriorCote(0) = fexamento dia anterior
+//PriorCote(3) = minima do dia anterior
+//PriorCote(1) = abertura do dia anterior
+//PriorCote(4) = ajuste do dia anterior
+{
+pra outros parametro usar closeD. LowD,highD,OpenD...
+}
+

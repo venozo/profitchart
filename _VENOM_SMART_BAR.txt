@@ -1,0 +1,24 @@
+
+begin
+
+se (Highest(AgressionVolSell,9) < Highest(AgressionVolBuy,9)) then
+if (High > Media(5,Close)) and (Low < Media(5,Close)) and (FinancialVol(false) > FinancialVol(false)[1]) then
+PaintBar(clAmarelo);
+
+se (Highest(AgressionVolSell,9) > Highest(AgressionVolBuy,9)) then
+if (High < Media(5,close)) and (FinancialVol(false) > FinancialVol(false)[1]) then
+PaintBar(clBlue );
+
+if (Highest(AgressionVolBuy,5) > Highest(AgressionVolBuy,5)[1]) and
+ (media(3,AgressionVolBuy) > media(3,AgressionVolBuy)[1]) and
+ (FinancialVol(false) > FinancialVol(false)[1])
+ then
+ PaintBar(clGreen );
+
+ if (Highest(AgressionVolSell,5) > Highest(AgressionVolSell,5)[1]) and
+ (media(3,AgressionVolSell) > media(3,AgressionVolSell)[1]) and
+ (FinancialVol(false) > FinancialVol(false)[1])then
+ PaintBar(clMaroon );
+
+end;
+

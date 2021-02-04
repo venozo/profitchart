@@ -1,0 +1,33 @@
+input
+hlength(4);
+
+var
+down_BarM:boolean;
+hl2:float;
+up_BarM:boolean;
+bsdbm:integer;
+bsubm:integer;
+
+begin
+hl2:=(high+low) /2;
+
+down_BarM:=false;
+down_BarM := close > hl2[1];
+
+up_BarM:=false;
+up_BarM := close < hl2[1];
+
+if down_BarM  then
+bsdbm := bsdbm[1] +1
+else
+bsdbm :=0;
+
+if up_BarM  then
+bsubm := bsubm[1] +1
+else
+bsubm :=0;
+
+plot(hlength);
+plot2(bsdbm);
+plot3(bsubm);
+end;

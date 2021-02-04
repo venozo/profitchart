@@ -1,0 +1,21 @@
+input
+  Dados(open);
+  limitarPlotagem(true);
+var
+  candle : integer;
+  valor  : float;
+begin
+  if (time[1] > 1600) and (time < 1100) then
+    begin
+      valor := Dados;
+    end;
+  if (limitarPlotagem = true) then
+    begin
+      if (time < 1630) then
+            plot(valor);
+              
+    end;
+  if (limitarPlotagem = false) then
+    plot(valor);
+end;
+

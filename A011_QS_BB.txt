@@ -1,0 +1,945 @@
+/////////////////////////////////////////////////////////////////
+//////  A_BB_onChart (Bollinger Bands) 
+///------------------ 2019-04-28 at 18:30 version
+
+/// MidP Bollinger => Plot2
+
+{
+Index
+
+// -- MAMA and FAMA   ................................................   600
+// -- Bollinger Bands              ...................................   976
+// -- WMAv and MACD WMAv vs. MiP_Bollinger  ..........................  1019
+// -- MidP Bollinger Colouration   ...................................  1188
+}
+
+
+
+input
+
+//////////////////////  Holt_EMA
+
+gmma_HoltMAvs2(40);
+alpha_HoltMAvs2(20);
+
+
+//////////////////////  ALMA 72
+Fast_HoltMAvs2(13);  // 13-72 
+Slow_HoltMAvs2(72);
+
+Sigma_HoltMAvs2(4);
+Offset_HoltMAvs2(0.85);
+Signal_HoltMAvs2(9);
+
+///////////////////////
+
+RefTg_Mavs2(15.00);
+
+
+
+
+//////  MAMA vs FAMA
+
+FastLimit_MFAMA(0.5);
+SlowLimit_MFAMA(0.05);
+
+FastPer_MFAMA(8);
+SlowPer_MFAMA(17);
+TriggerPer_MFAMA(16);
+
+Periodo_MFAMA(34);
+
+Ref_fTg_FAMA(0.095);   //  0 the BB_onChart's alert, but  0.095 to plot MFM 
+
+Ref_fTg_MiP_MFM(0.25);
+
+
+///////////////////////  MACD MAFAMA
+
+Ref1_fTg_MACD_MAFAMA(0.15);
+Ref2_fTg_MACD_MAFAMA(2.75);
+
+//////  Damiani Volatmeter 
+
+vis_atr(7);     // viscosity
+vis_std(50);    // sedimentation
+fat_Red_DamianiV (1);   {I've tested it between 0 and 3 | the bigger, 
+ more operations are going to be discarded (and painted in Blue) }
+
+
+//////////////////////////
+/// Low Volume 
+
+///// fator de redução do valor da referência das linhas superior e inferior da média do NmVolADX
+
+fatRef_NmVolADX(0.75);   
+Per_Ref_NmVolADX(810);  
+
+
+///////////////////////////////////////////////////////
+////////////////// MidP Line
+
+PeriodoHMAv_StAvTR_MidPline(3);
+fatorAfast_StAvTR_MidPLine(1.1618);  // default 1.15
+
+
+///////////////////////////////////////////////////////
+////////////////// MidP Bands
+
+PeriodoHMAv_StAvTR_MidPBands(6);
+
+fatorAfast_AVG(1.1618);
+
+fatorAfast_StAvTR_MidPBands(1.15);  // default 1.15
+
+/////////////////////////////////////////////
+////  ATR Bands
+
+AVG_Separation_Factor(0.95);
+Period(13);
+AVG_Separation_Factor_1(1.85);
+AVG_Separation_Factor_2(2.95);
+PeriodATRBands(13);
+PeriodoHMAv_StAvTR_Line(6);
+
+///////////////  Bollinger
+
+ComparisionFactor(1.328);
+
+AjusteBB(1.786);
+PeriodBB(13);
+
+fat_multpcl(0.0060);
+
+factReduction_RefLine(0.5);    // 0.1 to BBonC
+RefLine_MACD_MAFAMA(50);
+fact_openingBB(100.0);
+
+Ref_Tg_MidP_BB(7);
+Ref2_Tg_MidP_BB(0.9);
+
+BB_factor_2(1.01);
+BB_factor_3(1.01);
+
+Per_MidP_Bollinger(3);
+
+Ref_Tg_MidP_Bollinger(9);
+
+BB_ATR_factor_2(0.8); 
+
+
+
+
+
+
+
+///// MidP_Line
+
+PeriodoHMAv_StAvTR(3);
+fatorAfast_StAvTR(1.2);  // default 1.15
+
+Ref_Tg_MidP_Line(1.5);
+
+////////////// Ichimoku
+
+Tenkan(5);      // 4-17-34; 5-13-55
+Kijun(13);
+Chikou(55);
+
+Reg_fTg_TIchimoku(1.8);
+
+///////// Low Standard Deviation
+
+PeriodStd(20);
+LongPeriodStd(810);
+ReductionOfLongTimeStdFactor_toBBonChart(0.20);
+
+
+
+var
+
+src: float;
+Bull_BBonChart,Bear_BBonChart: Integer;
+Bull_MAFAMA, Bear_MAFAMA,Bull_Strong_MAFAMA, Bear_Strong_MAFAMA:Float; 
+yMACD_MFM, fTg_MACD_MAFAMA: Float;
+
+Cond_CL_BB: Integer;
+
+//////////////////////  Holt_EMA
+
+myalpha_HoltMAvs2, mygamma_HoltMAvs2, value1_HoltMAvs2, b_HoltMAvs2, HoltEMA_HoltMAvs2: Float;
+
+
+//////////////////////  ALMA 72
+
+Price_HoltMAvs2, m_HoltMAvs2, s_HoltMAvs2, WtdSum_HoltMAvs2, CumWt_HoltMAvs2, Wtd_HoltMAvs2,
+FastMA_HoltMAvs2, SlowMA_HoltMAvs2, n_HoltMAvs2, t_HoltMAvs2, SWtdSum_HoltMAvs2, SCumWt_HoltMAvs2, SWtd_HoltMAvs2:Float;
+ALMA_MACD_HoltMAvs2, Signal_MACD_HoltMAvs2, Hist_MACD_HoltMAvs2: Float;
+fTg_ALMA_MACD_HoltMAvs2, fTg_L1_MAvs2, fTg_L2_MAvs2: Float;
+K_HoltMAvs2: Integer;
+BullF1_AL_MAvs2,BearF1_AL_MAvs2: Integer;
+BullF2_AL_MAvs2,BearF2_AL_MAvs2: Integer;
+
+
+//////  MAMA vs FAMA
+
+Price_MFAMA,Smooth_MFAMA,Detrender_MFAMA: Float;
+Q1,I1,jI,jQ,I2,Q2,Re,Im: Float;
+MFmacd, MFsignal,MFhist: Float;
+Period_MFAMA,SmoothPeriod_MFAMA, Phase_MFAMA, DeltaPhase_MFAMA, alpha_MFAMA, MAMA, FAMA: Float;
+MidP_MFM, fTg_MidP_MFM: Float;
+MACD_MAFAMA: Float;
+
+Cond_FAMA_Hzt, fTg_FAMA: Float;
+Bull_MFMonC, Bear_MFMonC: Float;
+Bull_MFMonC_Strong, Bear_MFMonC_Strong: Float;
+
+
+
+
+////////////////  MACD MAFAMA FILTER
+
+Bull_MACD_MAFAMA,Bear_MACD_MAFAMA,Bull_MACD_MAFAMA_Strong,Bear_MACD_MAFAMA_Strong: Integer;
+
+
+///////////////  LLR
+
+Bull_LLR, Bear_LLR: Integer;
+
+
+//////  Damiani Volatmeter 
+
+x1,x2: Integer;
+
+lagsK, indc, sa, s1, s3, vol, WPrice, MA1, D1,D2,Sum1,Sum2, anti,  MA2, Sedi, anti_thres, t, volt, fat_Red_DV_Definitivo, Diff_VT: Float;
+noRange: Integer;
+
+threshold_level, lag_s_K: Float;
+lag_supressor: Integer;
+
+CondDamianiV: Integer;
+
+//////////// Low Volume
+
+normalizevolume_NmVolADX, nvo_NmVolADX : Float;
+Low_Volume: Integer;
+
+ WPrice_NmVolADX: Float;
+
+ yADX_NmVolADX: Float;
+ Ref_NmVolADX: Float;
+
+Period_NmVolADX, SuavADX_NmVolADX: Integer;
+
+/////////////////////  Bollinger
+
+Bollinger_Width, ATR_Width: Float;
+
+///////////////////////////////////////////////////////
+////////////////// MidP Line
+
+Bull_MidPLine, Bear_MidPLine: Integer;
+
+val_StAvTR, dev_StAvTR, acc1_StAvTR, acc2_StAvTR, dhigh_StAvTR, dlow_StAvTR, data_StAvTR : Real;
+
+Bsup_StAvTR: Float;
+Binf_StAvTR: Float;
+
+MidP_StAvTR: Float;
+Res2_StAvTR: Float;
+Res1_StAvTR: Float;
+Sup1_StAvTR: Float;
+Sup2_StAvTR: Float;
+
+BIntSup: Float;
+BIntInf: Float;
+
+MACD_MPH_StAvTR,yTrigger_MACD_MPH_StAvTR,Diff_MACD_MPH_StAvTR: Float;
+fTg_MidP_Line: Float;
+
+idx_StAvTR : Integer;
+
+Bull_MidP, Bear_MidP: Integer;
+
+
+///////////////////////////////////////////////////////
+////////////////// MidP Bands
+
+Bull_MidP_Bands, Bear_MidP_Bands: Integer;
+Bull2_MidP, Bear2_MidP: Integer;
+
+///////////////  ATR Bands
+
+Cond_BB_ATR: Integer;
+Cond_NarrowBB: Integer;
+MidPrice: Float;
+
+BInf_1_ATR, BInf_2_ATR: Float;
+BSup_1_ATR, BSup_2_ATR: Float;
+
+
+BIntSup_ATR: Float;
+BIntInf_ATR: Float;
+MidP_StAvTR_Line: Float;
+ATR_Bands_Width: Float;
+BB_Bands_Width: Float;
+
+////  BB
+
+Cond_BB_Opening: Integer;
+fBB_Sup, fBB_Inf: Float;
+BullBear_BB: Integer;
+Bull_Buffer5, Bear_Buffer5: Integer;
+Bull_Overflow, Bear_Overflow: Integer;
+Bull_Reversal, Bear_Reversal: Integer;
+MidP_Bollinger,fTg_MidP_Bollinger,fTg2_MidP_Bollinger: Float;
+
+
+////  Fractal
+
+HighCount, HighFractal, HighLevel, LowCount, LowFractal, LowLevel: Float;
+
+///////////  Ichimoku
+
+TIchimoku, fTg_TIchimoku: Float;
+
+///////// Low Standard Deviation
+
+LongTimeStd: Float;
+Cond_LowStdDev: Integer;
+
+////////////////      MACD WMAv_MidP-BB
+
+MACD_W_MBB, fTg_MACD_W_MBB: Float;
+Bull_WBB, Bear_WBB: Integer;
+
+ybarindex: integer;
+
+
+
+begin
+
+    setplotcolor(1,clAzul);     setplotwidth(1,2);
+    setplotcolor(2,clAzul);
+    setplotcolor(3,clAzul);
+    setplotcolor(4,clAzul);
+
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+//////  MAMA vs FAMA
+
+Bull_MAFAMA:= 0;
+Bear_MAFAMA:= 0;
+Bull_Strong_MAFAMA:= 0;
+Bear_Strong_MAFAMA:= 0;
+
+
+Period_MFAMA:=0;
+ 
+Price_MFAMA:= (High+Low)/2;
+ 
+ for ybarindex:= 0 to Periodo_MFAMA - 1 do
+  //  if(barindex > 5 ) then
+    Smooth_MFAMA:= (4*Price_MFAMA + 3*Price_MFAMA[1] + 2*Price_MFAMA[2] + Price_MFAMA[3]) / 10;
+    Detrender_MFAMA:= (0.0962*Smooth_MFAMA + 0.5769*Smooth_MFAMA[2] - 0.5769*Smooth_MFAMA[4] - 0.0962*Smooth_MFAMA[6])*(0.075*Period_MFAMA[1] + 0.54);
+ 
+Q1:= (0.0962*Detrender_MFAMA + 0.5769*Detrender_MFAMA[2] - 0.5769*Detrender_MFAMA[4] - 0.0962*Detrender_MFAMA[6])*(0.075*Period_MFAMA[1] + 0.54);
+I1:= Detrender_MFAMA[3];
+ 
+jI:= (0.0962*I1 + 0.5769*I1[2] - 0.5769*I1[4] - 0.0962*I1[6])*(0.075*Period_MFAMA[1] + 0.54);
+jQ:= (0.0962*Q1 + 0.5769*Q1[2] - 0.5769*Q1[4] - 0.0962*Q1[6])*(0.075*Period_MFAMA[1] + 0.54);
+ 
+I2:= I1 - jQ;
+Q2:= Q1 + jI;
+ 
+I2:= 0.2*I2 + 0.8*I2[1];
+Q2:= 0.2*Q2 + 0.8*Q2[1];
+ 
+Re:= I2*I2[1] + Q2*Q2[1];
+Im:= I2*Q2[1] - Q2*I2[1];
+Re:= 0.2*Re + 0.8*Re[1];
+Im:= 0.2*Im + 0.8*Im[1];
+
+If (Im <> 0) and (Re <> 0) then
+Period_MFAMA:= 360/ArcTangent(Im/Re);
+
+If (Period_MFAMA > 1.5*Period_MFAMA[1]) then
+Period_MFAMA:= 1.5*Period_MFAMA[1];
+
+If (Period_MFAMA < 0.67*Period_MFAMA[1]) then
+Period_MFAMA:= 0.67*Period_MFAMA[1];
+
+If (Period_MFAMA < 6) then
+Period_MFAMA:= 6;
+
+If (Period_MFAMA > 50) then
+Period_MFAMA:= 50;
+ 
+Period_MFAMA:= 0.2*Period_MFAMA + 0.8*Period_MFAMA[1];
+SmoothPeriod_MFAMA:= 0.33*Period_MFAMA + 0.67*SmoothPeriod_MFAMA[1];
+ 
+if(I1<>0) then
+Phase_MFAMA:= ArcTangent(Q1 / I1);   
+  
+DeltaPhase_MFAMA:= Phase_MFAMA[1] - Phase_MFAMA;
+If (DeltaPhase_MFAMA < 1) then
+DeltaPhase_MFAMA:= 1;
+ 
+alpha_MFAMA:= FastLimit_MFAMA / DeltaPhase_MFAMA;
+If (alpha_MFAMA < SlowLimit_MFAMA) then
+alpha_MFAMA:= SlowLimit_MFAMA;
+ 
+MAMA:= alpha_MFAMA*Price_MFAMA + (1 - alpha_MFAMA)*MAMA[1];
+FAMA:= 0.5*alpha_MFAMA*MAMA + (1 - 0.5*alpha_MFAMA)*FAMA[1];
+
+//////////////////////////////////////////////////////
+
+    if   (MAMA < FAMA)
+    and  (MACD_MAFAMA > MACD_MAFAMA[1])
+    and  (MAMA > MAMA[1])
+    and  (close>open)
+    and  (Cond_CL_BB=1)
+
+    then begin
+    Bull_MFMonC:= 1;
+    end;
+
+    if   (MAMA > FAMA)
+    and  (MACD_MAFAMA > MACD_MAFAMA[1])
+    and  (MAMA > MAMA[1])
+    and not (Low_Volume=1)
+    and  (close>open)
+    and  (Cond_CL_BB=1)
+
+    then begin
+    Bear_MFMonC:= 1;
+    end;
+
+////////////////////  MACD MAFAMA  FILTER
+
+Bull_MACD_MAFAMA:= 0; 
+Bear_MACD_MAFAMA:= 0; 
+
+
+MACD_MAFAMA:= MAMA - FAMA;
+fTg_MACD_MAFAMA:= (MACD_MAFAMA - MACD_MAFAMA[1])/ (TIME - TIME[1]) *(40/ (AVGTrueRange(21,21)*5));
+fTg_MACD_MAFAMA:= LWMAv(8,fTg_MACD_MAFAMA);
+
+
+
+if 
+     (MACD_MAFAMA > MACD_MAFAMA[1]) 
+
+     then Bull_MACD_MAFAMA:= 1;   
+
+if
+
+     (MACD_MAFAMA < MACD_MAFAMA[1]) 
+
+     then Bear_MACD_MAFAMA:= 1;  
+
+
+
+
+if 
+     (MACD_MAFAMA > MACD_MAFAMA[1]) 
+and  (fTg_MACD_MAFAMA > + Ref1_fTg_MACD_MAFAMA)
+and  (Bull_LLR=1)
+
+     then begin
+     Bull_MACD_MAFAMA:= 1; 
+     Bull_MACD_MAFAMA_Strong:= 1;   
+     end;
+if
+
+     (MACD_MAFAMA < MACD_MAFAMA[1]) 
+and  (fTg_MACD_MAFAMA < - Ref1_fTg_MACD_MAFAMA)
+and  (Bear_LLR=1)
+
+     then begin
+     Bear_MACD_MAFAMA:= 1; 
+     Bear_MACD_MAFAMA_Strong:= 1;   
+     end;
+
+
+
+if 
+    (MACD_MAFAMA > MACD_MAFAMA[1])
+and (fTg_MACD_MAFAMA > + Ref2_fTg_MACD_MAFAMA)
+and  (Bull_LLR=1)
+
+     then begin
+     Bull_MACD_MAFAMA:= 1; 
+     Bull_MACD_MAFAMA_Strong:= 1;   
+     end;
+
+ if 
+    (MACD_MAFAMA < MACD_MAFAMA[1]) 
+and (fTg_MACD_MAFAMA < - Ref2_fTg_MACD_MAFAMA)
+and  (Bear_LLR=1)
+
+     then begin
+     Bear_MACD_MAFAMA:= 1; 
+     Bear_MACD_MAFAMA_Strong:= 1;   
+     end;
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+//////// LLR  RESTRIÇÃO A OCORRÊNCIA DE ELIMINAÇÃO DO SEGUNDO CANDLE ANTERIOR
+/////////           (mesmo critérido do alerta AL_VF1)
+
+WPrice:= (low + high + 2*close)/4;
+
+Bull_LLR:= 0; Bear_LLR:= 0;
+
+if  (WPrice > WPrice[2])  then Bull_LLR:= 1;    
+if  (WPrice < WPrice[2])  then Bear_LLR:= 1;
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+///////  Colouration
+
+
+  
+
+///////////////////////////////////////
+////////  Bollinger
+
+src:= (16*low+16*high+68*close)/100;
+
+//fBB_Sup:= MediaExp(5,BollingerBands(AjusteBB,PeriodBB,0)|0|); 
+//fBB_Inf:= MediaExp(5,BollingerBands(AjusteBB,PeriodBB,0)|1|);
+
+//fBB_Sup:= MediaExp(round(PeriodBB/2),BollingerBands(AjusteBB,PeriodBB,0)|0|); 
+//fBB_Inf:= MediaExp(round(PeriodBB/2),BollingerBands(AjusteBB,PeriodBB,0)|1|);
+
+fBB_Sup:= Media(13,src) + 3 * StdDevs(src,13);
+fBB_Inf:= Media(13,src) - 3 * StdDevs(src,13);
+
+Bollinger_Width:= fBB_Sup - fBB_Inf;
+
+MidP_Bollinger:= LWMAv(Per_MidP_Bollinger,(fBB_Sup + fBB_Inf))/2;
+fTg_MidP_Bollinger:= (MidP_Bollinger - MidP_Bollinger[1])/(time - time[1]);
+fTg2_MidP_Bollinger:= (fTg_MidP_Bollinger - fTg_MidP_Bollinger[1])/(time - time[1]);
+
+
+
+
+  
+  setplotwidth(3,5);
+  setplotwidth(4,5);
+
+  //setplotcolor(2,clGray);
+  //setplotcolor(3,clGray);
+  //setplotcolor(4,clGray);
+  
+  Bull_BBonChart:= 1;
+  Bear_BBonChart:= 1; 
+
+  if not  (BollingerBandW(2.00,PeriodBB,1) > BB_factor_2 * BollingerBandW(2.00,PeriodBB,1)[1])
+  then begin
+  setplotcolor(3,clAzul);
+  setplotcolor(4,clAzul);
+  Bull_BBonChart:= 0;
+
+  end;
+
+  if     (BollingerBandW(2.00,PeriodBB,1) < (1/BB_factor_3) * BollingerBandW(2.00,PeriodBB,1)[1])
+  then begin
+  setplotcolor(3,clAzul);
+  setplotcolor(4,clAzul);
+  Bull_BBonChart:= 0;
+  end;
+
+
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+////   Plotting
+
+// Plot2(WMAv(8,close));
+//Plot2(MidP_Bollinger);
+
+Plot3(fBB_Sup);      
+Plot4(fBB_Inf);
+
+
+
+
+ 
+
+///////////////////////////////////////////////////////
+////////////////// MidP Line
+
+Bull_MidPLine:= 0;
+Bear_MidPLine:= 0;
+
+
+acc1_StAvTR := 0;
+acc2_StAvTR := 0;
+dhigh_StAvTR := High;
+dlow_StAvTR := Low;
+idx_StAvTR := 0;
+
+
+
+//////////////////////////////////////
+///  Configurações das linhas
+
+
+dhigh_StAvTR := High;
+dlow_StAvTR := Low;
+
+acc1_StAvTR := 0;
+acc2_StAvTR := 0;
+idx_StAvTR := 0;
+
+
+
+
+if (High[idx_StAvTR] > dhigh_StAvTR) then dhigh_StAvTR := High[idx_StAvTR];
+if (Low[idx_StAvTR] < dlow_StAvTR) then dlow_StAvTR := Low[idx_StAvTR];
+
+
+
+ MidP_StAvTR:=(LWMAv(PeriodoHMAv_StAvTR_MidPLine,((dhigh_StAvTR + dlow_StAvTR)/2))); 
+
+
+ ////////////////////////////
+ /////  Cond_CL_BB
+
+Cond_CL_BB:= 1;
+
+
+if  
+     (
+        (
+         ((yMACD_MFM > 0) and (yMACD_MFM < factReduction_RefLine * (+1) * RefLine_MACD_MAFAMA))
+          or 
+         ((yMACD_MFM < 0) and (yMACD_MFM > factReduction_RefLine * (-1) * RefLine_MACD_MAFAMA))
+         )
+        and not ( (Media(5,Bollinger_Width[0]) >   (Media(5,Bollinger_Width[1]))))
+        )
+
+
+      then begin
+      Cond_CL_BB:= 0;
+      end;
+    
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+///////  Lime / Red Colouration
+
+//// via CR criterion
+
+if 
+    (close > open)
+    and (MAMA > FAMA)
+    and (MACD_MAFAMA > MACD_MAFAMA[1])
+    and (Bull_MACD_MAFAMA[1]=1)
+    //and (CondDamianiv=1)
+    //and not (Low_Volume=1)
+    and not lastbaronchart
+
+    then begin
+    Bull_MAFAMA:=1;
+    Bull_Strong_MAFAMA:=1;
+
+    end;
+
+    
+if 
+    (close < open)
+    and (MAMA < FAMA)
+    and (MACD_MAFAMA < MACD_MAFAMA[1]) 
+    and (Bear_MACD_MAFAMA[1]=1)
+    //and (CondDamianiv=1)
+    //and not (Low_Volume=1)
+    and not lastbaronchart
+
+
+    then begin
+    Bear_MAFAMA:= 1;
+    Bear_Strong_MAFAMA:=1;
+    end;
+        
+ 
+
+
+ BullBear_BB:= 0;
+
+
+///////////////////
+
+
+ ///////////  Filter CL_BB
+
+ Cond_CL_BB:= 1;
+
+ if  
+    (
+       ((yMACD_MFM > 0) and (yMACD_MFM < factReduction_RefLine * (+1) * RefLine_MACD_MAFAMA))
+    or ((yMACD_MFM < 0) and (yMACD_MFM > factReduction_RefLine * (-1) * RefLine_MACD_MAFAMA))
+
+    and not ( (Media(5,Bollinger_Width[0]) >   (Media(5,Bollinger_Width[1]))))
+
+    )
+
+      then begin
+       //PaintBar(clBlue);
+       Cond_CL_BB:= 1;
+      end;
+
+   Bull_MFMonC:= 0;
+   Bear_MFMonC:= 0;
+   Bull_MFMonC_Strong:= 0;
+   Bear_MFMonC_Strong:= 0;
+   
+
+    if   (MAMA < FAMA)
+    and  (MACD_MAFAMA > MACD_MAFAMA[1])
+    and  (MAMA > MAMA[1])
+    and  (close>open)
+    and  (Cond_CL_BB=1)
+
+    then begin
+    Bull_MFMonC:= 1;
+    end;
+
+    if   (MAMA > FAMA)
+    and  (MACD_MAFAMA > MACD_MAFAMA[1])
+    and  (MAMA > MAMA[1])
+    and not (Low_Volume=1)
+    and  (close>open)
+    and  (Cond_CL_BB=1)
+
+    
+    then begin
+    Bull_MFMonC_Strong:= 1;
+    end;
+
+
+    if   (MAMA > FAMA)
+    and  (MACD_MAFAMA < MACD_MAFAMA[1])
+    and  (MAMA < MAMA[1])
+    and  (close<open)
+    and  (Cond_CL_BB=1)
+
+    then begin
+    Bear_MFMonC:= 1;
+    end;
+
+
+    if   (MAMA < FAMA)
+    and  (MACD_MAFAMA < MACD_MAFAMA[1])
+    and  (MAMA < MAMA[1])
+    and not (Low_Volume=1)
+    and  (close<open)
+    and  (Cond_CL_BB=1)
+
+    then begin
+    Bear_MFMonC_Strong:= 1;
+    end;
+
+
+     MidP_MFM:= (MAMA+FAMA)/2;
+     fTg_MidP_MFM:= ((MidP_MFM - MidP_MFM[1]) / (time - time[1])) *  (40/400);
+
+     if 
+     (LWMAv(3,MidP_MFM) > LWMAv(3,MidP_MFM[1])) 
+     and not  (abs(fTg_MidP_MFM) <  Ref_fTg_MiP_MFM)
+     then begin
+     Bull_MFMonC_Strong:= 1;
+     end;
+     
+     if 
+     (LWMAv(3,MidP_MFM) < LWMAv(3,MidP_MFM[1])) 
+     and not  (abs(fTg_MidP_MFM) <  Ref_fTg_MiP_MFM)
+     then begin
+     Bear_MFMonC_Strong:= 1;
+     end;
+
+
+  
+ 
+
+
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+////////////// Alligator Opening
+
+
+
+yMACD_MFM:= MACD_MAFAMA;
+
+
+      Cond_BB_Opening:= 0;
+
+    if  not
+
+    ( 
+    ((fBB_Inf > fBB_Inf[1]) and (fBB_Sup > fBB_Sup[1]))
+    or 
+    ((fBB_Inf < fBB_Sup[1]) and (fBB_Sup < fBB_Sup[1]))
+    )
+
+    then begin
+
+     if (close > open) then begin setplotcolor(3,clSilver); setplotcolor(4,clSilver); end;
+     if (close < open) then begin setplotcolor(3,clSilver); setplotcolor(4,clSilver); end;
+
+            if   
+            ((Bull_MFMonC=1) or (Bull_MFMonC_Strong=1))
+             and ((Bull_MFMonC[1]=1) or (Bull_MFMonC_Strong[1]=1))
+             and ((Bull_MFMonC[2]=1) or (Bull_MFMonC_Strong[2]=1))
+ 
+            then begin
+            setplotcolor(3,clSilver);
+            setplotcolor(4,clSilver);
+            end;
+
+            if   ((Bear_MFMonC=1) or (Bear_MFMonC_Strong=1))
+             and ((Bear_MFMonC[1]=1) or (Bear_MFMonC_Strong[1]=1))
+             and ((Bear_MFMonC[2]=1) or (Bear_MFMonC_Strong[2]=1))
+            
+            then begin
+            setplotcolor(3,clSilver);
+            setplotcolor(4,clSilver);
+            end;
+
+      //PaintBar(clBlue);
+      Bull_BBonChart:= 1;
+      Bear_BBonChart:= 1;
+      Cond_BB_Opening:= 1;
+
+    end;
+
+    if  
+
+    ( 
+    ((fBB_Inf > fBB_Inf[1]) and (fBB_Sup > fBB_Sup[1]))
+    or 
+    ((fBB_Inf < fBB_Sup[1]) and (fBB_Sup < fBB_Sup[1]))
+    )
+
+    then begin
+
+      setplotwidth(3,4);
+      setplotwidth(4,4);
+      Bull_BBonChart:= 0;
+      Bear_BBonChart:= 0;
+      Cond_BB_Opening:= 0;
+
+    end;
+
+     
+
+  
+//////////////////////////////////////////
+/////////// Alerts
+
+if 
+     (
+     (
+     (Bull_BBonChart[1]=0)
+      and (Bull_BBonChart[0]=1)
+      )
+      or
+     (
+     (Bear_BBonChart[1]=0)
+      and (Bear_BBonChart[0]=1)
+      )
+      )
+      and (Cond_FAMA_Hzt[0]= 1)
+
+      and not lastbaronchart
+      
+      then begin
+
+            if  
+            
+            ((Bull_MFMonC=1) or (Bull_MFMonC_Strong=1))
+             and ((Bull_MFMonC[1]=1) or (Bull_MFMonC_Strong[1]=1))
+             and ((Bull_MFMonC[2]=1) or (Bull_MFMonC_Strong[2]=1))
+             and not (Cond_LowStdDev=1)            
+
+            then begin
+            setplotcolor(3,clSilver);
+            setplotcolor(4,clSilver);
+            Alert(clSilver);
+            end;
+
+            if   
+            ((Bear_MFMonC=1) or (Bear_MFMonC_Strong=1))
+             and ((Bear_MFMonC[1]=1) or (Bear_MFMonC_Strong[1]=1))
+             and ((Bear_MFMonC[2]=1) or (Bear_MFMonC_Strong[2]=1))
+             and not (Cond_LowStdDev=1)            
+            
+            then begin
+            setplotcolor(3,clSilver);
+            setplotcolor(4,clSilver);
+            Alert(clSilver);
+            end;
+ 
+      end;
+ 
+     setplotwidth(3,3);
+     setplotwidth(4,3);
+        
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

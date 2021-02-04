@@ -1,0 +1,147 @@
+input
+
+  frequencia(30);
+
+  periodo(10);
+
+  esconder_linhas_não_horizontais(true);
+
+var
+
+  topoOnda, fundoOnda :float;
+
+  chave, pausa, pausa2, chave2 : integer;
+
+begin
+
+  //-----------------------------------------
+
+  //   CONTANDO AS PLOTAGENS
+
+  if (topoOnda>0) and (fundoOnda>0) then
+
+  begin
+
+    chave:=chave+1;
+
+  end;
+
+  //-----------------------------------------
+
+  //   PRIMEIRO CÁLCULO DO INDICADOR
+
+  if (topoOnda=0) and (fundoOnda=0) then
+
+  begin
+
+    topoOnda:=high;
+
+    fundoOnda:=low;
+
+  end;
+
+  //-----------------------------------------
+
+  //   ATUALIZANDO TOPOS 
+
+  if (high>topoOnda) then
+
+  begin
+
+    chave:=chave-1;
+
+    pausa:=1;
+
+    topoOnda:=high;
+
+  end;
+
+  if (high<topoOnda) then
+
+  begin
+
+    pausa:=0;
+
+  end;
+
+  //-----------------------------------------
+
+  //   ATUALIZANDO FUNDOS
+
+  if (low<fundoOnda) then
+
+  begin
+
+    chave:=chave-1;
+
+    pausa2:=1;
+
+    fundoOnda:=low;
+
+  end;
+
+  if (low>fundoOnda) then
+
+  begin
+
+    pausa2:=0;
+
+  end;
+
+  //-----------------------------------------
+
+  // RECONECTANDO COM A REGIÃO ATUAL DO PREÇO
+
+  if (chave=frequencia) then
+
+  begin
+
+    chave2:=0;
+
+    chave:=0;
+
+    pausa:=1;
+
+    pausa2:=1;
+
+    topoOnda:=(highest(high, periodo));
+
+    fundoOnda:=(lowest(low, periodo));
+
+  end;
+
+  //-----------------------------------------
+
+  //  PLOTANDO O INDICADOR NO GRÁFICO
+
+  if (topoOnda>0) and (fundoOnda>0) then
+
+  begin
+
+  if (esconder_linhas_não_horizontais=true) then
+
+  begin
+
+    if (pausa=0) then
+
+      plot(topoOnda);
+
+    if (pausa2=0) then 
+
+      plot2(fundoOnda);  
+
+  end;
+
+  if (esconder_linhas_não_horizontais=false) then
+
+  begin
+
+    plot(topoOnda);
+
+    plot2(fundoOnda);  
+
+  end;
+
+  end;
+
+end;

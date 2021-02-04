@@ -1,0 +1,120 @@
+{
++-----------------------------------------------------------------------------+
+|                             CANDLESTICKTYPE.PSF                             |
++-----------------------------------------------------------------------------+
+|                                                                             |
+| Autor....: Alessandro Renner                                                |
+|                                                                             |
+| Descrição: Script utilizado para marcar os "tipos" de candlestick: martelo, |
+|            martelo invertido e doji em gráficos Heikin Ashi sobre o  Renko. |
+|            Apresenta a utilização da função HeikinAshi().                   |
+|                                                                             |
+| Licença..: Apenas para uso pessoal e estudos, não deve ser  utilizada  para |
+|            fins comerciais sem a expressa autorização do autor.             |
+|                                                                             |
+| Versão...: 1.0 (publicação inicial)                                         |
+|                                                                             |
++-----------------------------------------------------------------------------+
+
+Função HeikinAshi()
+
+A função (indicador) HeikinAshi(), retorna um valor do tipo float,  de  acordo 
+com a média, o tipo da média e o dado desejado.
+
+Sintaxe
+HeikinAshi(Média, Tipo da média)|Dado Desejado|.
+
+Parâmetros
+• Média: 
+  Média utilizada no momento do cálculo do indicador;
+
+• Tipo de Média: 
+  Determina o tipo da média utilizada, onde: 
+  - "0" é Aritmética, 
+  - "1" é Exponencial, 
+  - "2" é Welles Wilder e 
+  - "3" é Ponderada; 
+
+• Dado Desejado: 
+  Determina o dado desejado, onde: 
+  - Abertura   = 0
+  - Máxima     = 2
+  - Mínima     = 3 
+  - Fechamento = 1
+}
+
+var
+  VlrAbr : float;   //valor da abertura   (O)
+  VlrMxm : float;   //valor da máxima     (H)
+  VlrMnm : float;   //valor da mínima     (L)
+  VlrFch : float;   //valor do fechamento (C)
+
+  SmbSpr : float;   //sombra superior
+  SmbInf : float;   //sombra inferior
+  
+  CrpCnd : float;   //corpo do candle (tamanho)
+
+begin
+  
+  //obtendo o preço Heilin Ashi
+  //{
+  VlrAbr := HeikinAshi(1,0)|0|;
+  VlrMxm := HeikinAshi(1,0)|2|;
+  VlrMnm := HeikinAshi(1,0)|3|;
+  VlrFch := HeikinAshi(1,0)|1|;
+  //}
+  
+  //cálculo do tamanho do candle e das sombras
+  //{
+  CrpCnd := ABS(VlrAbr-VlrFch);
+  
+  SmbSpr := VlrMxm-VlrAbr;
+  SmbInf := VlrFch-VlrMnm;
+  
+  if 
+    (VlrAbr < VlrFch)
+  then
+    begin
+      SmbSpr := VlrMxm-VlrFch;
+      SmbInf := VlrAbr-VlrMnm;
+    end;   
+  //}
+
+  //---------------------------------------------------------------------------
+
+  //{
+  //doji
+  if
+    (CrpCnd < (VlrMxm-VlrMnm)*0.025)
+  then
+    begin
+      PaintBar (RGB(000,000,255));
+    end;
+  //} 
+  
+  //{
+  //martelo
+  if
+        (VlrAbr > VlrFch)
+    and (CrpCnd > (VlrMxm-VlrMnm)*0.025)
+    and (SmbInf > SmbSpr*1.5)
+    and (CrpCnd < SmbInf)
+  then
+    begin
+      PaintBar (RGB(000,128,000));
+    end;
+  
+  //}
+  
+  //martelo invertido
+  if
+        (VlrAbr < VlrFch)
+    and (CrpCnd > (VlrMxm-VlrMnm)*0.025)
+    and (SmbSpr > SmbInf*1.5)
+    and (CrpCnd < SmbSpr)
+  then
+    begin
+      PaintBar (RGB(255,000,000));
+    end;
+  //}
+end;

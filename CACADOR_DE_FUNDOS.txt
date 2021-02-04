@@ -1,0 +1,28 @@
+var
+compra1,compra2,confirmar:boolean;
+entra:integer;
+compra3:float;
+begin
+compra2:=
+  (CLOSE[4]>CLOSE[5])AND
+  (CLOSE[3]<CLOSE[4])AND
+  (CLOSE[2]>CLOSE[3])AND
+  (CLOSE[1]<CLOSE[2])and
+  (CLOSE[1]<CLOSE[2]);
+ compra1:= 
+  (CLOSE[1]<CLOSE[2]) AND
+  (CLOSE[2]<CLOSE[3])AND
+  (CLOSE[3]<CLOSE[4])AND
+  (CLOSE[4]<CLOSE[5])AND
+  (CLOSE>CLOSE[1]);
+ compra3:= (high-low) ;
+
+
+ entra:=0;
+ se(close>close[3])and(close>close[4]) then entra:=1;
+ if entra=1 then paintbar(clverde);
+ 
+ if (compra3 >(high[1]-low[1]))and (close<close[1]) then  paintbar(255);
+ if compra1 or compra2 then  PAINTBAR(CLAZUL);
+ if compra1 or compra2 then BuyAtMarket;
+end;
